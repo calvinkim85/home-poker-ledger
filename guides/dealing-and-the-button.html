@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!-- Partial CSP. script-src is deliberately absent: Google supports only strict
+     CSP with per-request nonces for AdSense (a domain allowlist breaks ad serving
+     as their domains rotate), and GitHub Pages serves static files and cannot
+     generate a nonce per request. frame-ancestors and X-Content-Type-Options are
+     header-only and cannot be set from a meta tag at all. What is here is the
+     subset that is both enforceable and safe for ads. See docs/launch-runbook.md. -->
+<meta http-equiv="Content-Security-Policy" content="object-src 'none'; base-uri 'none'; form-action 'none'; upgrade-insecure-requests">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Who deals at a home poker game, and how the button moves</title>
+<meta name="description" content="Rotating the deal versus a dedicated dealer, how the button and blinds move, and the small mistakes that cause most home-game disputes.">
+<meta name="theme-color" content="#14523c">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="canonical" href="https://homepokerledger.com/guides/dealing-and-the-button">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Home Poker Ledger">
+<meta property="og:title" content="Who deals at a home poker game, and how the button moves">
+<meta property="og:description" content="Rotating the deal versus a dedicated dealer, how the button and blinds move, and the small mistakes that cause most home-game disputes.">
+<meta property="og:url" content="https://homepokerledger.com/guides/dealing-and-the-button">
+<meta property="og:image" content="https://homepokerledger.com/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preload" href="../fonts/plex-sans-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../fonts/bodoni-700-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../fonts/plex-mono-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" type="image/png" sizes="48x48" href="../favicon-48.png">
+<link rel="icon" type="image/png" sizes="96x96" href="../favicon-96.png">
+<link rel="icon" type="image/png" sizes="192x192" href="../favicon-192.png">
+<link rel="icon" type="image/svg+xml" href="../icon.svg">
+<link rel="apple-touch-icon" sizes="192x192" href="../favicon-192.png">
+<link rel="stylesheet" href="../site.css">
+<script>
+(function(){try{var s=JSON.parse(localStorage.getItem("poker.ledger.v1")||"null");
+if(s&&(s.theme==="dark"||s.theme==="light"))document.documentElement.setAttribute("data-theme",s.theme);}catch(e){}})();
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Dealing and the button",
+  "description": "Rotating the deal versus a dedicated dealer, how the button and blinds move, and the small mistakes that cause most home-game disputes.",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://homepokerledger.com/guides/dealing-and-the-button"
+  },
+  "url": "https://homepokerledger.com/guides/dealing-and-the-button",
+  "image": {
+    "@type": "ImageObject",
+    "url": "https://homepokerledger.com/og.png",
+    "width": 1200,
+    "height": 630
+  },
+  "datePublished": "2026-09-17T20:46:45-05:00",
+  "dateModified": "2026-09-17T20:46:45-05:00",
+  "author": {
+    "@type": "Organization",
+    "name": "Home Poker Ledger",
+    "url": "https://homepokerledger.com/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Home Poker Ledger",
+    "url": "https://homepokerledger.com/",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://homepokerledger.com/favicon-512.png",
+      "width": 512,
+      "height": 512
+    }
+  },
+  "inLanguage": "en",
+  "isAccessibleForFree": true
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home Poker Ledger",
+      "item": "https://homepokerledger.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://homepokerledger.com/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Dealing and the button",
+      "item": "https://homepokerledger.com/guides/dealing-and-the-button"
+    }
+  ]
+}
+</script>
+</head>
+<body>
+
+<main class="table">
+
+  <header class="rail">
+    <div class="brand">
+      <div class="suits">&spades; &hearts; &diams; &clubs;</div>
+      <h1>Dealing and the button</h1>
+      <div class="sub">Who deals, and in what order</div>
+    </div>
+    <a class="back" href="../">&larr; Back to the ledger</a>
+  </header>
+
+  <article class="doc">
+
+    <p class="updated">Guides &middot; At the table</p>
+
+    <p class="lede">Almost every home game deals for itself, and almost every home game
+      has had the same argument: whose blind was it, and did the button move?</p>
+
+    <h2>Rotating deal, or one dealer?</h2>
+    <p><strong>Rotating</strong> is the norm and it is free. Each player deals their own
+      button. It is slower, hands get misdealt more often, and the person dealing is also
+      playing &mdash; which is fine, and is how most games run forever.</p>
+    <p><strong>A dedicated dealer</strong> makes the game noticeably faster and cleaner.
+      Worth considering if someone is happy to sit out, if you are running a bigger
+      tournament, or if your group has drifted towards more serious play. The cost is one
+      seat.</p>
+    <p>If you rotate, one person should still be the agreed authority on rulings. Dealing
+      and deciding are different jobs, and the
+      <a href="house-rules">list of house rules</a> should say who does the second.</p>
+
+    <h2>How the button actually moves</h2>
+    <p>The dealer button moves <strong>one seat clockwise after every hand</strong>,
+      without exception, whether or not that player is still in the game.</p>
+    <p>The small blind is immediately to its left, the big blind after that. Betting
+      starts to the left of the big blind before the flop, and to the left of the button
+      afterwards. Once the button is right, everything else places itself.</p>
+    <p>Use a physical button. A poker chip or a coin is enough. Nearly every
+      &ldquo;whose blind is it?&rdquo; argument is a game where the button lives in
+      somebody's memory.</p>
+
+    <h2>When a player leaves mid-game</h2>
+    <p>Move the button as if they were still sitting there. Skipping a seat shifts the
+      blinds onto someone twice and they will notice.</p>
+    <p>A player joining should either wait for the big blind to reach them or post it to
+      come in immediately &mdash; agree which, once, in advance.
+      <a href="rebuys-and-late-entries">More on seating a late arrival here.</a></p>
+
+    <h2>The small things that go wrong</h2>
+    <ul>
+      <li><strong>Dealing before the blinds are in.</strong> Post first, deal second.</li>
+      <li><strong>A card exposed while dealing.</strong> Standard practice: the exposed
+        card is replaced and becomes the burn. Agree your version beforehand.</li>
+      <li><strong>Forgetting to burn.</strong> Harmless if consistent, an argument if
+        it happens sometimes.</li>
+      <li><strong>Dealing out of turn after a break.</strong> Look at the button, not at
+        who is holding the deck.</li>
+    </ul>
+
+    <h2>It has nothing to do with the money</h2>
+    <p>Worth stating, because new hosts conflate the two: the person dealing does not
+      need to be the person running the bank. They are separate roles and it is often
+      better if they are separate people &mdash; there is
+      <a href="being-the-banker">a guide on the banking side</a>.</p>
+
+  </article>
+
+  <footer class="foot">
+    <a href="../">Ledger</a><span class="sep">&middot;</span><a href="../how-it-works">How it works</a><span class="sep">&middot;</span><a href="../guides/">Guides</a><br><a href="../privacy" hreflang="en">Privacy</a>&#8202;<a href="../privacy-ko" lang="ko" hreflang="ko" aria-label="개인정보처리방침 — the privacy policy in Korean">(한국어)</a><span class="sep">&middot;</span><a href="../terms">Terms</a><span class="sep">&middot;</span><a href="#" data-consent-reopen hidden>Cookie settings</a>
+  </footer>
+
+</main>
+
+<script src="../consent.js" defer></script>
+
+</body>
+</html>

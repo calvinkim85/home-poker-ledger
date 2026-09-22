@@ -1,0 +1,2735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!-- Partial CSP. script-src is deliberately absent: Google supports only strict
+     CSP with per-request nonces for AdSense (a domain allowlist breaks ad serving
+     as their domains rotate), and GitHub Pages serves static files and cannot
+     generate a nonce per request. frame-ancestors and X-Content-Type-Options are
+     header-only and cannot be set from a meta tag at all. What is here is the
+     subset that is both enforceable and safe for ads. See docs/launch-runbook.md. -->
+<meta http-equiv="Content-Security-Policy" content="object-src 'none'; base-uri 'none'; form-action 'none'; upgrade-insecure-requests">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Home Poker Ledger — free poker settlement calculator</title>
+<meta name="description" content="Free home poker calculator. Enter buy-ins and cash-outs, get who pays whom in the fewest transfers, and copy a dated summary the table can keep.">
+<meta name="theme-color" content="#14523c">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Poker Ledger">
+<link rel="preload" href="fonts/plex-sans-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/bodoni-700-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/plex-mono-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" type="image/png" sizes="48x48" href="favicon-48.png">
+<link rel="icon" type="image/png" sizes="96x96" href="favicon-96.png">
+<link rel="icon" type="image/png" sizes="192x192" href="favicon-192.png">
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<link rel="apple-touch-icon" sizes="192x192" href="favicon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+<!-- Proves to Naver that this domain is ours. Naver re-checks it, so it has to
+     stay on the page, and the verification expires yearly. Same token on the
+     Korean page so /ko/ can be registered as its own property without a second
+     round trip. -->
+<meta name="naver-site-verification" content="1fbc33b127a1a4b818631086bbfc73da88280353" />
+<link rel="canonical" href="https://homepokerledger.com/">
+<!-- Each page names itself and its counterpart, including x-default, so a search
+     engine treats them as one page in two languages rather than as duplicates. -->
+<link rel="alternate" hreflang="en" href="https://homepokerledger.com/">
+<link rel="alternate" hreflang="ko" href="https://homepokerledger.com/ko/">
+<link rel="alternate" hreflang="x-default" href="https://homepokerledger.com/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Home Poker Ledger">
+<meta property="og:title" content="Home Poker Ledger — free poker settlement calculator">
+<meta property="og:description" content="Free home poker calculator. Enter buy-ins and cash-outs for 2-10 players, get who pays whom in the fewest transfers, and copy a dated summary to paste in the group chat.">
+<meta property="og:url" content="https://homepokerledger.com/">
+<meta property="og:image" content="https://homepokerledger.com/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Home Poker Ledger — buy-ins, cash-outs, and who pays whom.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Home Poker Ledger — free poker settlement calculator">
+<meta name="twitter:description" content="Free home poker calculator. Enter buy-ins and cash-outs for 2-10 players, get who pays whom in the fewest transfers, and copy a dated summary to paste in the group chat.">
+<meta name="twitter:image" content="https://homepokerledger.com/og.png">
+
+<style>
+/* Self-hosted fonts — no third-party request, and no round trip to discover the
+   URLs. Google Fonts required fetching a stylesheet from fonts.googleapis.com before
+   the browser could even learn where the font files were, then a second connection to
+   fonts.gstatic.com to get them. Both are gone.
+
+   These are the exact woff2 subsets Google served, so the bytes on the wire are
+   unchanged; only the origin is. IBM Plex and Bodoni Moda are both SIL OFL 1.1,
+   which permits this — see fonts/OFL.txt.
+
+   unicode-range means a browser fetches only the subsets a page actually needs;
+   latin-ext is what carries the won sign, so a KRW user pulls it and nobody else does.
+   The card suits and the transfer arrow are outside both subsets and fall back to a
+   system font, exactly as they did before. */
+@font-face{
+  font-family:'Bodoni Moda';
+  font-style:normal;
+  font-weight:700;
+  font-display:swap;
+  src:url(fonts/bodoni-700-latin.woff2) format('woff2');
+  unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face{
+  font-family:'Bodoni Moda';
+  font-style:normal;
+  font-weight:700;
+  font-display:swap;
+  src:url(fonts/bodoni-700-latin-ext.woff2) format('woff2');
+  unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face{
+  font-family:'IBM Plex Sans';
+  font-style:normal;
+  font-weight:400;
+  font-display:swap;
+  src:url(fonts/plex-sans-400-latin.woff2) format('woff2');
+  unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face{
+  font-family:'IBM Plex Sans';
+  font-style:normal;
+  font-weight:400;
+  font-display:swap;
+  src:url(fonts/plex-sans-400-latin-ext.woff2) format('woff2');
+  unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face{
+  font-family:'IBM Plex Sans';
+  font-style:normal;
+  font-weight:500;
+  font-display:swap;
+  src:url(fonts/plex-sans-500-latin.woff2) format('woff2');
+  unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face{
+  font-family:'IBM Plex Sans';
+  font-style:normal;
+  font-weight:500;
+  font-display:swap;
+  src:url(fonts/plex-sans-500-latin-ext.woff2) format('woff2');
+  unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face{
+  font-family:'IBM Plex Sans';
+  font-style:normal;
+  font-weight:600;
+  font-display:swap;
+  src:url(fonts/plex-sans-600-latin.woff2) format('woff2');
+  unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face{
+  font-family:'IBM Plex Sans';
+  font-style:normal;
+  font-weight:600;
+  font-display:swap;
+  src:url(fonts/plex-sans-600-latin-ext.woff2) format('woff2');
+  unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face{
+  font-family:'IBM Plex Sans';
+  font-style:normal;
+  font-weight:700;
+  font-display:swap;
+  src:url(fonts/plex-sans-700-latin.woff2) format('woff2');
+  unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face{
+  font-family:'IBM Plex Sans';
+  font-style:normal;
+  font-weight:700;
+  font-display:swap;
+  src:url(fonts/plex-sans-700-latin-ext.woff2) format('woff2');
+  unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face{
+  font-family:'IBM Plex Mono';
+  font-style:normal;
+  font-weight:400;
+  font-display:swap;
+  src:url(fonts/plex-mono-400-latin.woff2) format('woff2');
+  unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face{
+  font-family:'IBM Plex Mono';
+  font-style:normal;
+  font-weight:400;
+  font-display:swap;
+  src:url(fonts/plex-mono-400-latin-ext.woff2) format('woff2');
+  unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face{
+  font-family:'IBM Plex Mono';
+  font-style:normal;
+  font-weight:500;
+  font-display:swap;
+  src:url(fonts/plex-mono-500-latin.woff2) format('woff2');
+  unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face{
+  font-family:'IBM Plex Mono';
+  font-style:normal;
+  font-weight:500;
+  font-display:swap;
+  src:url(fonts/plex-mono-500-latin-ext.woff2) format('woff2');
+  unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face{
+  font-family:'IBM Plex Mono';
+  font-style:normal;
+  font-weight:600;
+  font-display:swap;
+  src:url(fonts/plex-mono-600-latin.woff2) format('woff2');
+  unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face{
+  font-family:'IBM Plex Mono';
+  font-style:normal;
+  font-weight:600;
+  font-display:swap;
+  src:url(fonts/plex-mono-600-latin-ext.woff2) format('woff2');
+  unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face{
+  font-family:'IBM Plex Mono';
+  font-style:normal;
+  font-weight:700;
+  font-display:swap;
+  src:url(fonts/plex-mono-700-latin.woff2) format('woff2');
+  unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face{
+  font-family:'IBM Plex Mono';
+  font-style:normal;
+  font-weight:700;
+  font-display:swap;
+  src:url(fonts/plex-mono-700-latin-ext.woff2) format('woff2');
+  unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+  :root{
+    --display:'Bodoni Moda',Didot,'Bodoni MT',Georgia,serif;
+    --body:'IBM Plex Sans','Helvetica Neue',Arial,sans-serif;
+    --mono:'IBM Plex Mono','SFMono-Regular',Consolas,monospace;
+
+    --felt:#1d6b4f;
+    --felt-deep:#14523c;
+    --rail:#6b3f22;
+    --card:#fbf7ef;
+    --card-edge:#ddd2bd;
+    --card-sunk:#f2ebdd;
+    --ink:#22201c;
+    --ink-soft:#716a5d;
+    --gold:#84662c;
+    --win:#1c7a4f;
+    --loss:#b23b34;
+    --flat:#716a5d;
+    --alert:#9f6028;
+    --alert-bg:#fdf1df;
+    --ok-bg:#e9f5ed;
+    --chip:#f4ede0;
+    --chip-edge:#c8b998;
+    --shadow:rgba(10,26,20,.42);
+    --on-felt:#fcfaf5;
+    --on-felt-dim:#dfe8e2;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --felt:#0d3527;
+      --felt-deep:#07231a;
+      --rail:#2e1c10;
+      --card:#161c1a;
+      --card-edge:#2c3a35;
+      --card-sunk:#101614;
+      --ink:#eee7da;
+      --ink-soft:#93a09a;
+      --gold:#d8b061;
+      --win:#5fcf94;
+      --loss:#f0776c;
+      --flat:#93a09a;
+      --alert:#eca85e;
+      --alert-bg:#2a1f10;
+      --ok-bg:#10261b;
+      --chip:#1d2623;
+      --chip-edge:#3a4a44;
+      --shadow:rgba(0,0,0,.6);
+      --on-felt:#eef3ef;
+      --on-felt-dim:#a9bbb2;
+    }
+  }
+  :root[data-theme="dark"]{
+    --felt:#0d3527;
+    --felt-deep:#07231a;
+    --rail:#2e1c10;
+    --card:#161c1a;
+    --card-edge:#2c3a35;
+    --card-sunk:#101614;
+    --ink:#eee7da;
+    --ink-soft:#93a09a;
+    --gold:#d8b061;
+    --win:#5fcf94;
+    --loss:#f0776c;
+    --flat:#93a09a;
+    --alert:#eca85e;
+    --alert-bg:#2a1f10;
+    --ok-bg:#10261b;
+    --chip:#1d2623;
+    --chip-edge:#3a4a44;
+    --shadow:rgba(0,0,0,.6);
+    --on-felt:#eef3ef;
+    --on-felt-dim:#a9bbb2;
+  }
+
+  *{ box-sizing:border-box; }
+
+  body{
+    margin:0;
+    color:var(--ink);
+    font-family:var(--body);
+    background-color:var(--felt);
+    background-image:
+      radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--felt) 55%, #ffffff) 0%, transparent 62%),
+      repeating-linear-gradient(45deg, color-mix(in srgb, var(--felt-deep) 40%, transparent) 0 2px, transparent 2px 6px);
+    min-height:100vh;
+  }
+  img{ max-width:100%; }
+  [hidden]{ display:none !important; }
+
+  .table{
+    max-width:840px;
+    margin:clamp(12px,3vw,44px) auto;
+    padding:0 clamp(10px,2.4vw,20px) clamp(40px,6vw,70px);
+  }
+
+  /* ---- header ---- */
+  .rail{
+    background:var(--card);
+    border:1px solid var(--card-edge);
+    border-radius:14px;
+    box-shadow:0 20px 44px -26px var(--shadow);
+    padding:clamp(16px,3vw,24px) clamp(16px,3vw,26px);
+    display:flex;
+    align-items:center;
+    gap:14px;
+    flex-wrap:wrap;
+  }
+  .brand{ flex:1 1 auto; min-width:0; }
+  .suits{
+    font-size:.86rem;
+    letter-spacing:.32em;
+    color:var(--gold);
+    margin-bottom:2px;
+  }
+  h1{
+    font-family:var(--display);
+    font-weight:700;
+    font-size:clamp(1.6rem,3.4vw+.7rem,2.5rem);
+    line-height:1.05;
+    margin:0;
+    letter-spacing:.01em;
+  }
+  .sub{
+    font-family:var(--mono);
+    font-size:.6rem;
+    letter-spacing:.19em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    margin-top:6px;
+  }
+  .lbl{
+    font-family:var(--mono);
+    font-size:.57rem;
+    letter-spacing:.19em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    display:block;
+  }
+
+  /* ---- buttons ---- */
+  .btn{
+    font-family:var(--mono);
+    text-transform:uppercase;
+    letter-spacing:.13em;
+    font-size:.66rem;
+    padding:11px 15px;
+    border:1.5px solid var(--card-edge);
+    border-radius:8px;
+    background:var(--card);
+    color:var(--ink);
+    cursor:pointer;
+    transition:background .15s ease, color .15s ease, border-color .15s ease;
+  }
+  .btn:hover:not(:disabled){ background:var(--ink); color:var(--card); border-color:var(--ink); }
+  .btn:focus-visible{ outline:2px solid var(--gold); outline-offset:2px; }
+  .btn:disabled{ opacity:.35; cursor:not-allowed; }
+  .btn.primary{
+    background:var(--felt-deep);
+    border-color:var(--felt-deep);
+    color:var(--on-felt);
+    font-size:.76rem;
+    padding:15px 22px;
+  }
+  .btn.primary:hover:not(:disabled){ background:var(--ink); border-color:var(--ink); color:var(--card); }
+  .btn.ghost{ background:transparent; }
+  .btn.tiny{ font-size:.58rem; padding:8px 11px; }
+
+  /* ---- setup bar ---- */
+  .setup{
+    margin-top:clamp(12px,2vw,16px);
+    background:var(--card);
+    border:1px solid var(--card-edge);
+    border-radius:14px;
+    box-shadow:0 20px 44px -26px var(--shadow);
+    padding:clamp(14px,2.4vw,20px) clamp(16px,3vw,26px);
+    /* A grid, not a wrapping flex row.
+
+       Flex-wrap sized every field to whatever text happened to be in it, then
+       bottom-aligned fields of different heights, so the panel came out as three
+       ragged rows with controls starting at four different x positions. Columns of
+       one width fix that by construction: whatever wraps, wraps onto a column. */
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(196px, 1fr));
+    align-items:start;
+    gap:16px 18px;
+  }
+  .field{ display:flex; flex-direction:column; gap:5px; min-width:0; }
+  .money{
+    position:relative;
+    display:flex;
+    align-items:center;
+  }
+  .money .cur{
+    position:absolute;
+    left:11px;
+    font-family:var(--mono);
+    font-size:.82rem;
+    color:var(--ink-soft);
+    pointer-events:none;
+    white-space:nowrap;
+  }
+  input[type="text"],input[type="number"]{
+    font-family:var(--mono);
+    font-size:.95rem;
+    color:var(--ink);
+    background:var(--card-sunk);
+    border:1.5px solid var(--card-edge);
+    border-radius:8px;
+    padding:11px 12px;
+    width:100%;
+    -moz-appearance:textfield;
+  }
+  input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0; }
+  input:focus-visible{ outline:2px solid var(--gold); outline-offset:1px; }
+  /* --cur-pad is set from JS to the measured symbol width, so "CN¥" and "$"
+     both clear the digits. */
+  .money input{ padding-left:var(--cur-pad,24px); font-variant-numeric:tabular-nums; }
+  input.bad{ border-color:var(--loss); background:color-mix(in srgb, var(--loss) 12%, var(--card-sunk)); }
+  .w-default{ width:150px; }
+  /* Below the grid's two-column point every control spans the whole card, and a
+     150px money box beside them is the one thing that does not line up. */
+  @media (max-width:560px){ .w-default{ width:100%; } }
+  /* Every dropdown in the setup row, not just the currency one.
+
+     This used to be `select#currency`, which was fine when there was exactly one
+     select. Four more were added — rounding, the change destination, payment routing
+     and the discrepancy handling — and every one of them rendered as a bare native
+     control: 19px tall, next to a 44px styled neighbour and a 45px money input. Three
+     different control heights in a row that is supposed to read as one panel.
+
+     Height is pinned rather than left to padding, because a select's intrinsic height
+     comes from its font and the arrow the platform draws, so padding alone does not
+     make it match an input. */
+  .setup select{
+    font-family:var(--mono);
+    font-size:.82rem;
+    color:var(--ink);
+    background:var(--card-sunk);
+    border:1.5px solid var(--card-edge);
+    border-radius:8px;
+    padding:0 32px 0 12px;
+    height:45px;
+    cursor:pointer;
+    /* The platform arrow sits at a different inset on every OS, so draw our own and
+       reserve the room for it above. */
+    -webkit-appearance:none;
+    appearance:none;
+    background-image:linear-gradient(45deg, transparent 50%, var(--ink-soft) 50%),
+                     linear-gradient(135deg, var(--ink-soft) 50%, transparent 50%);
+    background-position:calc(100% - 17px) 20px, calc(100% - 12px) 20px;
+    background-size:5px 5px, 5px 5px;
+    background-repeat:no-repeat;
+    /* A select clips its label mid-word by default — "$ USD — US dolla". These are
+       set by the app rather than typed by anyone, so the right answer is columns
+       wide enough for them; the ellipsis is the floor for a narrow window, where
+       a visible "…" at least reads as truncation rather than as a bug. */
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  .setup select:focus-visible{ outline:2px solid var(--gold); outline-offset:1px; }
+  .setup select:hover{ border-color:var(--ink-soft); }
+  #currency{ min-width:0; }
+
+
+  .notice{
+    margin:10px 0 0;
+    background:var(--alert-bg);
+    border:1.5px solid var(--alert);
+    border-radius:10px;
+    padding:11px 14px;
+    font-size:.86rem;
+    line-height:1.5;
+    color:var(--ink);
+  }
+  .setup .spacer{ flex:1 1 auto; }
+  /* The one field carrying a hint and a tooltip needs two columns for them. */
+  .field.grow{ grid-column:span 2; gap:3px; position:relative; }
+  @media (max-width:560px){ .field.grow{ grid-column:1 / -1; } }
+
+  /* Seat count and the add button are not settings, so they get their own line
+     under the grid rather than competing with it for a column. */
+  .setup-foot{
+    grid-column:1 / -1;
+    display:flex;
+    align-items:center;
+    gap:14px;
+    flex-wrap:wrap;
+    border-top:1px solid var(--card-edge);
+    padding-top:14px;
+  }
+  .check-row{ display:flex; align-items:center; gap:7px; }
+  .term{ border-bottom:1px dotted var(--ink-soft); cursor:help; }
+  .info{
+    flex:none;
+    width:19px; height:19px;
+    border-radius:50%;
+    border:1.5px solid var(--card-edge);
+    background:var(--card-sunk);
+    color:var(--ink-soft);
+    font-family:var(--mono);
+    font-size:.66rem;
+    line-height:1;
+    padding:0;
+    cursor:pointer;
+    display:grid;
+    place-items:center;
+  }
+  .info:hover,.info[aria-expanded="true"]{
+    background:var(--felt-deep);
+    border-color:var(--felt-deep);
+    color:var(--on-felt);
+  }
+  .info:focus-visible{ outline:2px solid var(--gold); outline-offset:2px; }
+
+  .tip{
+    position:absolute;
+    top:calc(100% + 8px);
+    left:0;
+    z-index:20;
+    width:min(380px, calc(100vw - 44px));
+    background:var(--card);
+    border:1.5px solid var(--card-edge);
+    border-radius:12px;
+    box-shadow:0 26px 54px -22px var(--shadow);
+    padding:15px 17px;
+    font-size:.82rem;
+    line-height:1.6;
+    color:var(--ink);
+  }
+  .tip b{ display:block; font-size:.58rem; font-family:var(--mono);
+          letter-spacing:.19em; text-transform:uppercase; color:var(--ink-soft);
+          margin-bottom:8px; }
+  .tip p{ margin:0 0 9px; }
+  .tip .eg{
+    display:flex; flex-direction:column; gap:4px;
+    background:var(--card-sunk);
+    border-left:2.5px solid var(--gold);
+    border-radius:0 8px 8px 0;
+    padding:10px 12px;
+    margin:11px 0 9px;
+    font-family:var(--mono);
+    font-size:.73rem;
+    line-height:1.55;
+  }
+  .tip .eg b{ display:inline; font-family:var(--mono); font-size:.73rem;
+              letter-spacing:0; text-transform:none; color:var(--ink); margin:0; }
+  .tip .eg-h{ color:var(--ink-soft); letter-spacing:.04em; }
+  .tip .tip-foot{ margin:0; color:var(--ink-soft); font-size:.76rem; }
+  .check{
+    display:flex;
+    align-items:center;
+    gap:9px;
+    cursor:pointer;
+    font-size:.92rem;
+    font-weight:600;
+  }
+  .check input{
+    width:17px; height:17px;
+    accent-color:var(--felt);
+    cursor:pointer;
+    flex:none;
+  }
+  .check input:focus-visible{ outline:2px solid var(--gold); outline-offset:2px; }
+  .hint{
+    font-size:.75rem;
+    line-height:1.5;
+    color:var(--ink-soft);
+    max-width:46ch;
+  }
+  .count{
+    font-family:var(--mono);
+    font-size:.66rem;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    white-space:nowrap;
+  }
+  .count b{ color:var(--ink); font-size:.86rem; }
+
+  /* ---- player rows ---- */
+  .players{ margin-top:clamp(12px,2vw,16px); display:flex; flex-direction:column; gap:10px; }
+  .seat{
+    background:var(--card);
+    border:1px solid var(--card-edge);
+    border-radius:14px;
+    box-shadow:0 18px 40px -28px var(--shadow);
+    padding:clamp(13px,2.2vw,18px) clamp(14px,2.6vw,20px);
+    display:grid;
+    grid-template-columns:1fr auto;
+    gap:12px 16px;
+    align-items:start;
+  }
+  .seat-head{ display:flex; align-items:center; gap:10px; min-width:0; }
+  .seat-no{
+    font-family:var(--mono);
+    font-size:.62rem;
+    color:var(--ink-soft);
+    border:1.5px solid var(--card-edge);
+    border-radius:50%;
+    width:26px; height:26px;
+    display:grid; place-items:center;
+    flex:none;
+  }
+  .seat-head input{ font-family:var(--body); font-weight:600; font-size:1rem; padding:9px 11px; }
+  .seat-tools{ display:flex; align-items:center; gap:8px; }
+
+  .stakes{
+    grid-column:1 / -1;
+    display:grid;
+    grid-template-columns:1fr;
+    gap:12px;
+    border-top:1px solid var(--card-edge);
+    padding-top:12px;
+  }
+  @media (min-width:660px){
+    .stakes{ grid-template-columns:1fr 190px; align-items:start; }
+  }
+
+  .chips{ display:flex; flex-wrap:wrap; align-items:center; gap:7px; margin-top:6px; }
+  .chip{
+    position:relative;
+    display:inline-flex;
+    align-items:center;
+    background:var(--chip);
+    border:1.5px dashed var(--chip-edge);
+    border-radius:999px;
+    padding-left:9px;
+  }
+  .chip input{
+    width:64px;
+    border:0;
+    background:transparent;
+    padding:8px 2px 8px 8px;
+    font-size:.85rem;
+    text-align:right;
+    font-variant-numeric:tabular-nums;
+  }
+  .chip input:focus-visible{ outline:2px solid var(--gold); outline-offset:1px; border-radius:4px; }
+  .chip .cur{ font-family:var(--mono); font-size:.72rem; color:var(--ink-soft); }
+  .chip .x{
+    border:0;
+    background:transparent;
+    color:var(--ink-soft);
+    cursor:pointer;
+    font-size:1rem;
+    line-height:1;
+    padding:8px 10px 8px 4px;
+    border-radius:999px;
+  }
+  .chip .x:hover{ color:var(--loss); }
+  .chip .x:focus-visible{ outline:2px solid var(--gold); outline-offset:-2px; }
+  .chip.bad{ border-color:var(--loss); border-style:solid; }
+
+  /* A seat someone has cashed out of. Deliberately not dimmed — the numbers on it
+     are the ones you are about to settle from and must stay perfectly legible. It
+     recedes by going quieter in the frame, not by losing contrast. */
+  .seat.settled{ border-color:var(--win); background:var(--ok-bg); }
+  .seat.settled .chips{ opacity:.72; }
+  .seat.settled input[readonly]{ background:transparent; border-style:dashed; cursor:default; }
+  /* Same shape as the cashed-out tag in a different colour. The Banker button alone
+     could not carry this: pressed and unpressed rendered near enough identically that
+     you could not tell from the screen who was holding the money. */
+  .banker-tag{
+    font-family:var(--mono);
+    font-size:.54rem;
+    letter-spacing:.17em;
+    text-transform:uppercase;
+    color:var(--gold);
+    border:1px solid var(--gold);
+    border-radius:99px;
+    padding:2px 7px;
+    white-space:nowrap;
+  }
+  .settled-tag{
+    font-family:var(--mono);
+    font-size:.54rem;
+    letter-spacing:.17em;
+    text-transform:uppercase;
+    color:var(--win);
+    border:1px solid var(--win);
+    border-radius:99px;
+    padding:2px 7px;
+    margin-left:8px;
+    white-space:nowrap;
+  }
+  .no-chips{
+    font-family:var(--mono);
+    font-size:.68rem;
+    color:var(--ink-soft);
+    padding:8px 0;
+  }
+
+  .tally{
+    display:flex;
+    gap:18px;
+    justify-content:flex-start;
+    font-family:var(--mono);
+    font-variant-numeric:tabular-nums;
+    margin-top:10px;
+  }
+  @media (min-width:660px){
+    .tally{ flex-direction:column; gap:10px; margin-top:0; }
+  }
+  .tally div{ min-width:0; }
+  .tally .v{ font-size:1.02rem; font-weight:600; display:block; margin-top:2px; }
+  .v.up{ color:var(--win); }
+  .v.down{ color:var(--loss); }
+  .v.flat{ color:var(--flat); }
+
+
+  /* ---- guide ---- */
+  .guide{
+    margin-top:clamp(16px,2.6vw,24px);
+    background:var(--card);
+    border:1px solid var(--card-edge);
+    border-radius:14px;
+    box-shadow:0 20px 44px -26px var(--shadow);
+    overflow:hidden;
+  }
+  .guide summary{
+    cursor:pointer;
+    padding:clamp(15px,2.4vw,20px) clamp(16px,3vw,26px);
+    font-family:var(--mono);
+    font-size:.66rem;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    list-style:none;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .guide summary::-webkit-details-marker{ display:none; }
+  .guide summary::after{
+    content:"+";
+    margin-left:auto;
+    font-size:1.1rem;
+    line-height:1;
+    color:var(--ink-soft);
+  }
+  .guide[open] summary::after{ content:"\2212"; }
+  .guide summary:hover{ color:var(--ink); }
+  .guide summary:focus-visible{ outline:2px solid var(--gold); outline-offset:-3px; }
+  .guide-body{
+    padding:0 clamp(16px,3vw,26px) clamp(20px,3vw,30px);
+    max-width:68ch;
+    font-size:.94rem;
+    line-height:1.72;
+    color:var(--ink);
+  }
+  .guide-body .lede{
+    font-size:1.02rem;
+    color:var(--ink);
+    border-left:2.5px solid var(--gold);
+    padding-left:15px;
+    margin-top:0;
+  }
+  .guide-body h2{
+    font-family:var(--display);
+    font-weight:700;
+    font-size:1.32rem;
+    line-height:1.25;
+    margin:30px 0 10px;
+    text-wrap:balance;
+  }
+  .guide-body h3{
+    font-family:var(--body);
+    font-weight:700;
+    font-size:1rem;
+    margin:22px 0 8px;
+  }
+  .guide-body p{ margin:0 0 13px; }
+  .guide-body ul{ margin:0 0 15px; padding-left:20px; }
+  .guide-body li{ margin-bottom:7px; }
+  .guide-body strong{ font-weight:700; }
+
+  /* ---- actions ---- */
+  .actions{
+    margin-top:clamp(14px,2.4vw,20px);
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    align-items:center;
+  }
+  .actions .spacer{ flex:1 1 auto; }
+
+  /* ---- results ---- */
+  .result{
+    margin-top:clamp(14px,2.4vw,20px);
+    background:var(--card);
+    border:1px solid var(--card-edge);
+    border-radius:14px;
+    box-shadow:0 22px 50px -26px var(--shadow);
+    padding:clamp(16px,3vw,26px);
+  }
+  .result h2{
+    font-family:var(--display);
+    font-weight:700;
+    font-size:1.5rem;
+    margin:0 0 4px;
+  }
+  .banner{
+    border-radius:10px;
+    padding:13px 15px;
+    margin:14px 0 18px;
+    font-size:.92rem;
+    line-height:1.55;
+    border:1.5px solid var(--card-edge);
+    background:var(--card-sunk);
+  }
+  .banner.ok{ border-color:var(--win); background:var(--ok-bg); }
+  .banner.warn{ border-color:var(--alert); background:var(--alert-bg); }
+  .banner b{ font-family:var(--mono); font-variant-numeric:tabular-nums; }
+  .banner .head{
+    display:block;
+    font-family:var(--mono);
+    font-size:.6rem;
+    letter-spacing:.19em;
+    text-transform:uppercase;
+    margin-bottom:5px;
+    color:var(--ink-soft);
+  }
+  .banner.warn .head{ color:var(--alert); }
+  .banner.ok .head{ color:var(--win); }
+
+  ol.transfers{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:8px; }
+  ol.transfers li{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    flex-wrap:wrap;
+    background:var(--card-sunk);
+    border:1.5px solid var(--card-edge);
+    border-radius:10px;
+    padding:12px 14px;
+    font-size:.98rem;
+  }
+  ol.transfers .who{ font-weight:700; }
+  ol.transfers .arrow{ color:var(--gold); font-family:var(--mono); }
+  ol.transfers .amt{
+    margin-left:auto;
+    font-family:var(--mono);
+    font-weight:600;
+    font-variant-numeric:tabular-nums;
+    font-size:1.05rem;
+  }
+  .none{ font-size:.95rem; color:var(--ink-soft); }
+
+  table.summary{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:20px;
+    font-family:var(--mono);
+    font-size:.85rem;
+  }
+  .summary caption{
+    text-align:left;
+    font-size:.57rem;
+    letter-spacing:.19em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    margin-bottom:8px;
+  }
+  .summary th,.summary td{
+    border-bottom:1.5px solid var(--card-edge);
+    padding:9px 8px;
+    text-align:right;
+    font-variant-numeric:tabular-nums;
+  }
+  .summary th:first-child,.summary td:first-child{ text-align:left; font-family:var(--body); }
+  .summary thead th{
+    font-size:.55rem;
+    font-weight:500;
+    letter-spacing:.11em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+  }
+  .summary tfoot td{ font-weight:600; border-bottom:0; border-top:1.5px solid var(--ink); }
+  /* The change sits in the footer so it totals with the seats, but it is not a total:
+     the heavy rule belongs to the Table row alone, or the two read as equals. */
+  .summary tfoot tr.change td{ font-weight:500; border-top:1px dashed var(--card-edge); color:var(--ink-soft); }
+
+  .foot{
+    margin-top:clamp(18px,3vw,26px);
+    font-family:var(--mono);
+    font-size:.64rem;
+    line-height:1.95;
+    letter-spacing:.02em;
+    color:var(--on-felt-dim);
+    text-align:center;
+  }
+  .foot a{ color:var(--on-felt); text-decoration:none; border-bottom:1px solid rgba(255,255,255,.28); }
+  .foot a:hover{ border-bottom-color:var(--on-felt); }
+  .foot a:focus-visible{ outline:2px solid var(--on-felt); outline-offset:3px; border-radius:2px; }
+  .foot .sep{ opacity:.5; margin:0 7px; }
+
+  @media (max-width:560px){
+    .seat{ grid-template-columns:1fr; }
+    .seat-tools{ justify-content:flex-end; }
+    .actions .btn{ flex:1 1 auto; }
+    .actions .btn.primary{ flex-basis:100%; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ transition-duration:.01ms !important; animation-duration:.01ms !important; }
+  }
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Home Poker Ledger",
+  "alternateName": ["HomePokerLedger", "homepokerledger", "홈 포커 정산 계산기"],
+  "sameAs": ["https://github.com/calvinkim85/home-poker-ledger"],
+  "url": "https://homepokerledger.com/",
+  "applicationCategory": "FinanceApplication",
+  "applicationSubCategory": "Settlement calculator",
+  "operatingSystem": "Any browser",
+  "browserRequirements": "Requires JavaScript",
+  "description": "Free home poker calculator. Enter each player's buy-ins and cash-out and it works out who pays whom in the fewest transfers, for 2-10 players in seven currencies. Copies a dated plain-text summary of the night so the table keeps a record of a cash game.",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "isAccessibleForFree": true,
+  "inLanguage": "en",
+  "featureList": [
+    "Settles a home poker game in the fewest possible transfers",
+    "Tracks every rebuy as a separate entry",
+    "Detects a chip count that does not match the buy-ins",
+    "Optionally covers the shortfall from the players who finished ahead",
+    "Seven currencies including KRW and JPY, which have no minor unit",
+    "Copies a dated summary of the night so a cash game leaves a record",
+    "Runs entirely in the browser with no account and no server"
+  ]
+}
+</script>
+</head>
+<body>
+
+<main class="table">
+
+  <header class="rail">
+    <div class="brand">
+      <div class="suits">&spades; &hearts; &diams; &clubs;</div>
+      <h1>Home Poker Ledger</h1>
+      <div class="sub">Buy-ins &middot; Cash-outs &middot; Who pays whom</div>
+    </div>
+    <button class="btn ghost" id="themeBtn" type="button" aria-label="Change colour scheme">
+      <span id="themeName">Auto</span>
+    </button>
+  </header>
+
+  <section class="setup">
+    <div class="field">
+      <label class="lbl" for="currency">Currency</label>
+      <select id="currency"></select>
+    </div>
+    <div class="field">
+      <label class="lbl" for="defaultBuyIn">Standard buy-in</label>
+      <div class="money w-default">
+        <span class="cur" id="defaultCur">$</span>
+        <input type="text" id="defaultBuyIn" inputmode="decimal" value="20.00">
+      </div>
+    </div>
+    <div class="field">
+      <label class="lbl" for="roundTo">Round cash-outs</label>
+      <select id="roundTo"></select>
+    </div>
+    <div class="field" id="roundDestField" hidden>
+      <label class="lbl" for="roundDest">Change goes to</label>
+      <select id="roundDest"></select>
+    </div>
+    <div class="field">
+      <label class="lbl" for="payVia">Payments</label>
+      <select id="payVia"></select>
+    </div>
+    <div class="field grow">
+      <div class="check-row">
+        <label class="lbl" for="gapMode">If the count is off</label>
+        <button class="info" type="button" id="absorbInfo"
+                aria-expanded="false" aria-controls="absorbTip"
+                aria-label="How covering the gap works">?</button>
+      </div>
+      <select id="gapMode"></select>
+      <span class="hint" id="gapHint">Show the difference and decide at the table.</span>
+
+      <div class="tip" id="absorbTip" role="tooltip" hidden>
+        <b>How it works</b>
+        <p>A chip count that doesn't match the buy-ins leaves money belonging to nobody.
+          There are three answers, and which is right depends on who held the cash.</p>
+        <p><b>Show it and decide</b> settles nothing and leaves the difference on screen
+          &mdash; often the right call, since a large gap is usually a real bookkeeping
+          mistake worth finding rather than a rounding error worth absorbing.</p>
+        <p><b>The banker covers it</b> is what most hosts do, and it needs a seat marked
+          as the banker. If one person took the cash all night, the difference is theirs.</p>
+        <p><b>Cover it from the top</b> is for games with nobody banking: the difference
+          lands on the players who finished ahead, starting at the top.</p>
+        <p>One runaway winner covers it alone &mdash; they're far enough clear that paying
+          it doesn't cost them first place.</p>
+        <p>When the leaders finish close together, letting one of them absorb it all would
+          drop them below the other. So they chop it instead: half each for two, thirds for
+          three, quarters for four.</p>
+        <p>Either way nobody swaps places. The biggest winner is still the biggest winner,
+          second is still second &mdash; only the amounts move.</p>
+        <div class="eg">
+          <span class="eg-h">Alice +$40 &middot; Bob +$32</span>
+          <span><b>$4</b> unaccounted &rarr; Alice covers it alone &rarr; +$36 / +$32</span>
+          <span><b>$10</b> &rarr; alone she'd fall behind Bob, so they halve it &rarr; +$35 / +$27</span>
+        </div>
+        <p class="tip-foot">Chips come up <em>short</em> instead? Same idea on the other
+          side &mdash; the biggest loser's debt comes down first.</p>
+      </div>
+    </div>
+    <div class="setup-foot">
+      <div class="count">Players <b id="countOut">0</b> / 10</div>
+      <div class="count" id="bankOut" hidden></div>
+      <div class="spacer"></div>
+      <button class="btn" id="addBtn" type="button">+ Add player</button>
+    </div>
+  </section>
+
+  <p class="notice" id="notice" hidden role="status"></p>
+
+  <section class="players" id="players"></section>
+
+  <div class="actions">
+    <button class="btn primary" id="calcBtn" type="button">Calculate settlement</button>
+    <div class="spacer"></div>
+    <button class="btn ghost" id="newBtn" type="button">New game</button>
+    <button class="btn ghost" id="clearBtn" type="button">Clear all</button>
+  </div>
+
+  <section class="result" id="result" hidden aria-live="polite"></section>
+
+
+  <details class="guide" id="guide">
+    <summary><span>How to settle a home poker game</span></summary>
+    <div class="guide-body">
+
+      <p class="lede">Most home games end the same way: everyone counts their chips, someone
+        does arithmetic on a phone, the numbers don't quite add up, and the last twenty
+        minutes of the night are spent arguing about five dollars. Here is how the settling
+        actually works, why the count so often misses, and what to do when it does.</p>
+
+      <h2>Nobody pays the pot &mdash; players pay each other</h2>
+
+      <p>A home game has no house. The money that goes in is the money that comes out, so the
+        only thing that matters at the end is each player's <strong>net</strong>: what they
+        cashed out minus everything they bought in for. Someone who bought in twice for $20
+        and finished with $65 in chips is up $25. Someone who bought in once and busted is
+        down $20.</p>
+
+      <p>Add every net together and, if the count is right, they come to exactly zero. The
+        winners are owed precisely what the losers owe. Settling is then a matter of matching
+        one to the other with as few payments as possible &mdash; there is no reason for six
+        people to send six separate transfers when three will do. Pairing the biggest winner
+        with the biggest loser, then working down, always settles a table of <em>n</em>
+        players in at most <em>n</em>&nbsp;&minus;&nbsp;1 payments.</p>
+
+      <p>How those payments physically happen is a separate question, and home games split
+        fairly evenly on it. Plenty of tables settle directly: the app works out who owes
+        whom, people send it, done. Plenty of others run a <strong>banker</strong> &mdash;
+        one person takes cash and hands out chips all night, then buys the chips back at the
+        end. Cash for chips, chips for cash.</p>
+
+      <p>Neither is wrong, and the arguments against each are real. Settling between players
+        means somebody may have to chase a near-stranger for money, which is the objection
+        experienced hosts raise most; running a bank means one person is holding everyone's
+        cash and carrying the risk if the count goes wrong.</p>
+
+      <p>So mark a seat as the <strong>Banker</strong> if that is how your game works. Two
+        things change. <em>Payments</em> can route everything through them &mdash; every
+        loser pays the banker, the banker pays every winner, and nobody has to deal with
+        anyone else. And a count that will not reconcile can land on the banker, which is
+        what hosts overwhelmingly say they do in practice: the person who held the money
+        takes the hit rather than spreading it over people who came to play cards.</p>
+
+      <h2>Why the chips almost never add up</h2>
+
+      <p>The count comes up wrong more often than not, and it is rarely anyone's fault:</p>
+
+      <ul>
+        <li>A rebuy gets handed over mid-hand and nobody writes it down.</li>
+        <li>Someone leaves early, cashes out, and their chips get folded back into the tray.</li>
+        <li>A stack gets miscounted &mdash; easy at 2am with mixed denominations.</li>
+        <li>A chip ends up on the floor, in a pocket, or under the sofa.</li>
+      </ul>
+
+      <p>The direction of the error tells you what happened, and the two cases are genuinely
+        different problems:</p>
+
+      <h3>More chips than money went in</h3>
+
+      <p>If the buy-ins total $300 but the chips count $320, the table is claiming $20 that
+        was never paid in. Almost always this means a buy-in went unrecorded &mdash; someone
+        rebought and it was missed. <strong>Check the buy-ins first.</strong> If you can find
+        the missing one, the books balance and no one has to lose anything.</p>
+
+      <p>If you genuinely cannot find it, that $20 does not exist and somebody has to absorb
+        it. The winners cannot all be paid in full.</p>
+
+      <h3>Fewer chips than money went in</h3>
+
+      <p>If $300 went in but only $285 is counted, $15 of chips has gone missing. Look under
+        the table before you do anything else. Failing that, the losers collectively owe more
+        than the winners are claiming, and the surplus has no owner.</p>
+
+      <h2>When the count won't reconcile</h2>
+
+      <p>Once you have looked and the gap is still there, someone has to eat it, and the
+        fairest answer is not obvious. Splitting it equally across everyone punishes the
+        players who lost money already. Making the person who miscounted pay assumes you know
+        who that was.</p>
+
+      <p>The approach this tool offers &mdash; the <strong>Cover the gap from the top</strong>
+        option &mdash; puts it on the players who finished ahead, starting with the biggest
+        winner. The reasoning is simple: they are the ones with winnings to give up, and a
+        small dent in a good night hurts less than deepening someone's loss.</p>
+
+      <p>The refinement that makes it fair is what happens when the top players finished close
+        together. If the biggest winner is far out in front, they cover the whole thing alone
+        and are still comfortably ahead. But if the top two are within a few dollars of each
+        other, making one of them pay it all would leapfrog the other &mdash; so they split
+        it, half each. Three players bunched at the top split it in thirds, four in quarters.
+        Nobody ever changes position; the amounts move, the standings don't.</p>
+
+      <p>It is off by default, and leaving it off is a perfectly good choice. Some tables would
+        rather see the raw discrepancy and decide in the moment &mdash; often the right call,
+        because a large gap usually means a genuine bookkeeping mistake worth finding rather
+        than a rounding error worth absorbing.</p>
+
+      <h2>Chips that went out without the cash coming in</h2>
+
+      <p>The banking error hosts describe more than any other is not a miscount. It is the
+        moment someone says &ldquo;can I get fifty more?&rdquo; mid-hand, gets the chips and
+        pays later &mdash; except later never arrives, and by the end of the night nobody can
+        say whether it did. It is rarely dishonesty. It is a conversation that happened while
+        everyone was looking at a flop.</p>
+
+      <p>Mark a seat as the banker and every other player gets an <strong>Owes the bank</strong>
+        figure. Enter whatever they have taken and not yet paid for. The line at the top of
+        the page then shows what should be in the cash box right now, and how much is out on
+        credit. Count the box against it occasionally &mdash; once an hour is a common habit
+        &mdash; and a discrepancy is trapped inside that hour rather than discovered at 2am
+        with no way left to reconstruct it.</p>
+
+      <p>It does not change anyone's settlement, and that is deliberate. Someone who took
+        chips on credit and lost them has already lost that money on paper: their net is down
+        by the full amount, exactly as if they had paid cash at the start. Charging the debt
+        again on top would bill them twice for it. What the figure buys you is the check
+        during the night, and a line in the copied summary naming who still owes the bank
+        after everyone goes home.</p>
+
+      <h2>Nobody wants to hand out quarters</h2>
+
+      <p>At small stakes the last few coins are more trouble than they are worth. Counting
+        them out takes longer than the hand that won them, nobody has the change, and the
+        complaining runs out of all proportion to the amount &mdash; the standing observation
+        among hosts is that you would not believe the argument a table can have over less
+        than a dollar. So most games round. <strong>Round cash-outs</strong> does it here:
+        each player is paid down to the nearest dollar, or five, or whatever the currency's
+        equivalent is.</p>
+
+      <p>Down, never up. Rounding someone <em>up</em> means another person covers the
+        difference out of their own pocket, and that is a decision about who is hosting
+        rather than a piece of arithmetic. Rounding down only takes money off the table, and
+        the one thing that then matters is saying where it went.</p>
+
+      <p>So the tool insists on a destination &mdash; drinks, the host, a high-hand pot, next
+        week's game, or a hand dealt for it there and then. The leftover appears as its own
+        line in the settlement and in the copied summary, and it is settled like any other
+        winner: somebody actually hands it over. Money that leaves the table without a name
+        on it is indistinguishable from money somebody miscounted, which is the argument this
+        whole page exists to prevent.</p>
+
+      <p>The chip count is checked against the buy-ins before any of this happens, on the
+        chips as counted. Rounding is what the table chooses to do afterwards, so it can
+        never paper over a real mistake in the count.</p>
+
+      <h2>House rules worth agreeing before you deal</h2>
+
+      <p>Nearly every end-of-night argument traces back to something nobody agreed at the
+        start. Five minutes beforehand saves an hour afterwards:</p>
+
+      <ul>
+        <li><strong>Buy-in and rebuy amounts.</strong> Fixed, or can people top up to any
+          number? Fixed is easier to track and easier to settle.</li>
+        <li><strong>Who records rebuys.</strong> One person, writing it down every time. This
+          single rule prevents most discrepancies.</li>
+        <li><strong>Leaving early.</strong> Count that player's chips at the moment they
+          leave, in front of someone else, and record it.</li>
+        <li><strong>How people pay up.</strong> Cash on the night, or transfers before
+          everyone goes to bed. Debts that survive the night have a way of surviving the
+          month.</li>
+        <li><strong>Rounding.</strong> If you play with change, decide whether you settle to
+          the cent or to the nearest dollar.</li>
+      </ul>
+
+      <h2>Cash games leave no receipt</h2>
+
+      <p>Chips and cash move across the table all night and nothing writes any of it down.
+        That is fine until someone remembers the evening differently a fortnight later &mdash;
+        a rebuy they are sure they paid for, a settlement they are sure never reached them.
+        With nothing on paper the argument is unwinnable in both directions, and between
+        friends it usually ends with whoever cares least about the money giving way. That is
+        a bad way to lose a player.</p>
+
+      <p>The <strong>Copy settlement</strong> button exists for this. It puts a dated,
+        plain-text summary on your clipboard: every payment, each player's total in and total
+        out, the table totals, and any discrepancy stated outright rather than quietly
+        smoothed over. Paste it into the group chat before anyone leaves. It costs nothing on
+        the night and settles the question completely if it ever comes up.</p>
+
+      <h2>Keeping a tally across a season</h2>
+
+      <p>A single night says almost nothing about how anyone plays &mdash; variance swamps
+        skill over a few hours. What is interesting is the running total across a season, and
+        that only exists if someone records each night's nets somewhere. Copy the settlement
+        out at the end of each game and keep them together; after a dozen sessions you will
+        have something worth looking at, and it settles the question of who is actually
+        winning far better than anyone's memory of last month.</p>
+
+      <h2>About this tool</h2>
+
+      <p>Everything here runs in your browser. There is no account, no server, and nothing is
+        uploaded &mdash; the numbers you type never leave your device, which also means a game
+        entered on your phone won't appear on your laptop. It handles 2&ndash;10 players, seven
+        currencies including yen and won (which have no decimal places), and as many rebuys
+        per player as the night calls for. It is free, and it always will be.</p>
+
+    </div>
+  </details>
+
+  <!-- Reserved for an ad unit. Stays hidden and occupies no space until a unit is
+       placed here; see ADSENSE.md. Nothing is loaded from Google today. -->
+  <aside class="adslot" id="adslot" hidden aria-hidden="true"></aside>
+
+  <footer class="foot">
+    Everything stays in this browser &mdash; nothing is uploaded.<br>
+    <a href="how-it-works">How it works</a><span class="sep">&middot;</span><a href="guides/">Guides</a><span class="sep">&middot;</span><a href="privacy" hreflang="en">Privacy</a>&#8202;<a href="privacy-ko" lang="ko" hreflang="ko" aria-label="개인정보처리방침 — the privacy policy in Korean">(한국어)</a><span class="sep">&middot;</span><a href="terms">Terms</a><span class="sep">&middot;</span><a href="#" data-consent-reopen hidden>Cookie settings</a>
+  </footer>
+
+</main>
+
+<script>
+(function(){
+  "use strict";
+
+  var KEY = "poker.ledger.v1";
+  var MIN_PLAYERS = 2, MAX_PLAYERS = 10;
+  /* Bounds that keep every total inside the range JavaScript can represent exactly.
+     Money is held as an integer count of minor units, and integers stay exact only up
+     to Number.MAX_SAFE_INTEGER (9,007,199,254,740,991). Past that, arithmetic silently
+     rounds — which for a tool about who owes whom is the worst possible failure, since
+     nothing looks wrong.
+
+     Worst case here is MAX_PLAYERS x MAX_BUYINS x MAX_AMOUNT in minor units
+     = 10 x 100 x 1e11 = 1e14, comfortably inside the safe range with room to spare.
+     A billion of any supported currency is far past a plausible home game, so the
+     cap only ever catches a typo. */
+  var MAX_AMOUNT = 1e9;      /* per entry, in major units */
+  var MAX_BUYINS = 100;      /* rebuys per player */
+  var THEMES = ["dark","light"];
+  var THEME_LABEL = { dark:"Night", light:"Day" };
+  /* Read once to pick a starting side; the page never follows the OS after that. */
+  function systemTheme(){
+    try{
+      return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    }catch(e){ return "dark"; }
+  }
+
+  var root = document.documentElement;
+  var playersEl = document.getElementById("players");
+  var resultEl = document.getElementById("result");
+  var countOut = document.getElementById("countOut");
+  var addBtn = document.getElementById("addBtn");
+  var calcBtn = document.getElementById("calcBtn");
+  var newBtn = document.getElementById("newBtn");
+  var clearBtn = document.getElementById("clearBtn");
+  var themeBtn = document.getElementById("themeBtn");
+  var themeName = document.getElementById("themeName");
+  var defaultInput = document.getElementById("defaultBuyIn");
+  var defaultCur = document.getElementById("defaultCur");
+  var currencySel = document.getElementById("currency");
+  var noticeEl = document.getElementById("notice");
+  var bankOut = document.getElementById("bankOut");
+  var gapSel = document.getElementById("gapMode");
+  var gapHint = document.getElementById("gapHint");
+  var payViaSel = document.getElementById("payVia");
+  var roundSel = document.getElementById("roundTo");
+  var roundDestSel = document.getElementById("roundDest");
+  var roundDestField = document.getElementById("roundDestField");
+
+  var absorbInfo = document.getElementById("absorbInfo");
+  var absorbTip = document.getElementById("absorbTip");
+
+  /* Symbols are ours, not Intl's: in their own locales SGD formats as a bare "$"
+     (identical to USD) and CNY as "\u00a5" (identical to JPY). "dec" is the number of
+     minor units — yen and won have none. */
+  /* `def` is the standard buy-in a fresh table starts on, in that currency's smallest
+     unit. Set from what home games actually use, not from an exchange rate — a rate
+     drifts and produces buy-ins like 47,300, which nobody hands over.
+
+     What the sources say (checked Sept 2026):
+       US    "typically $20"; $25 and $50 also very popular; $100 occasional
+             — pokerchipforum.com home cash game threads
+       UK    £20-£200 overall; 100-200 big blinds, so £25-50 at 25p/25p
+             — pokersupplies.uk home game guide
+       KR    홀덤펍 ₩10,000-30,000 casual, ₩50,000+ for events
+             — holdemmaster.com. Home-game data is scarce; Korea's rules on
+               private play make it a thin literature.
+       JP    home games are frequently played for no money at all, so the figure
+             here is nominal rather than typical.
+       EUR / SGD / CNY have no direct data and follow the same band.
+
+     Every source converges on 100 big blinds as the anchor, which at the common
+     casual stakes lands at 20-50 of the local unit.
+
+     $20 is also what this site's own guides teach throughout — including the chip
+     table in guides/chip-denominations.html, which adds to exactly $20. A default
+     that contradicted the documentation would be its own small bug. */
+  /* `step` is the rounding granularity offered for each currency, in minor units.
+     Explicit per currency rather than derived, because "the nearest dollar" has no
+     sensible mechanical translation: rounding won to the nearest 1 won would be
+     absurd, and the smallest note anyone at a Korean table is holding is 1,000. The
+     numbers below are the smallest denominations actually in play in each place. */
+  var CURRENCIES = {
+    USD:{ sym:"$",       name:"US dollar",        dec:2, loc:"en-US", def:2000,  step:[100, 500]    },  /* $20 */
+    EUR:{ sym:"\u20ac",      name:"Euro",             dec:2, loc:"en-IE", def:2000,  step:[100, 500]    },  /* EUR 20 */
+    GBP:{ sym:"\u00a3",      name:"British pound",    dec:2, loc:"en-GB", def:2000,  step:[100, 500]    },  /* GBP 20 */
+    SGD:{ sym:"S$",      name:"Singapore dollar", dec:2, loc:"en-SG", def:2000,  step:[100, 500]    },  /* S$20 */
+    CNY:{ sym:"CN\u00a5",    name:"Chinese yuan",     dec:2, loc:"zh-CN", def:10000, step:[100, 1000]   },  /* CN\u00a5100, one note */
+    JPY:{ sym:"\u00a5",      name:"Japanese yen",     dec:0, loc:"ja-JP", def:3000,  step:[100, 1000]   },  /* \u00a53,000 */
+    KRW:{ sym:"\u20a9",      name:"Korean won",       dec:0, loc:"ko-KR", def:30000, step:[1000, 5000]  }   /* \u20a930,000 */
+  };
+
+  /* Where the rounded-off change ends up. Hosts already do all of these; the list is
+     cpiaaq's, from the thread on not wanting to hand out quarters. Naming a
+     destination is the whole point \u2014 money that leaves the table without one looks
+     exactly like money someone miscounted, which is the argument this tool exists
+     to prevent. */
+  var ROUND_DESTS = ["Food and drinks", "The host", "High-hand jackpot", "Next game", "Flipped for"];
+
+  /* What happens to a count that will not reconcile, and how the payments are routed.
+     Both were booleans once; both turned out to have a third answer the moment the
+     table had a banker, which is why they are named modes rather than flags. */
+  var GAP_MODES = ["show", "top", "banker"];
+  var PAY_MODES = ["fewest", "banker"];
+  var CURRENCY_ORDER = ["USD","EUR","GBP","SGD","CNY","JPY","KRW"];
+
+  /* state: money is always an integer count of the active currency's smallest unit
+     — cents for USD, whole won for KRW. "" means the field is blank. */
+  var state = {
+    players: [],
+    defaultBuyIn: CURRENCIES.USD.def,
+    currency: "USD",
+    gapMode: "show",
+    payVia: "fewest",
+    roundTo: 0,      /* minor units; 0 means pay exact amounts and round nothing */
+    roundDest: 0     /* index into ROUND_DESTS */
+  };
+  var themeState = null;   /* resolved at boot from storage, else from the OS */
+
+  /* ---------- money ---------- */
+  function cur(){ return CURRENCIES[state.currency] || CURRENCIES.USD; }
+  function minor(code){
+    var c = CURRENCIES[code] || CURRENCIES.USD;
+    return Math.pow(10, c.dec);
+  }
+
+  /* parseMoney returns minor units, or null when the text is not a usable number.
+     Blank counts as 0 so an empty cash-out reads as "busted", not as an error.
+     Any symbol or grouping separator is stripped, so pasted amounts just work. */
+  function parseMoney(text){
+    var raw = String(text == null ? "" : text).trim();
+    if(raw === "") return 0;
+    /* Drop grouping separators, then a symbol run at either edge — so "CN\u00a51,250.50"
+       and "50.00 USD" both parse, while interior junk like "12abc34" still fails. */
+    var t = raw.replace(/[\s,'\u00a0\u2019]/g, "")
+               .replace(/^[^\d.\-]+/, "")
+               .replace(/[^\d.]+$/, "");
+    if(t === "" || t === "." || t === "-") return null;
+    if(!/^-?\d*\.?\d*$/.test(t)) return null;
+    var n = parseFloat(t);
+    /* Above MAX_AMOUNT the value cannot be held exactly once it is scaled to minor
+       units, and the old code returned it anyway: typing twenty 9s displayed
+       $100,000,000,000,000,000,000.00 — a different number from the one entered, with
+       no indication anything had happened. Rejecting marks the field and keeps the
+       last good value, which is the honest failure. */
+    if(!isFinite(n) || n < 0 || n > MAX_AMOUNT) return null;
+    return Math.round(n * minor(state.currency));
+  }
+  function fmt(units){
+    var c = cur();
+    var sign = units < 0 ? "-" : "";
+    var major = Math.abs(units) / Math.pow(10, c.dec);
+    var digits;
+    try{
+      digits = new Intl.NumberFormat(c.loc, {
+        minimumFractionDigits: c.dec, maximumFractionDigits: c.dec
+      }).format(major);
+    }catch(e){
+      digits = major.toFixed(c.dec);
+    }
+    return sign + c.sym + digits;
+  }
+  function fmtSigned(units){
+    if(units === 0) return fmt(0);
+    return (units > 0 ? "+" : "") + fmt(units);
+  }
+  function toInput(units){ return (units / Math.pow(10, cur().dec)).toFixed(cur().dec); }
+
+  /* Switching currency relabels, it does not convert: $20 becomes \u20a920. Values are
+     re-quantized to the new precision, which is lossy going into a zero-decimal
+     currency — the caller warns when that actually changed something. */
+  function convertAll(from, to){
+    var mf = minor(from), mt = minor(to);
+    var changed = false;
+    function re(units){
+      var out = Math.round(units / mf * mt);
+      if(Math.round(out / mt * mf) !== units) changed = true;
+      return out;
+    }
+    state.players.forEach(function(p){
+      p.buyIns = p.buyIns.map(re);
+      p.cashOut = re(p.cashOut);
+    });
+    state.defaultBuyIn = re(state.defaultBuyIn);
+    return changed;
+  }
+
+  /* ---------- persistence ---------- */
+  function save(){
+    try{
+      localStorage.setItem(KEY, JSON.stringify({
+        players: state.players.map(function(p){
+          return { name:p.name, buyIns:p.buyIns.slice(), cashOut:p.cashOut,
+                   done:p.done === true, banker:p.banker === true, owed:p.owed || 0 };
+        }),
+        defaultBuyIn: state.defaultBuyIn,
+        currency: state.currency,
+        gapMode: state.gapMode,
+        payVia: state.payVia,
+        roundTo: state.roundTo,
+        roundDest: state.roundDest,
+        theme: themeState
+      }));
+    }catch(e){}
+  }
+  function clampUnits(c){
+    if(typeof c !== "number" || !isFinite(c) || c < 0) return 0;
+    return Math.min(Math.round(c), MAX_AMOUNT * minor(state.currency));
+  }
+  /* Both callers below are untrusted input: localStorage is editable by hand, and a
+     share link was built by somebody else. One implementation so the bounds cannot
+     drift apart — a hand-copied second copy of this logic has bitten us before. */
+  /* Both of these come back from storage and from a link someone else built, so they
+     get the same treatment as every other untrusted number: anything not on the list
+     of steps this currency actually offers falls back to paying exact amounts. */
+  function readRound(v, code){
+    var steps = (CURRENCIES[code] || CURRENCIES.USD).step || [];
+    return (typeof v === "number" && steps.indexOf(v) >= 0) ? v : 0;
+  }
+  function readDest(v){
+    return (typeof v === "number" && v >= 0 && v < ROUND_DESTS.length) ? Math.floor(v) : 0;
+  }
+  /* `absorb` is the boolean these replaced. Games saved before the banker existed
+     still carry it, and a returning player should not silently lose the setting. */
+  function readGapMode(v, legacyAbsorb){
+    if(GAP_MODES.indexOf(v) >= 0) return v;
+    return legacyAbsorb === true ? "top" : "show";
+  }
+  function readPayVia(v){
+    return PAY_MODES.indexOf(v) >= 0 ? v : "fewest";
+  }
+
+  function readPlayers(raw){
+    if(!Array.isArray(raw) || raw.length < MIN_PLAYERS) return null;
+    /* Exactly one banker, enforced rather than trusted: a hand-edited store or a
+       crafted link can mark every seat, and two bankers would make bankerIndex pick
+       one arbitrarily while the other still rendered as marked. */
+    var seen = false;
+    return raw.slice(0, MAX_PLAYERS).map(function(p, i){
+      p = p || {};
+      return {
+        name: typeof p.name === "string" ? p.name.slice(0, 40) : "Player " + (i + 1),
+        buyIns: (Array.isArray(p.buyIns) ? p.buyIns : []).slice(0, MAX_BUYINS).map(clampUnits),
+        cashOut: clampUnits(p.cashOut),
+        done: p.done === true,
+        banker: (p.banker === true && !seen) ? (seen = true) : false,
+        owed: clampUnits(p.owed)
+      };
+    });
+  }
+
+  /* A share link carries the night in the URL fragment. Fragments are never sent to
+     a server by any browser, so "the numbers you type are never sent anywhere" stays
+     literally true — the only thing that moves the game is the person pasting it. */
+  var SHARE_BASE = "https://homepokerledger.com/";
+  function shareUrl(){
+    var payload = {
+      c: state.currency,
+      a: state.gapMode === "top",   /* kept so links made here still open in older tabs */
+      m: state.gapMode,
+      v: state.payVia,
+      r: state.roundTo,
+      d: state.roundDest,
+      p: state.players.map(function(p){
+        return { n: p.name, b: p.buyIns.slice(), o: p.cashOut, k: p.banker === true,
+                 w: p.owed || 0 };
+      })
+    };
+    return SHARE_BASE + "#g=" + encodeURIComponent(JSON.stringify(payload));
+  }
+  function decodeShare(hash){
+    try{
+      var m = /(?:^|[#&])g=([^&]*)/.exec(hash || "");
+      if(!m || !m[1]) return null;
+      var o = JSON.parse(decodeURIComponent(m[1]));
+      if(!o || typeof o !== "object") return null;
+      var players = readPlayers((Array.isArray(o.p) ? o.p : []).map(function(p){
+        p = p || {};
+        /* a shared game is one that has already been counted */
+        return { name: p.n, buyIns: p.b, cashOut: p.o, done: true, banker: p.k === true,
+                 owed: p.w };
+      }));
+      if(!players) return null;
+      /* Resolved before the step is checked: a link carrying KRW plus a step of 500
+         must not be validated against whatever currency this browser happens to be
+         showing, or the step would survive into a currency that never offered it. */
+      var code = Object.prototype.hasOwnProperty.call(CURRENCIES, o.c) ? o.c : "USD";
+      return {
+        currency: code,
+        gapMode: readGapMode(o.m, o.a === true),
+        payVia: readPayVia(o.v),
+        roundTo: readRound(o.r, code),
+        roundDest: readDest(o.d),
+        players: players
+      };
+    }catch(e){ return null; }
+  }
+
+  function load(){
+    try{
+      var s = JSON.parse(localStorage.getItem(KEY) || "null");
+      if(!s) return false;
+      if(THEMES.indexOf(s.theme) >= 0) themeState = s.theme;
+      else if(s.theme === "auto") themeState = systemTheme();
+      /* own-property check only: CURRENCIES["constructor"] and other inherited keys
+         are truthy via bracket access, so a hand-edited store could smuggle a
+         non-currency through. Not exploitable today (render falls back to USD) but
+         this is the surface an attacker pokes, so keep it airtight. */
+      state.currency = Object.prototype.hasOwnProperty.call(CURRENCIES, s.currency) ? s.currency : "USD";
+      state.gapMode = readGapMode(s.gapMode, s.absorb);
+      state.payVia = readPayVia(s.payVia);
+      /* Validated against the currency that was just restored, not the one that was
+         active a moment ago: a stored step of 500 is $5 under USD and meaningless
+         under KRW, and readRound answers that question per currency. */
+      state.roundTo = readRound(s.roundTo, state.currency);
+      state.roundDest = readDest(s.roundDest);
+      if(typeof s.defaultBuyIn === "number" && isFinite(s.defaultBuyIn) && s.defaultBuyIn >= 0){
+        state.defaultBuyIn = Math.round(s.defaultBuyIn);
+      }
+      var loaded = readPlayers(s.players);
+      if(!loaded) return false;
+      state.players = loaded;
+      dropModesWithoutBanker();
+      return true;
+    }catch(e){ return false; }
+  }
+
+  /* ---------- currency ---------- */
+  function buildCurrencyPicker(){
+    CURRENCY_ORDER.forEach(function(code){
+      var c = CURRENCIES[code];
+      var o = document.createElement("option");
+      o.value = code;
+      o.textContent = c.sym + " " + code + " " + c.name;
+      currencySel.appendChild(o);
+    });
+  }
+
+  /* The symbol sits over the input, so the padding has to follow its width.
+     Both faces are monospaced, which makes ch an exact measure. */
+  /* Rebuilt whenever the currency changes, not once at boot: the steps on offer are
+     per currency, so a $5 option must not survive a switch to won. */
+  function buildRoundPicker(){
+    roundSel.textContent = "";
+    var exact = document.createElement("option");
+    exact.value = "0";
+    exact.textContent = "Exact amounts";
+    roundSel.appendChild(exact);
+    (cur().step || []).forEach(function(step){
+      var o = document.createElement("option");
+      o.value = String(step);
+      o.textContent = "Down to " + fmt(step);
+      roundSel.appendChild(o);
+    });
+    if(!roundDestSel.options.length){
+      ROUND_DESTS.forEach(function(name, i){
+        var o = document.createElement("option");
+        o.value = String(i);
+        o.textContent = name;
+        roundDestSel.appendChild(o);
+      });
+    }
+  }
+  function applyRounding(){
+    state.roundTo = roundStep();          /* drops a step the new currency doesn't offer */
+    roundSel.value = String(state.roundTo);
+    roundDestSel.value = String(state.roundDest);
+    /* Asking where the change goes is noise until there is any change to place. */
+    roundDestField.hidden = state.roundTo === 0;
+  }
+
+  /* Both option lists change wording with the banker: "the banker covers it" is not
+     an option you can offer when nobody has been marked, and an option that silently
+     does nothing is worse than one that is not there. */
+  var GAP_LABEL = { show:"Show it and decide", top:"Cover it from the top",
+                    banker:"The banker covers it" };
+  var GAP_HINT = {
+    show: "Show the difference and decide at the table.",
+    top: "Lands the difference on whoever finished ahead, without changing anyone's place.",
+    banker: "The whole difference lands on the banker, which is what most hosts do."
+  };
+  var PAY_LABEL = { fewest:"Fewest transfers", banker:"Through the banker" };
+  function buildModePickers(){
+    var hasBanker = bankerIndex(state.players) >= 0;
+    gapSel.textContent = "";
+    GAP_MODES.forEach(function(m){
+      if(m === "banker" && !hasBanker) return;
+      var o = document.createElement("option");
+      o.value = m; o.textContent = GAP_LABEL[m];
+      gapSel.appendChild(o);
+    });
+    payViaSel.textContent = "";
+    PAY_MODES.forEach(function(m){
+      if(m === "banker" && !hasBanker) return;
+      var o = document.createElement("option");
+      o.value = m; o.textContent = PAY_LABEL[m];
+      payViaSel.appendChild(o);
+    });
+    dropModesWithoutBanker();
+    gapSel.value = state.gapMode;
+    payViaSel.value = state.payVia;
+    gapHint.textContent = GAP_HINT[state.gapMode];
+  }
+
+  function applyCurrency(){
+    var c = cur();
+    currencySel.value = state.currency;
+    defaultCur.textContent = c.sym;
+    document.documentElement.style.setProperty(
+      "--cur-pad", "calc(" + c.sym.length + "ch + 17px)"
+    );
+    defaultInput.inputMode = c.dec === 0 ? "numeric" : "decimal";
+    buildRoundPicker();
+    applyRounding();
+  }
+
+  /* ArielVer18 counts the box once an hour against the debt ledger: "If the numbers
+     don't match, I can narrow down the banking error to a smaller window of time
+     instead of scratching my head at the end of the game wondering what went wrong."
+     This is that number, kept live, so the check is a glance rather than a sum. */
+  function renderBankCheck(){
+    var b = bankCheck(state.players);
+    var on = bankerIndex(state.players) >= 0 && b.credit > 0;
+    bankOut.hidden = !on;
+    if(on){
+      bankOut.textContent = "";
+      bankOut.appendChild(document.createTextNode("Box should hold "));
+      bankOut.appendChild(el("b", null, fmt(b.cash)));
+      bankOut.appendChild(document.createTextNode(" \u00b7 " + fmt(b.credit) + " on credit"));
+    }
+  }
+
+  function showNotice(text){
+    if(!text){ noticeEl.hidden = true; noticeEl.textContent = ""; return; }
+    noticeEl.textContent = text;
+    noticeEl.hidden = false;
+  }
+
+  currencySel.addEventListener("change", function(){
+    var from = state.currency;
+    var to = CURRENCIES[currencySel.value] ? currencySel.value : "USD";
+    if(to === from) return;
+
+    /* On an untouched table, re-default to a buy-in that makes sense in the new
+       currency. Rescaling by the minor unit alone would turn $50 into 50 won, which
+       is not a buy-in in any game. On a table with real amounts in it, keep the old
+       behaviour and only fix the decimal places. */
+    var fresh = isPristine();
+    var rounded = false;
+    if(fresh){
+      state.defaultBuyIn = CURRENCIES[to].def;
+      state.players.forEach(function(p){
+        p.buyIns = [state.defaultBuyIn];
+        p.cashOut = 0;
+      });
+    } else {
+      rounded = convertAll(from, to);
+    }
+
+    state.currency = to;
+    applyCurrency();
+    hideResult();          /* a settlement priced in the old currency must not linger */
+    save();
+    render();
+    /* Switching mid-game keeps the numbers you typed — it does not apply an exchange
+       rate, and never has. Silently reinterpreting 120 dollars as 120 won is the kind
+       of thing you notice at settlement, so say it out loud. */
+    showNotice(fresh
+      ? "Standard buy-in set to " + fmt(state.defaultBuyIn) + "."
+      : "Amounts were kept as typed, not converted to " + cur().name.toLowerCase() + "." +
+        (rounded ? " Some were rounded to whole units." : ""));
+  });
+
+  /* ---------- theme ---------- */
+  function applyTheme(){
+    root.setAttribute("data-theme", themeState);
+    themeName.textContent = THEME_LABEL[themeState];
+  }
+  themeBtn.addEventListener("click", function(){
+    themeState = THEMES[(THEMES.indexOf(themeState) + 1) % THEMES.length];
+    applyTheme();
+    save();
+  });
+
+  /* ---------- player helpers ---------- */
+  function makePlayer(i){
+    return { name:"Player " + (i + 1), buyIns:[state.defaultBuyIn], cashOut:0,
+             done:false, banker:false, owed:0 };
+  }
+  /* True while nothing has actually been entered: every seat still holds exactly one
+     buy-in at the standard amount and nobody has cashed out. Switching currency is
+     free to re-default the table in that state, and must not touch it otherwise —
+     a game in progress is real data and its numbers are not ours to reinvent. */
+  function isPristine(){
+    return state.players.every(function(p){
+      return p.buyIns.length === 1 &&
+             p.buyIns[0] === state.defaultBuyIn &&
+             (p.cashOut === 0 || p.cashOut === "") &&
+             p.done !== true;
+    });
+  }
+  function totalIn(p){
+    return p.buyIns.reduce(function(a, c){ return a + c; }, 0);
+  }
+  function netOf(p){ return p.cashOut - totalIn(p); }
+
+  /* ---------- the banker ----------
+     One seat may be marked the banker: the person holding the cash box in a game
+     where chips are bought rather than tallied. Most home games work that way -
+     "Hand me cash, I'll hand you chips. Hand me chips, I'll hand you cash" - and
+     until now this tool had no way to say so, which left two things it could not
+     express: that the host is the one who eats a discrepancy, and that everyone
+     settles with one person rather than with each other.
+
+     Stored on the player rather than as an index, because indices move when a seat
+     is removed and the banker would silently become somebody else. */
+  function bankerIndex(players){
+    for(var i = 0; i < players.length; i++){ if(players[i].banker === true) return i; }
+    return -1;
+  }
+  function seatName(p, i){ return p.name || "Player " + (i + 1); }
+  function setBanker(idx){
+    state.players.forEach(function(p, i){ p.banker = (i === idx); });
+  }
+  /* Both settings name the banker, so neither can outlive one. Un-marking the seat
+     used to fix only what was on screen - storage kept "banker" for both, and marking
+     somebody else later brought the old choice back without anyone asking for it. The
+     invariant belongs wherever state is built: here, load(), and a shared link. */
+  function dropModesWithoutBanker(){
+    if(bankerIndex(state.players) >= 0) return false;
+    var changed = state.gapMode === "banker" || state.payVia === "banker";
+    if(state.gapMode === "banker") state.gapMode = "show";
+    if(state.payVia === "banker") state.payVia = "fewest";
+    return changed;
+  }
+
+  /* ---------- rounding ----------
+     Hosts don't want to hand out coins, so they round cash-outs and the change goes
+     somewhere agreed. On the forum this is near-universal at small stakes:
+     "it was always rounded down to the nearest dollar and everyone throws their
+     fracs in the middle and runs a random hand for whatever was left over".
+
+     Down only, never up. Rounding a player UP means somebody covers the difference
+     out of their own pocket, and the hosts who do that are covering it themselves —
+     which needs a host, a concept this tool does not have yet. Rounding down takes
+     money off the table and puts it somewhere named, which needs nothing.
+
+     This is deliberately NOT part of the reconciliation check. Whether the chip count
+     matches the buy-ins is a question about whether someone miscounted, and it has to
+     stay answerable independently of what the table then chooses to do with the
+     change. Conflating the two would let a rounding convention hide a real error. */
+  function roundStep(){
+    var steps = cur().step || [];
+    return steps.indexOf(state.roundTo) >= 0 ? state.roundTo : 0;
+  }
+  function roundDestName(){
+    return ROUND_DESTS[state.roundDest] || ROUND_DESTS[0];
+  }
+  /* Returns each player's payable cash-out and the change left over. With no rounding
+     in effect this is the identity, so callers need no special case. */
+  function roundingPlan(players){
+    var step = roundStep();
+    var paid = players.map(function(p){
+      return step > 0 ? Math.floor(p.cashOut / step) * step : p.cashOut;
+    });
+    var left = 0;
+    players.forEach(function(p, i){ left += p.cashOut - paid[i]; });
+    return { step:step, paid:paid, left:left };
+  }
+
+  /* ---------- settlement ---------- */
+  /* Divide a gap equally among the fewest top players that can take it without
+     disturbing the order — the leader alone if they are clear enough, otherwise half
+     each, then thirds, then fourths. Equal shares leave every gap between the players
+     unchanged, which is what keeps the ranking intact; the search below only has to
+     decide who is in the group. Mutates `mags`, returns what each index gave up. */
+  function splitFromTop(mags, total){
+    var taken = mags.map(function(){ return 0; });
+    var order = mags.map(function(v, i){ return i; })
+                    .sort(function(a, b){ return mags[b] - mags[a]; });
+    var n = order.length;
+    if(total <= 0 || !n) return taken;
+
+    /* The group's lowest member pays the odd unit, so test against ceil, not floor.
+       Below the last winner there is nobody to tie with, so ending at exactly zero is
+       allowed — that is what comparing against -1 means. */
+    for(var k = 1; k <= n; k++){
+      var share = Math.ceil(total / k);
+      var below = k < n ? mags[order[k]] : -1;
+      if(mags[order[k - 1]] - share > below){
+        var per = Math.floor(total / k), rem = total % k;
+        for(var i = 0; i < k; i++){
+          /* the extra unit goes to the BOTTOM of the group: giving it to the leader
+             is what could put them a unit behind second place */
+          var cut = per + (i >= k - rem ? 1 : 0);
+          mags[order[i]] -= cut;
+          taken[order[i]] += cut;
+        }
+        return taken;
+      }
+    }
+
+    /* No group can take it and stay ranked — the gap outruns the winnings. Split it
+       across everyone, zeroing whoever cannot cover their share and re-dividing the
+       remainder among the rest. Only reachable on a wild miscount. */
+    var active = order.slice(), left = total;
+    while(left > 0 && active.length){
+      var k2 = active.length, per2 = Math.floor(left / k2);
+      var lowest = mags[active[k2 - 1]];
+      if(lowest > per2 || (lowest === per2 && left % k2 === 0)){
+        var rem2 = left % k2;
+        for(var a = 0; a < k2; a++){
+          var cut2 = per2 + (a >= k2 - rem2 ? 1 : 0);
+          mags[active[a]] -= cut2;
+          taken[active[a]] += cut2;
+        }
+        left = 0;
+      }else{
+        var idx = active.pop();
+        left -= mags[idx];
+        taken[idx] += mags[idx];
+        mags[idx] = 0;
+      }
+    }
+    return taken;
+  }
+
+  /* Close a chip-count gap by levelling it off the top. Which side pays depends on the
+     sign: when the chips claim more than went in (diff > 0) the winners are claiming
+     money that is not there, so their profits come down; when the chips come up short
+     (diff < 0) the losers owe more than anyone is claiming, so their debts come down.
+     Either way the adjusted nets sum to exactly zero — see the note in CLAUDE.md. */
+  function absorbGap(entries, diff){
+    if(!diff) return { entries:entries, taken:{}, side:null };
+    var winners = diff > 0;
+    var pick = [];
+    entries.forEach(function(e, i){
+      if(winners ? e.net > 0 : e.net < 0) pick.push(i);
+    });
+    if(!pick.length) return { entries:entries, taken:{}, side:null };
+
+    var mags = pick.map(function(i){ return Math.abs(entries[i].net); });
+    var cuts = splitFromTop(mags, Math.abs(diff));
+
+    var taken = {};
+    var out = entries.map(function(e){ return { name:e.name, net:e.net }; });
+    pick.forEach(function(entryIdx, j){
+      if(!cuts[j]) return;
+      taken[entryIdx] = cuts[j];
+      out[entryIdx].net = winners ? mags[j] : -mags[j];
+    });
+    return { entries:out, taken:taken, side:winners ? "winners" : "losers" };
+  }
+
+  /* Greedy debtor/creditor matching: at most n-1 transfers. When the books do not
+     balance the two sides cannot both empty, and the leftover is the discrepancy. */
+  function settle(players){
+    return settleNets(players.map(function(p){
+      return { name:p.name, net:netOf(p) };
+    }));
+  }
+  function settleNets(entries){
+    var creditors = [], debtors = [];
+    entries.forEach(function(e){
+      var n = e.net;
+      if(n > 0) creditors.push({ name:e.name, amt:n });
+      else if(n < 0) debtors.push({ name:e.name, amt:-n });
+    });
+    creditors.sort(function(a, b){ return b.amt - a.amt; });
+    debtors.sort(function(a, b){ return b.amt - a.amt; });
+
+    var transfers = [];
+    var ci = 0, di = 0;
+    while(ci < creditors.length && di < debtors.length){
+      var c = creditors[ci], d = debtors[di];
+      var amt = Math.min(c.amt, d.amt);
+      if(amt > 0) transfers.push({ from:d.name, to:c.name, cents:amt });
+      c.amt -= amt;
+      d.amt -= amt;
+      if(c.amt === 0) ci++;
+      if(d.amt === 0) di++;
+    }
+
+    var unpaid = creditors.slice(ci).filter(function(c){ return c.amt > 0; });
+    var unowed = debtors.slice(di).filter(function(d){ return d.amt > 0; });
+    return { transfers:transfers, unpaid:unpaid, unowed:unowed };
+  }
+
+  /* Everyone settles once, with the banker. Never fewer payments than the greedy
+     match - it is exactly n-1 - and that is not the point: the point is that no
+     player has to chase another player, which is the objection people actually
+     raise to net settlement. "All the losing players pay the biggest winner their
+     net loss and the other winners request their profit from the biggest winner."
+
+     `carried` is the part that must not be silent. The banker's own chips say one
+     thing; what they are left holding after everyone settles says another, and any
+     difference is an unassigned discrepancy landing on the one person who can
+     absorb it. Reported, not swallowed. */
+  function settleViaBanker(entries, bankerIdx){
+    var hub = entries[bankerIdx];
+    var transfers = [], others = 0;
+    entries.forEach(function(e, i){
+      if(i === bankerIdx || e.net === 0) return;
+      others += e.net;
+      if(e.net < 0) transfers.push({ from:e.name, to:hub.name, cents:-e.net });
+      else transfers.push({ from:hub.name, to:e.name, cents:e.net });
+    });
+    return { transfers:transfers, unpaid:[], unowed:[],
+             carried: others + hub.net };
+  }
+
+  /* The whole discrepancy on the banker, which is what hosts overwhelmingly say they
+     do: "As host, you eat the cost. Simple, bam." Subtracting it works in both
+     directions - more chips than money and the banker covers the difference, more
+     money than chips and the banker is left holding it. */
+  /* ---------- credit ----------
+     "Sometimes in the night its just 'Can i get 50 more?' and a 'Sure thing' and then
+     it's forgotten. My fault usually." Chips handed over without the cash arriving is
+     the banking error hosts describe most, and it is invisible until the end.
+
+     `owed` is per player rather than per buy-in on purpose. What a banker keeps is a
+     debt ledger - a name and an amount - not an annotation on each transaction, and
+     making buyIns an array of objects to hold a flag would rewrite the one data shape
+     everything else in here depends on.
+
+     It deliberately does NOT enter the settlement. A player who took chips on credit
+     and lost them already shows that loss in their net, and charging it again would
+     bill them twice for the same money. What credit buys you is the mid-game check
+     below, and a record of who still owes the bank. */
+  function bankCheck(players){
+    var issued = 0, credit = 0;
+    players.forEach(function(p){
+      issued += totalIn(p);
+      credit += Math.min(p.owed || 0, totalIn(p));
+    });
+    return { issued:issued, credit:credit, cash:issued - credit };
+  }
+  function creditors(players){
+    return players.map(function(p, i){
+      return { name:seatName(p, i), amt:Math.min(p.owed || 0, totalIn(p)) };
+    }).filter(function(c){ return c.amt > 0; });
+  }
+
+  /* Whether the seats table needs a second figure column, and what to head it with.
+     Pulled out of calculate() so it can be asserted at all. The version that lived
+     inline gated on the split alone, so when the banker took the gap the table printed
+     her pre-gap net (+$15.00) beside payments that handed her the post-gap one
+     ($5.00). Every settlement function was correct and every test passed; the only
+     thing that could catch it was looking at the screen. Now it is a pure function
+     with a name, and it is covered. */
+  function adjustedColumn(adj, gapOnBanker){
+    if(adj && adj.side) return "After the split";
+    if(gapOnBanker) return "After the gap";
+    return null;
+  }
+
+  function gapToBanker(entries, bankerIdx, diff){
+    var out = entries.map(function(e){ return { name:e.name, net:e.net }; });
+    out[bankerIdx].net -= diff;
+    return out;
+  }
+
+  function joinNames(names){
+    if(names.length === 1) return names[0];
+    return names.slice(0, -1).join(", ") + " and " + names[names.length - 1];
+  }
+  /* listNames() returns one name or several, so a verb after it has to agree:
+     "Alice owes", but "Alice and Bob owe". */
+  function verb(count, singular, plural){ return count === 1 ? singular : plural; }
+  function listNames(arr){
+    var names = arr.map(function(x){ return x.name + " (" + fmt(x.amt) + ")"; });
+    if(names.length === 1) return names[0];
+    return names.slice(0, -1).join(", ") + " and " + names[names.length - 1];
+  }
+
+  /* ---------- rendering ---------- */
+  function el(tag, cls, text){
+    var n = document.createElement(tag);
+    if(cls) n.className = cls;
+    if(text != null) n.textContent = text;
+    return n;
+  }
+
+  function render(){
+    playersEl.textContent = "";
+    state.players.forEach(function(p, idx){
+      playersEl.appendChild(renderSeat(p, idx));
+    });
+    countOut.textContent = state.players.length;
+    addBtn.disabled = state.players.length >= MAX_PLAYERS;
+    /* A greyed-out control that doesn't say why reads as broken rather than as a
+       limit. Both of these are hard bounds, so say which one you have hit. */
+    addBtn.title = addBtn.disabled
+      ? "A table holds " + MAX_PLAYERS + " players. Remove one to add another."
+      : "";
+    defaultInput.value = toInput(state.defaultBuyIn);
+    buildModePickers();
+    renderBankCheck();
+    updateTally();
+  }
+
+  function renderSeat(p, idx){
+    var seat = el("section", "seat" + (p.done ? " settled" : ""));
+
+    var head = el("div", "seat-head");
+    head.appendChild(el("span", "seat-no", String(idx + 1)));
+    if(p.done) head.appendChild(el("span", "settled-tag", "cashed out"));
+    if(p.banker) head.appendChild(el("span", "banker-tag", "banker"));
+    var name = el("input");
+    name.type = "text";
+    name.value = p.name;
+    name.maxLength = 40;
+    name.setAttribute("aria-label", "Name of player " + (idx + 1));
+    name.addEventListener("input", function(){
+      p.name = name.value;
+      save();
+    });
+    head.appendChild(name);
+    seat.appendChild(head);
+
+    var tools = el("div", "seat-tools");
+    var rebuy = el("button", "btn tiny", "+ Rebuy");
+    rebuy.type = "button";
+    rebuy.disabled = p.done === true;
+    if(rebuy.disabled) rebuy.title = "This player has cashed out. Reopen them to add a buy-in.";
+    rebuy.addEventListener("click", function(){
+      if(p.buyIns.length >= MAX_BUYINS){
+        showNotice("That's " + MAX_BUYINS + " buy-ins for one player. Edit an amount instead.");
+        return;
+      }
+      p.buyIns.push(state.defaultBuyIn);
+      save();
+      render();
+      var chips = playersEl.children[idx].querySelectorAll(".chip input");
+      if(chips.length) chips[chips.length - 1].focus();
+    });
+    tools.appendChild(rebuy);
+
+    /* A player who leaves at 11pm is one of the two commonest causes of a count that
+       will not reconcile: they take their money and their chips go back in the tray
+       before anyone writes the number down. Marking them cashed out locks the figure
+       in place and makes it obvious at a glance who is still playing. */
+    /* Marking the banker is what turns on the two settings that need one, so it lives
+       on the seat rather than in a dropdown of names: the person is the setting. */
+    var bank = el("button", "btn tiny" + (p.banker ? "" : " ghost"), "Banker");
+    bank.type = "button";
+    bank.title = p.banker
+      ? "This player holds the cash. Click to unset."
+      : "Mark this player as the one holding the cash box";
+    bank.setAttribute("aria-pressed", p.banker ? "true" : "false");
+    bank.addEventListener("click", function(){
+      setBanker(p.banker ? -1 : idx);
+      dropModesWithoutBanker();
+      save();
+      hideResult();
+      render();
+    });
+    tools.appendChild(bank);
+
+    var done = el("button", "btn tiny" + (p.done ? " ghost" : ""), p.done ? "Reopen" : "Cash out");
+    done.type = "button";
+    done.title = p.done
+      ? "Put this player back in the game"
+      : "Record their final count and lock it";
+    done.setAttribute("aria-pressed", p.done ? "true" : "false");
+    done.addEventListener("click", function(){
+      p.done = !p.done;
+      save();
+      render();
+      hideResult();
+    });
+    tools.appendChild(done);
+
+    var remove = el("button", "btn tiny ghost", "Remove");
+    remove.type = "button";
+    remove.disabled = state.players.length <= MIN_PLAYERS;
+    remove.title = remove.disabled
+      ? "A game needs at least " + MIN_PLAYERS + " players."
+      : "";
+    remove.setAttribute("aria-label", "Remove " + (p.name || "player " + (idx + 1)));
+    remove.addEventListener("click", function(){
+      state.players.splice(idx, 1);
+      hideResult();
+      save();
+      render();
+    });
+    tools.appendChild(remove);
+    seat.appendChild(tools);
+
+    /* --- stakes --- */
+    var stakes = el("div", "stakes");
+
+    var left = el("div");
+    left.appendChild(el("span", "lbl", "Buy-ins"));
+    var chips = el("div", "chips");
+    if(!p.buyIns.length){
+      chips.appendChild(el("span", "no-chips", "No buy-in yet — press Rebuy"));
+    }
+    p.buyIns.forEach(function(cents, ci){
+      chips.appendChild(renderChip(p, ci, idx));
+    });
+    left.appendChild(chips);
+
+    var cashWrap = el("div");
+    cashWrap.style.marginTop = "14px";
+    var cashLbl = el("span", "lbl", "Cash out at the end");
+    cashWrap.appendChild(cashLbl);
+    var money = el("div", "money");
+    money.style.maxWidth = "170px";
+    money.style.marginTop = "6px";
+    var cash = el("input");
+    cash.type = "text";
+    cash.inputMode = cur().dec === 0 ? "numeric" : "decimal";
+    cash.value = toInput(p.cashOut);
+    cash.setAttribute("aria-label", "Cash out for player " + (idx + 1));
+    if(p.done){
+      cash.readOnly = true;
+      cash.title = "Locked. Press Reopen to change it.";
+    }
+    cash.addEventListener("input", function(){
+      var c = parseMoney(cash.value);
+      cash.classList.toggle("bad", c === null);
+      if(c !== null){ p.cashOut = c; save(); updateTally(); }
+    });
+    cash.addEventListener("blur", function(){
+      if(parseMoney(cash.value) !== null) cash.value = toInput(p.cashOut);
+    });
+    money.appendChild(cash);
+    cashWrap.appendChild(money);
+
+    /* Only where it can mean something: credit is money owed to a bank, so without a
+       banker there is nobody to owe, and the banker cannot be in debt to themselves.
+       Showing this on every seat by default would put a field nobody needs on the
+       busiest control in the app. */
+    if(bankerIndex(state.players) >= 0 && !p.banker){
+      var owedWrap = el("div");
+      owedWrap.style.marginTop = "14px";
+      owedWrap.appendChild(el("span", "lbl", "Owes the bank"));
+      var owedMoney = el("div", "money");
+      owedMoney.style.maxWidth = "170px";
+      owedMoney.style.marginTop = "6px";
+      var owed = el("input");
+      owed.type = "text";
+      owed.inputMode = cur().dec === 0 ? "numeric" : "decimal";
+      owed.value = toInput(p.owed || 0);
+      owed.setAttribute("aria-label", "Buy-ins still unpaid by player " + (idx + 1));
+      owed.title = "Chips they took without the cash arriving yet";
+      owed.addEventListener("input", function(){
+        var c = parseMoney(owed.value);
+        /* Capped at what they actually bought in for: owing the bank more than you
+           were ever given chips for is not a state the night can be in. */
+        var bad = c === null || c > totalIn(p);
+        owed.classList.toggle("bad", bad);
+        if(!bad){ p.owed = c; save(); updateTally(); }
+      });
+      owed.addEventListener("blur", function(){
+        var c = parseMoney(owed.value);
+        if(c !== null && c <= totalIn(p)) owed.value = toInput(p.owed || 0);
+      });
+      owedMoney.appendChild(owed);
+      owedWrap.appendChild(owedMoney);
+      cashWrap.appendChild(owedWrap);
+    }
+    left.appendChild(cashWrap);
+    stakes.appendChild(left);
+
+    var tally = el("div", "tally");
+    var inBox = el("div");
+    inBox.appendChild(el("span", "lbl", "Total in"));
+    var inVal = el("span", "v");
+    inVal.dataset.role = "in";
+    inBox.appendChild(inVal);
+    tally.appendChild(inBox);
+
+    var netBox = el("div");
+    netBox.appendChild(el("span", "lbl", "Net"));
+    var netVal = el("span", "v");
+    netVal.dataset.role = "net";
+    netBox.appendChild(netVal);
+    tally.appendChild(netBox);
+    stakes.appendChild(tally);
+
+    seat.appendChild(stakes);
+    return seat;
+  }
+
+  function renderChip(p, ci, idx){
+    var chip = el("span", "chip");
+    chip.appendChild(el("span", "cur", cur().sym));
+    var inp = el("input");
+    inp.type = "text";
+    inp.inputMode = cur().dec === 0 ? "numeric" : "decimal";
+    inp.value = toInput(p.buyIns[ci]);
+    inp.setAttribute("aria-label", "Buy-in " + (ci + 1) + " for player " + (idx + 1));
+    inp.addEventListener("input", function(){
+      var c = parseMoney(inp.value);
+      chip.classList.toggle("bad", c === null);
+      if(c !== null){ p.buyIns[ci] = c; save(); updateTally(); }
+    });
+    inp.addEventListener("blur", function(){
+      if(parseMoney(inp.value) !== null) inp.value = toInput(p.buyIns[ci]);
+    });
+    chip.appendChild(inp);
+
+    var x = el("button", "x", "×");
+    x.type = "button";
+    x.setAttribute("aria-label", "Remove buy-in " + (ci + 1) + " for player " + (idx + 1));
+    x.addEventListener("click", function(){
+      p.buyIns.splice(ci, 1);
+      hideResult();
+      save();
+      render();
+    });
+    chip.appendChild(x);
+    return chip;
+  }
+
+  /* Live totals without a full re-render, so focus and caret survive typing. */
+  function updateTally(){
+    Array.prototype.forEach.call(playersEl.children, function(seat, i){
+      var p = state.players[i];
+      if(!p) return;
+      var inVal = seat.querySelector('[data-role="in"]');
+      var netVal = seat.querySelector('[data-role="net"]');
+      var net = netOf(p);
+      if(inVal) inVal.textContent = fmt(totalIn(p));
+      if(netVal){
+        netVal.textContent = fmtSigned(net);
+        netVal.className = "v " + (net > 0 ? "up" : net < 0 ? "down" : "flat");
+      }
+    });
+    renderBankCheck();
+  }
+
+  function hideResult(){
+    resultEl.hidden = true;
+    resultEl.textContent = "";
+  }
+
+  /* ---------- calculate ---------- */
+  function calculate(){
+    var players = state.players;
+
+    /* "Settling before everyone is counted" is mistake number two in the guide: money
+       moves, then the last stack comes in and the total does not reconcile, so now you
+       are unwinding payments as well as hunting an error.
+
+       Only warn when the feature is actually in use. Someone who never presses Cash out
+       gets no nagging; someone who marked five of six players gets told which one is
+       missing, which is exactly the moment the mistake happens. */
+    var settled = players.filter(function(p){ return p.done === true; });
+    var waiting = players.filter(function(p){ return p.done !== true; })
+                         .map(function(p, i){ return p.name || "Player " + (i + 1); });
+    /* Always set the notice, never only when the warning applies. Setting it
+       conditionally left the previous run's warning on screen after the last player
+       was marked — telling you to count people you had just counted. Calculate owns
+       this line for the duration of a settlement. */
+    showNotice(settled.length > 0 && waiting.length > 0
+      ? "Still to cash out: " + joinNames(waiting) +
+        ". Settling before everyone is counted is how payments get unwound."
+      : "");
+
+    var potIn = 0, potOut = 0;
+    players.forEach(function(p){ potIn += totalIn(p); potOut += p.cashOut; });
+    var diff = potOut - potIn;
+
+    /* Rounding runs on the cash-outs, before nets, because it is a physical act at the
+       table: the player is handed a round number and the change goes in the middle.
+       `diff` above is left untouched — see the note on roundingPlan. */
+    var plan = roundingPlan(players);
+    var raw = players.map(function(p, i){
+      return { name:seatName(p, i), net:plan.paid[i] - totalIn(p) };
+    });
+
+    var bIdx = bankerIndex(players);
+    var adj = { entries:raw, taken:{}, side:null };
+    if(diff !== 0 && state.gapMode === "top"){
+      adj = absorbGap(raw, diff);
+    }else if(diff !== 0 && state.gapMode === "banker" && bIdx >= 0){
+      adj = { entries:gapToBanker(raw, bIdx, diff), taken:{}, side:null };
+    }
+    var absorbed = adj.side !== null;
+    var gapOnBanker = diff !== 0 && state.gapMode === "banker" && bIdx >= 0;
+    /* Whenever the gap has been assigned to anybody, the seats table has to show the
+       figure people are actually settling on. Showing the raw net alone made the
+       banker read +$15.00 in the table while the payments handed her $5.00 - the row
+       not adding up in front of someone checking it by hand, which is the exact
+       failure the rounding column was built to avoid. */
+    var adjHead = adjustedColumn(adj, gapOnBanker);
+    var adjusted = adjHead !== null;
+
+    /* The change is a creditor like any other, so the existing solver places it with
+       no special handling and the nets still sum the way settleNets expects. Without
+       this entry the losers would be told to pay out more than the winners receive,
+       and the difference would simply vanish from the settlement. */
+    var entries = adj.entries;
+    if(plan.left > 0){
+      entries = entries.concat([{ name:roundDestName(), net:plan.left }]);
+    }
+    /* The change entry is appended after the seats, so the banker's index still points
+       at the banker. A banker holding the cash is also the one who hands the leftover
+       to whatever it was earmarked for, which falls out of this for free. */
+    var viaBanker = state.payVia === "banker" && bIdx >= 0;
+    var res = viaBanker ? settleViaBanker(entries, bIdx) : settleNets(entries);
+
+    resultEl.textContent = "";
+    resultEl.hidden = false;
+    resultEl.appendChild(el("h2", null, "Settlement \u00b7 " + state.currency));
+
+    /* --- discrepancy banner --- */
+    var banner = el("div", "banner " + (diff === 0 ? "ok" : "warn"));
+    if(diff === 0){
+      banner.appendChild(el("span", "head", "Books balance"));
+      banner.appendChild(document.createTextNode(
+        "Total bought in and total cashed out both come to " + fmt(potIn) + ". Everything is accounted for."
+      ));
+    }else{
+      banner.appendChild(el("span", "head", diff < 0 ? "Table is short" : "Table is over"));
+      var msg = el("div");
+      msg.appendChild(document.createTextNode("Bought in " + fmt(potIn) + ", cashed out " + fmt(potOut) + " — a difference of "));
+      var b = el("b", null, fmt(Math.abs(diff)));
+      msg.appendChild(b);
+      msg.appendChild(document.createTextNode(diff < 0
+        ? ". There is less on the table than went in, so chips are missing or a cash-out was under-counted."
+        : ". There are more chips than money in, so a buy-in probably was not recorded."));
+      banner.appendChild(msg);
+
+      var short = el("div");
+      short.style.marginTop = "8px";
+      if(absorbed){
+        var who = Object.keys(adj.taken).map(function(k){
+          return { name:raw[k].name, amt:adj.taken[k] };
+        }).sort(function(a, b){ return b.amt - a.amt; });
+        short.textContent = (adj.side === "winners"
+          ? "Split from the top: " + listNames(who) + " gave up that much of the win, so the payments below settle exactly. Everyone finishes in the order they placed."
+          : "Split from the top: " + listNames(who) + " " + verb(who.length, "owes", "owe") + " that much less, so the payments below settle exactly. Everyone finishes in the order they placed.");
+      }else if(res.unpaid.length){
+        short.textContent = "Even after every payment below, " + listNames(res.unpaid) + " still cannot be paid in full.";
+      }else if(res.unowed.length){
+        short.textContent = "Even after every payment below, " + listNames(res.unowed) + " still " + verb(res.unowed.length, "owes", "owe") + " money with nobody to pay.";
+      }else if(gapOnBanker){
+        short.textContent = entries[bIdx].name + (diff > 0
+          ? " covers the " + fmt(diff) + " the count is over, so the payments below settle exactly."
+          : " keeps the " + fmt(-diff) + " the count is short, so the payments below settle exactly.");
+      }else if(viaBanker && res.carried){
+        /* Nobody assigned the gap, but everything routes through one person, so they
+           absorb it purely by holding the money. Saying so is the whole reason
+           settleViaBanker returns this number. */
+        short.textContent = entries[bIdx].name + " handles every payment, so they end up "
+          + (res.carried > 0 ? "absorbing " : "keeping ") + fmt(Math.abs(res.carried))
+          + " of the discrepancy without anyone deciding that.";
+      }
+      if(short.textContent) banner.appendChild(short);
+    }
+    resultEl.appendChild(banner);
+
+    /* --- transfers --- */
+    if(!res.transfers.length){
+      resultEl.appendChild(el("p", "none",
+        potIn === 0 && potOut === 0
+          ? "Nothing entered yet — add buy-ins and cash-outs, then calculate."
+          : "Nobody owes anybody. Everyone finished level."));
+    }else{
+      var ol = el("ol", "transfers");
+      res.transfers.forEach(function(t){
+        var li = el("li");
+        li.appendChild(el("span", "who", t.from || "Unnamed"));
+        li.appendChild(el("span", "arrow", "→"));
+        li.appendChild(el("span", "who", t.to || "Unnamed"));
+        li.appendChild(el("span", "amt", fmt(t.cents)));
+        ol.appendChild(li);
+      });
+      resultEl.appendChild(ol);
+    }
+
+    /* --- summary table --- */
+    /* `out` is what the player is actually handed, not what their chips counted to.
+       If the column showed the raw count while Net used the rounded figure, every row
+       would fail to add up in front of someone checking it by hand — which is the
+       fastest way to lose an argument this tool is supposed to win. The change is
+       accounted for on its own line in the footer, so the column still totals. */
+    var rows = players.map(function(p, i){
+      return { name:raw[i].name, inn:totalIn(p), out:plan.paid[i],
+               net:raw[i].net, adjNet:adj.entries[i].net, cut:adj.taken[i] || 0 };
+    }).sort(function(a, b){ return b.net - a.net; });
+
+    var tbl = el("table", "summary");
+    var cap = el("caption", null, "Every seat");
+    tbl.appendChild(cap);
+    var thead = el("thead");
+    var hr = el("tr");
+    var heads = ["Player","Bought in","Cashed out","Net"];
+    if(adjHead) heads.push(adjHead);
+    heads.forEach(function(h){ hr.appendChild(el("th", null, h)); });
+    thead.appendChild(hr);
+    tbl.appendChild(thead);
+
+    var tbody = el("tbody");
+    rows.forEach(function(r){
+      var tr = el("tr");
+      tr.appendChild(el("td", null, r.name));
+      tr.appendChild(el("td", null, fmt(r.inn)));
+      tr.appendChild(el("td", null, fmt(r.out)));
+      var td = el("td", null, fmtSigned(r.net));
+      td.style.color = r.net > 0 ? "var(--win)" : r.net < 0 ? "var(--loss)" : "var(--flat)";
+      if(adjusted) td.style.opacity = ".55";
+      tr.appendChild(td);
+      if(adjusted){
+        var ad = el("td", null, fmtSigned(r.adjNet) + (r.cut ? "  (-" + fmt(r.cut) + ")" : ""));
+        ad.style.color = r.adjNet > 0 ? "var(--win)" : r.adjNet < 0 ? "var(--loss)" : "var(--flat)";
+        if(r.cut) ad.style.fontWeight = "600";
+        tr.appendChild(ad);
+      }
+      tbody.appendChild(tr);
+    });
+    tbl.appendChild(tbody);
+
+    var tfoot = el("tfoot");
+    /* Sits between the seats and the table total so the column visibly adds up:
+       what the players were paid, plus the change, equals what the chips counted to. */
+    if(plan.left > 0){
+      var cr = el("tr", "change");
+      cr.appendChild(el("td", null, "Rounded off → " + roundDestName()));
+      cr.appendChild(el("td", null, ""));
+      cr.appendChild(el("td", null, fmt(plan.left)));
+      cr.appendChild(el("td", null, ""));
+      if(adjusted) cr.appendChild(el("td", null, ""));
+      tfoot.appendChild(cr);
+    }
+    var fr = el("tr");
+    fr.appendChild(el("td", null, "Table"));
+    fr.appendChild(el("td", null, fmt(potIn)));
+    fr.appendChild(el("td", null, fmt(potOut)));
+    fr.appendChild(el("td", null, fmtSigned(diff)));
+    if(adjusted) fr.appendChild(el("td", null, fmt(0)));
+    tfoot.appendChild(fr);
+    tbl.appendChild(tfoot);
+    resultEl.appendChild(tbl);
+
+    /* --- copy --- */
+    var copyRow = el("div", "actions");
+    var copy = el("button", "btn", "Copy settlement");
+    copy.type = "button";
+    copy.addEventListener("click", function(){
+      var text = settlementText(res, rows, potIn, potOut, diff, adjusted, adj, plan,
+        viaBanker ? entries[bIdx].name : null,
+        /* When the gap was assigned the banker's net already carries it, so `carried`
+           is zero. When it was NOT assigned and everything still routes through them,
+           they absorb it anyway just by being the one holding the money — which is
+           exactly the silent case this value exists to prevent. */
+        gapOnBanker ? diff : (viaBanker ? res.carried : 0),
+        bIdx >= 0 ? creditors(players) : []);
+      var done = function(){
+        copy.textContent = "Copied";
+        setTimeout(function(){ copy.textContent = "Copy settlement"; }, 1600);
+      };
+      var fail = function(){
+        copy.textContent = "Press ⌘C";
+        setTimeout(function(){ copy.textContent = "Copy settlement"; }, 1600);
+      };
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(text).then(done, fail);
+      }else{ fail(); }
+    });
+    copyRow.appendChild(copy);
+
+    /* The whole table gets this link, not just whoever did the counting. */
+    var share = el("button", "btn", "Copy share link");
+    share.type = "button";
+    share.addEventListener("click", function(){
+      var url = shareUrl();
+      var back = function(){ share.textContent = "Copy share link"; };
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(url).then(function(){
+          share.textContent = "Link copied";
+          setTimeout(back, 1600);
+        }, function(){
+          share.textContent = "Press \u2318C";
+          setTimeout(back, 1600);
+        });
+      }else{
+        share.textContent = "Press \u2318C";
+        setTimeout(back, 1600);
+      }
+    });
+    copyRow.appendChild(share);
+    resultEl.appendChild(copyRow);
+
+    resultEl.scrollIntoView({ behavior:"smooth", block:"nearest" });
+  }
+
+  function settlementText(res, rows, potIn, potOut, diff, adjusted, adj, plan,
+                          bankerLabel, bankerGap, stillOwed){
+    var lines = ["POKER SETTLEMENT", "All amounts in " + state.currency + " (" + cur().name + ")", ""];
+    if(res.transfers.length){
+      res.transfers.forEach(function(t){
+        lines.push(t.from + " pays " + t.to + " " + fmt(t.cents));
+      });
+    }else{
+      lines.push("No payments needed — everyone finished level.");
+    }
+    lines.push("", "Net by player:");
+    rows.forEach(function(r){
+      lines.push("  " + r.name + ": " + fmtSigned(r.net) + "  (in " + fmt(r.inn) + ", out " + fmt(r.out) + ")"
+        + (adjusted && r.net !== r.adjNet ? "  -> " + fmtSigned(r.adjNet) + " after the gap" : ""));
+    });
+    /* Stated even though the transfers above already route it, because this text is
+       read weeks later by someone reconstructing where their money went. "Rounded off"
+       is the line that stops the change reading as a counting error. */
+    if(bankerLabel){
+      lines.push("", "Everyone settles with " + bankerLabel + ".");
+    }
+    if(bankerGap){
+      lines.push((bankerLabel || "The banker") + (bankerGap > 0
+        ? " covers the " + fmt(bankerGap) + " the count is over."
+        : " keeps the " + fmt(-bankerGap) + " the count is short."));
+    }
+    if(stillOwed && stillOwed.length){
+      lines.push("", "Still owed to the bank (not part of the payments above):");
+      stillOwed.forEach(function(c){ lines.push("  " + c.name + ": " + fmt(c.amt)); });
+    }
+    if(plan && plan.left > 0){
+      lines.push("", "Cash-outs rounded down to the nearest " + fmt(plan.step) + ".",
+        fmt(plan.left) + " left over \u2192 " + roundDestName() + ".");
+    }
+    lines.push("", "Total in " + fmt(potIn) + " / total out " + fmt(potOut));
+    if(diff !== 0){
+      lines.push("WARNING: table is " + (diff < 0 ? "short" : "over") + " by " + fmt(Math.abs(diff)));
+      if(adj && adj.side){
+        lines.push("The gap was split between the top " + adj.side + ", so the payments above settle exactly.");
+      }
+    }
+    /* This text gets pasted into the table's group chat, where everyone who just
+       played reads it. Without this line they have no idea what produced it.
+
+       The date is what turns the paste into a record. Cash games leave no paper
+       trail, so the argument that actually happens is weeks later and is about a
+       night nobody can pin down — "someone has 'forgotten' they were fully paid".
+       An undated summary loses that argument; a dated one ends it.
+
+       Built from local calendar parts rather than toISOString(), which is UTC: a
+       game settled at half past midnight would otherwise be stamped with the
+       previous day and contradict every phone in the room. ISO order rather than a
+       locale format, because 03/04 is two different days depending on the reader. */
+    var now = new Date(), pad = function(n){ return (n < 10 ? "0" : "") + n; };
+    lines.push("", "Settled " + now.getFullYear() + "-" + pad(now.getMonth() + 1) + "-" +
+      pad(now.getDate()) + " with homepokerledger.com");
+    return lines.join("\n");
+  }
+
+  /* ---------- controls ---------- */
+  addBtn.addEventListener("click", function(){
+    if(state.players.length >= MAX_PLAYERS) return;
+    state.players.push(makePlayer(state.players.length));
+    hideResult();
+    save();
+    render();
+    var seats = playersEl.children;
+    var last = seats[seats.length - 1].querySelector('.seat-head input');
+    if(last) last.select();
+  });
+
+  calcBtn.addEventListener("click", calculate);
+
+  /* The explainer opens on hover for a mouse, on focus for a keyboard, and stays
+     pinned open when the "?" is tapped — hover does not exist on a phone, which is
+     where this page mostly gets used. */
+  var tipPinned = false;
+  function showTip(){
+    absorbTip.hidden = false;
+    absorbInfo.setAttribute("aria-expanded", "true");
+  }
+  function hideTip(force){
+    if(tipPinned && !force) return;
+    tipPinned = false;
+    absorbTip.hidden = true;
+    absorbInfo.setAttribute("aria-expanded", "false");
+  }
+  [absorbInfo].forEach(function(el2){
+    el2.addEventListener("mouseenter", showTip);
+    el2.addEventListener("mouseleave", function(){ hideTip(); });
+  });
+  absorbInfo.addEventListener("click", function(){
+    if(tipPinned) hideTip(true);
+    else { tipPinned = true; showTip(); }
+  });
+  absorbInfo.addEventListener("focus", showTip);
+  absorbInfo.addEventListener("blur", function(){ if(!tipPinned) hideTip(); });
+  document.addEventListener("keydown", function(e){
+    if(e.key === "Escape" && !absorbTip.hidden){ hideTip(true); absorbInfo.focus(); }
+  });
+  document.addEventListener("click", function(e){
+    if(tipPinned && !absorbTip.contains(e.target) && !absorbInfo.contains(e.target)){
+      hideTip(true);
+    }
+  });
+
+  roundSel.addEventListener("change", function(){
+    state.roundTo = readRound(parseInt(roundSel.value, 10), state.currency);
+    applyRounding();
+    save();
+    if(!resultEl.hidden) calculate();
+  });
+  roundDestSel.addEventListener("change", function(){
+    state.roundDest = readDest(parseInt(roundDestSel.value, 10));
+    save();
+    if(!resultEl.hidden) calculate();
+  });
+
+  gapSel.addEventListener("change", function(){
+    state.gapMode = readGapMode(gapSel.value, false);
+    gapHint.textContent = GAP_HINT[state.gapMode];
+    hideResult();      /* a settlement computed under the other setting must not linger */
+    save();
+  });
+
+  payViaSel.addEventListener("change", function(){
+    state.payVia = readPayVia(payViaSel.value);
+    hideResult();
+    save();
+  });
+
+  newBtn.addEventListener("click", function(){
+    if(!confirm("Start a new game? Names stay, buy-ins and cash-outs reset.")) return;
+    showNotice("");
+    state.players.forEach(function(p){
+      p.buyIns = [state.defaultBuyIn];
+      p.cashOut = 0;
+      p.done = false;   /* last night's cash-outs must not lock tonight's seats */
+    });
+    hideResult();
+    save();
+    render();
+  });
+
+  clearBtn.addEventListener("click", function(){
+    if(!confirm("Clear everything and start from two empty seats?")) return;
+    showNotice("");
+    state.players = [makePlayer(0), makePlayer(1)];
+    hideResult();
+    save();
+    render();
+  });
+
+  defaultInput.addEventListener("input", function(){
+    var c = parseMoney(defaultInput.value);
+    defaultInput.classList.toggle("bad", c === null);
+    if(c !== null){ state.defaultBuyIn = c; save(); }
+  });
+  defaultInput.addEventListener("blur", function(){
+    if(parseMoney(defaultInput.value) !== null) defaultInput.value = toInput(state.defaultBuyIn);
+  });
+
+  /* ---------- boot ---------- */
+  /* A share link wins over stored state, but is never written to storage: opening a
+     friend's link must not quietly overwrite your own game. */
+  var shared = decodeShare(typeof location !== "undefined" ? location.hash : "");
+  if(shared){
+    state.currency = shared.currency;
+    state.gapMode = shared.gapMode;
+    state.payVia = shared.payVia;
+    state.roundTo = shared.roundTo;
+    state.roundDest = shared.roundDest;
+    state.players = shared.players;
+    dropModesWithoutBanker();
+  }else if(!load()){
+    state.players = [makePlayer(0), makePlayer(1)];
+  }
+  if(!themeState) themeState = systemTheme();
+  applyTheme();
+  buildCurrencyPicker();
+  applyCurrency();
+  render();
+  if(shared) calculate();
+})();
+</script>
+
+<script src="consent.js" defer></script>
+
+</body>
+</html>

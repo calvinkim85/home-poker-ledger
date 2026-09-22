@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!-- Partial CSP. script-src is deliberately absent: Google supports only strict
+     CSP with per-request nonces for AdSense (a domain allowlist breaks ad serving
+     as their domains rotate), and GitHub Pages serves static files and cannot
+     generate a nonce per request. frame-ancestors and X-Content-Type-Options are
+     header-only and cannot be set from a meta tag at all. What is here is the
+     subset that is both enforceable and safe for ads. See docs/launch-runbook.md. -->
+<meta http-equiv="Content-Security-Policy" content="object-src 'none'; base-uri 'none'; form-action 'none'; upgrade-insecure-requests">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cash game or tournament for a home poker game?</title>
+<meta name="description" content="The difference, which suits which group, and why the money side differs far more than the poker does. Includes the compromise most regular games settle on.">
+<meta name="theme-color" content="#14523c">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="canonical" href="https://homepokerledger.com/guides/cash-game-or-tournament">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Home Poker Ledger">
+<meta property="og:title" content="Cash game or tournament for a home poker game?">
+<meta property="og:description" content="The difference, which suits which group, and why the money side differs far more than the poker does. Includes the compromise most regular games settle on.">
+<meta property="og:url" content="https://homepokerledger.com/guides/cash-game-or-tournament">
+<meta property="og:image" content="https://homepokerledger.com/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preload" href="../fonts/plex-sans-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../fonts/bodoni-700-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../fonts/plex-mono-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" type="image/png" sizes="48x48" href="../favicon-48.png">
+<link rel="icon" type="image/png" sizes="96x96" href="../favicon-96.png">
+<link rel="icon" type="image/png" sizes="192x192" href="../favicon-192.png">
+<link rel="icon" type="image/svg+xml" href="../icon.svg">
+<link rel="apple-touch-icon" sizes="192x192" href="../favicon-192.png">
+<link rel="stylesheet" href="../site.css">
+<script>
+(function(){try{var s=JSON.parse(localStorage.getItem("poker.ledger.v1")||"null");
+if(s&&(s.theme==="dark"||s.theme==="light"))document.documentElement.setAttribute("data-theme",s.theme);}catch(e){}})();
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Cash game or tournament",
+  "description": "The difference, which suits which group, and why the money side differs far more than the poker does. Includes the compromise most regular games settle on.",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://homepokerledger.com/guides/cash-game-or-tournament"
+  },
+  "url": "https://homepokerledger.com/guides/cash-game-or-tournament",
+  "image": {
+    "@type": "ImageObject",
+    "url": "https://homepokerledger.com/og.png",
+    "width": 1200,
+    "height": 630
+  },
+  "datePublished": "2026-09-07T21:30:39+09:00",
+  "dateModified": "2026-09-08T16:23:14+09:00",
+  "author": {
+    "@type": "Organization",
+    "name": "Home Poker Ledger",
+    "url": "https://homepokerledger.com/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Home Poker Ledger",
+    "url": "https://homepokerledger.com/",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://homepokerledger.com/favicon-512.png",
+      "width": 512,
+      "height": 512
+    }
+  },
+  "inLanguage": "en",
+  "isAccessibleForFree": true
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home Poker Ledger",
+      "item": "https://homepokerledger.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://homepokerledger.com/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Cash game or tournament",
+      "item": "https://homepokerledger.com/guides/cash-game-or-tournament"
+    }
+  ]
+}
+</script>
+</head>
+<body>
+
+<main class="table">
+
+  <header class="rail">
+    <div class="brand">
+      <div class="suits">&spades; &hearts; &diams; &clubs;</div>
+      <h1>Cash game or tournament</h1>
+      <div class="sub">Choosing a structure</div>
+    </div>
+    <a class="back" href="../">&larr; Back to the ledger</a>
+  </header>
+
+  <article class="doc">
+
+    <p class="updated">Guides &middot; Getting started</p>
+
+    <p class="lede">The first structural decision a home game makes, and the one that
+      shapes the whole evening: do people buy in for chips they can cash out at any
+      time, or does everyone start level and play until one person has all of them?</p>
+
+    <h2>Cash game</h2>
+    <p>Chips represent money directly. A $1 chip is a dollar. Players buy in, play as
+      long as they like, and cash out for whatever their stack is worth whenever they
+      want to stop.</p>
+    <ul>
+      <li><strong>People can arrive and leave whenever.</strong> The single biggest
+        practical advantage for a weeknight game.</li>
+      <li><strong>Losing does not end your night.</strong> Bust and rebuy, and you are
+        back in the next hand.</li>
+      <li><strong>No fixed finish.</strong> Which is either flexible or a problem,
+        depending on your group.</li>
+      <li><strong>Settling means counting chips</strong> and comparing against buy-ins.</li>
+    </ul>
+
+    <h2>Tournament</h2>
+    <p>Everyone pays the same entry and receives the same starting stack. Chips have no
+      cash value &mdash; they are just a scoreboard. Blinds rise on a timer, players are
+      eliminated, and the prize pool goes to whoever finishes highest.</p>
+    <ul>
+      <li><strong>Everyone starts equal</strong>, which suits a mixed-ability table.</li>
+      <li><strong>It ends.</strong> The blinds rising guarantee it, usually in two to
+        four hours.</li>
+      <li><strong>Your maximum loss is the entry.</strong> Genuinely valuable if anyone
+        is nervous about the stakes.</li>
+      <li><strong>Busting means you are done</strong>, unless rebuys are allowed early.</li>
+      <li><strong>Settling is a payout structure</strong>, agreed in advance.</li>
+    </ul>
+
+    <h2>Which suits a home game</h2>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>If your group…</th><th>Play</th></tr></thead>
+        <tbody>
+          <tr><td>arrives at different times</td><td>Cash game</td></tr>
+          <tr><td>needs to be done by a set hour</td><td>Tournament</td></tr>
+          <tr><td>has wildly mixed experience</td><td>Tournament</td></tr>
+          <tr><td>includes someone anxious about losing</td><td>Tournament &mdash; the entry is the cap</td></tr>
+          <tr><td>hates being knocked out early</td><td>Cash game</td></tr>
+          <tr><td>is new to hosting</td><td>Cash game &mdash; less to set up</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>For a first game, a <strong>cash game is easier to run</strong>: no blind
+      schedule, no timer, no payout structure to agree, and latecomers are not a
+      problem. Most regular home games are cash games for exactly those reasons.</p>
+
+    <h2>The compromise most groups land on</h2>
+    <p>A tournament first, then a cash game for whoever is still around. The tournament
+      gives the night a shape and a winner; the cash game gives the people who busted
+      early something to do that is not watching. It is more work to run and it is the
+      structure that keeps the most people at the table.</p>
+
+    <h2>The money side differs more than the poker</h2>
+    <p>A <strong>cash game</strong> settles on counted chips against recorded buy-ins,
+      which is what <a href="../">this calculator</a> does. The count either balances or
+      it does not, and when it does not you need to know by how much.</p>
+    <p>A <strong>tournament</strong> settles on finishing position against an agreed
+      payout structure. Agree that structure before you deal &mdash; a common split for
+      seven or eight players is 50/30/20 across the top three, or winner-takes-all for a
+      small field. Arguing about payouts after somebody has won is the worst possible
+      time to have that conversation.</p>
+    <p>If you run rebuys in a tournament, the prize pool grows, so the structure has to
+      be a percentage rather than fixed amounts.</p>
+
+  </article>
+
+  <footer class="foot">
+    <a href="../">Ledger</a><span class="sep">&middot;</span><a href="../how-it-works">How it works</a><span class="sep">&middot;</span><a href="../guides/">Guides</a><br><a href="../privacy" hreflang="en">Privacy</a>&#8202;<a href="../privacy-ko" lang="ko" hreflang="ko" aria-label="개인정보처리방침 — the privacy policy in Korean">(한국어)</a><span class="sep">&middot;</span><a href="../terms">Terms</a><span class="sep">&middot;</span><a href="#" data-consent-reopen hidden>Cookie settings</a>
+  </footer>
+
+</main>
+
+<script src="../consent.js" defer></script>
+
+</body>
+</html>

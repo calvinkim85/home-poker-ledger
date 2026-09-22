@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!-- Partial CSP. script-src is deliberately absent: Google supports only strict
+     CSP with per-request nonces for AdSense (a domain allowlist breaks ad serving
+     as their domains rotate), and GitHub Pages serves static files and cannot
+     generate a nonce per request. frame-ancestors and X-Content-Type-Options are
+     header-only and cannot be set from a meta tag at all. What is here is the
+     subset that is both enforceable and safe for ads. See docs/launch-runbook.md. -->
+<meta http-equiv="Content-Security-Policy" content="object-src 'none'; base-uri 'none'; form-action 'none'; upgrade-insecure-requests">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Home poker guides — setup, rules and settling up</title>
+<meta name="description" content="Practical guides to running a home poker game: choosing stakes and chips, rebuy rules, being the banker, and settling up when the count does not balance.">
+<meta name="theme-color" content="#14523c">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="canonical" href="https://homepokerledger.com/guides/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Home Poker Ledger">
+<meta property="og:title" content="Home poker guides — setup, rules and settling up">
+<meta property="og:description" content="Practical guides to running a home poker game: choosing stakes and chips, rebuy rules, being the banker, and settling up when the count does not balance.">
+<meta property="og:url" content="https://homepokerledger.com/guides/">
+<meta property="og:image" content="https://homepokerledger.com/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preload" href="../fonts/plex-sans-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../fonts/bodoni-700-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../fonts/plex-mono-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" type="image/png" sizes="48x48" href="../favicon-48.png">
+<link rel="icon" type="image/png" sizes="96x96" href="../favicon-96.png">
+<link rel="icon" type="image/png" sizes="192x192" href="../favicon-192.png">
+<link rel="icon" type="image/svg+xml" href="../icon.svg">
+<link rel="apple-touch-icon" sizes="192x192" href="../favicon-192.png">
+<link rel="alternate" type="application/rss+xml" title="Home Poker Ledger — guides" href="../rss.xml">
+<link rel="stylesheet" href="../site.css">
+<script>
+(function(){try{var s=JSON.parse(localStorage.getItem("poker.ledger.v1")||"null");
+if(s&&(s.theme==="dark"||s.theme==="light"))document.documentElement.setAttribute("data-theme",s.theme);}catch(e){}})();
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "name": "Home poker guides",
+  "description": "Practical guides to running a home poker game: choosing stakes and chips, rebuy rules, being the banker, and settling up when the count does not balance.",
+  "url": "https://homepokerledger.com/guides/",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://homepokerledger.com/guides/"
+  },
+  "inLanguage": "en",
+  "isPartOf": {
+    "@type": "WebSite",
+    "name": "Home Poker Ledger",
+    "url": "https://homepokerledger.com/"
+  },
+  "mainEntity": {
+    "@type": "ItemList",
+    "itemListOrder": "https://schema.org/ItemListUnordered",
+    "numberOfItems": 21,
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "url": "https://homepokerledger.com/guides/being-the-banker",
+        "name": "Being the banker at a home poker game"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "url": "https://homepokerledger.com/guides/cash-game-or-tournament",
+        "name": "Cash game or tournament"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "url": "https://homepokerledger.com/guides/chip-denominations",
+        "name": "Poker chip values and starting stacks"
+      },
+      {
+        "@type": "ListItem",
+        "position": 4,
+        "url": "https://homepokerledger.com/guides/first-home-game",
+        "name": "How to run your first home poker game"
+      },
+      {
+        "@type": "ListItem",
+        "position": 5,
+        "url": "https://homepokerledger.com/guides/rebuys-and-late-entries",
+        "name": "Poker rebuys and late entries"
+      },
+      {
+        "@type": "ListItem",
+        "position": 6,
+        "url": "https://homepokerledger.com/guides/settlement-mistakes",
+        "name": "Five ways a poker settlement goes wrong"
+      },
+      {
+        "@type": "ListItem",
+        "position": 7,
+        "url": "https://homepokerledger.com/guides/when-someone-cannot-pay",
+        "name": "When someone can't pay"
+      },
+      {
+        "@type": "ListItem",
+        "position": 8,
+        "url": "https://homepokerledger.com/guides/house-rules",
+        "name": "House rules worth agreeing"
+      },
+      {
+        "@type": "ListItem",
+        "position": 9,
+        "url": "https://homepokerledger.com/guides/cashing-out",
+        "name": "Cashing out at the end of the night"
+      },
+      {
+        "@type": "ListItem",
+        "position": 10,
+        "url": "https://homepokerledger.com/guides/paying-up",
+        "name": "Paying up after the game"
+      },
+      {
+        "@type": "ListItem",
+        "position": 11,
+        "url": "https://homepokerledger.com/guides/how-many-chips",
+        "name": "How many chips you actually need"
+      },
+      {
+        "@type": "ListItem",
+        "position": 12,
+        "url": "https://homepokerledger.com/guides/blinds-and-stacks",
+        "name": "Blinds and starting stacks"
+      },
+      {
+        "@type": "ListItem",
+        "position": 13,
+        "url": "https://homepokerledger.com/guides/raking-a-home-game",
+        "name": "Should you take a rake?"
+      },
+      {
+        "@type": "ListItem",
+        "position": 14,
+        "url": "https://homepokerledger.com/guides/tracking-a-season",
+        "name": "Tracking a season"
+      },
+      {
+        "@type": "ListItem",
+        "position": 15,
+        "url": "https://homepokerledger.com/guides/side-pots",
+        "name": "Side pots"
+      },
+      {
+        "@type": "ListItem",
+        "position": 16,
+        "url": "https://homepokerledger.com/guides/how-many-players",
+        "name": "How many players"
+      },
+      {
+        "@type": "ListItem",
+        "position": 17,
+        "url": "https://homepokerledger.com/guides/finding-players",
+        "name": "Finding players"
+      },
+      {
+        "@type": "ListItem",
+        "position": 18,
+        "url": "https://homepokerledger.com/guides/dealing-and-the-button",
+        "name": "Dealing and the button"
+      },
+      {
+        "@type": "ListItem",
+        "position": 19,
+        "url": "https://homepokerledger.com/guides/keeping-the-game-alive",
+        "name": "Why home games die"
+      },
+      {
+        "@type": "ListItem",
+        "position": 20,
+        "url": "https://homepokerledger.com/guides/beginners-at-the-table",
+        "name": "Beginners at the table"
+      },
+      {
+        "@type": "ListItem",
+        "position": 21,
+        "url": "https://homepokerledger.com/guides/bank-came-up-short",
+        "name": "When the bank comes up short"
+      }
+    ]
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home Poker Ledger",
+      "item": "https://homepokerledger.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://homepokerledger.com/guides/"
+    }
+  ]
+}
+</script>
+</head>
+<body>
+
+<main class="table">
+
+  <header class="rail">
+    <div class="brand">
+      <div class="suits">&spades; &hearts; &diams; &clubs;</div>
+      <h1>Home poker guides</h1>
+      <div class="sub">Setup, rules and settling up</div>
+    </div>
+    <a class="back" href="../">&larr; Back to the ledger</a>
+  </header>
+
+  <article class="doc">
+
+    <p class="lede">Practical pieces on running a home game and the money side of it &mdash; the
+      part that has nothing to do with how well you play, and causes most of the friction.</p>
+
+    <ul class="cards">
+      <li><a href="first-home-game"><b>How to run your first home poker game</b>
+        <span>Choosing stakes, how many players, what to buy, the rules to agree before
+        dealing, and how to settle up at the end.</span></a></li>
+      <li><a href="cash-game-or-tournament"><b>Cash game or tournament?</b>
+        <span>Which structure suits your group, and why the money side differs far more
+        than the poker does.</span></a></li>
+      <li><a href="chip-denominations"><b>Choosing chip values and starting stacks</b>
+        <span>How to pick denominations that fit your buy-in, why the cheapest chip should
+        be worth about a fortieth of a stack, and the colours to avoid.</span></a></li>
+      <li><a href="rebuys-and-late-entries"><b>Rebuys, add-ons, and players who arrive late</b>
+        <span>What to agree before the first hand, how to record a rebuy so it survives
+        until settlement, and how to seat someone who missed the start.</span></a></li>
+      <li><a href="being-the-banker"><b>Being the banker</b>
+        <span>Running the cash without it becoming your whole evening: collecting buy-ins,
+        keeping the tray honest, and paying out at the end.</span></a></li>
+      <li><a href="when-someone-cannot-pay"><b>When someone can't pay</b>
+        <span>How to prevent the most uncomfortable moment a home game produces, and
+        why making the numbers fit is the worst way out of it.</span></a></li>
+      <li><a href="settlement-mistakes"><b>Five ways a settlement goes wrong</b>
+        <span>The specific arithmetic errors that turn a five-minute settle into a
+        forty-minute argument, and how to catch each one.</span></a></li>
+      <li><a href="house-rules"><b>House rules worth agreeing</b>
+        <span>The short list a home game needs settled in advance: money rules, table rules, and who has the final say mid-hand.</span></a></li>
+      <li><a href="cashing-out"><b>Cashing out at the end of the night</b>
+        <span>The order to count a table down in, why you colour up first, and how to catch a count that does not match the money in.</span></a></li>
+      <li><a href="paying-up"><b>Paying up after the game</b>
+        <span>How the money actually moves once the ledger is settled: cash versus apps, rounding, and what is still owed.</span></a></li>
+      <li><a href="how-many-chips"><b>How many chips you actually need</b>
+        <span>How many chips a home game needs by player count, and which denomination always runs out first.</span></a></li>
+      <li><a href="blinds-and-stacks"><b>Blinds and starting stacks</b>
+        <span>Picking blinds that fit your buy-in, why 100 big blinds is the standard, and levels for a home tournament.</span></a></li>
+      <li><a href="raking-a-home-game"><b>Should you take a rake?</b>
+        <span>Why a cut of the pot changes what your game is, and the fairer ways to cover the costs of hosting.</span></a></li>
+      <li><a href="tracking-a-season"><b>Tracking a season</b>
+        <span>Keeping a record across weeks without it turning into a debt ledger, and what the numbers will show you.</span></a></li>
+      <li><a href="side-pots"><b>Side pots</b>
+        <span>What happens to the betting when someone is all in for less, and the one rule that settles every dispute.</span></a></li>
+      <li><a href="how-many-players"><b>How many players</b>
+        <span>Why six to eight is the sweet spot, and what to do when ten people say yes.</span></a></li>
+      <li><a href="finding-players"><b>Finding players</b>
+        <span>Where home game players actually come from, and how to make it easy to say yes again.</span></a></li>
+      <li><a href="dealing-and-the-button"><b>Dealing and the button</b>
+        <span>Rotating the deal versus a dedicated dealer, and how the button and blinds move.</span></a></li>
+      <li><a href="keeping-the-game-alive"><b>Why home games die</b>
+        <span>The four reasons a regular game quietly stops happening, and the habits that keep one running.</span></a></li>
+      <li><a href="beginners-at-the-table"><b>Beginners at the table</b>
+        <span>Including someone who has never played, without slowing the game or taking all their money in an hour.</span></a></li>
+      <li><a href="bank-came-up-short"><b>When the bank comes up short</b>
+        <span>The chips do not match the money. How to find the cause, and who should absorb it once you have genuinely looked.</span></a></li>
+    </ul>
+
+    <p>The calculator itself is <a href="../">here</a>, and
+      <a href="../how-it-works">How it works</a> explains the arithmetic it performs.</p>
+
+  </article>
+
+  <footer class="foot">
+    <a href="../">Ledger</a><span class="sep">&middot;</span><a href="../how-it-works">How it works</a><span class="sep">&middot;</span><a href="../guides/">Guides</a><br><a href="../privacy" hreflang="en">Privacy</a>&#8202;<a href="../privacy-ko" lang="ko" hreflang="ko" aria-label="개인정보처리방침 — the privacy policy in Korean">(한국어)</a><span class="sep">&middot;</span><a href="../terms">Terms</a><span class="sep">&middot;</span><a href="#" data-consent-reopen hidden>Cookie settings</a>
+  </footer>
+
+</main>
+
+<script src="../consent.js" defer></script>
+
+</body>
+</html>

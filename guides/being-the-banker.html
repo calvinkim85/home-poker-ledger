@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!-- Partial CSP. script-src is deliberately absent: Google supports only strict
+     CSP with per-request nonces for AdSense (a domain allowlist breaks ad serving
+     as their domains rotate), and GitHub Pages serves static files and cannot
+     generate a nonce per request. frame-ancestors and X-Content-Type-Options are
+     header-only and cannot be set from a meta tag at all. What is here is the
+     subset that is both enforceable and safe for ads. See docs/launch-runbook.md. -->
+<meta http-equiv="Content-Security-Policy" content="object-src 'none'; base-uri 'none'; form-action 'none'; upgrade-insecure-requests">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>How to be the banker at a home poker game</title>
+<meta name="description" content="Running the money at a home poker game: collecting buy-ins, never banking from your own pocket, and cashing out in the right order.">
+<meta name="theme-color" content="#14523c">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="canonical" href="https://homepokerledger.com/guides/being-the-banker">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Home Poker Ledger">
+<meta property="og:title" content="How to be the banker at a home poker game">
+<meta property="og:description" content="Running the money at a home poker game: collecting buy-ins, never banking from your own pocket, and cashing out in the right order.">
+<meta property="og:url" content="https://homepokerledger.com/guides/being-the-banker">
+<meta property="og:image" content="https://homepokerledger.com/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preload" href="../fonts/plex-sans-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../fonts/bodoni-700-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../fonts/plex-mono-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" type="image/png" sizes="48x48" href="../favicon-48.png">
+<link rel="icon" type="image/png" sizes="96x96" href="../favicon-96.png">
+<link rel="icon" type="image/png" sizes="192x192" href="../favicon-192.png">
+<link rel="icon" type="image/svg+xml" href="../icon.svg">
+<link rel="apple-touch-icon" sizes="192x192" href="../favicon-192.png">
+<link rel="stylesheet" href="../site.css">
+<script>
+(function(){try{var s=JSON.parse(localStorage.getItem("poker.ledger.v1")||"null");
+if(s&&(s.theme==="dark"||s.theme==="light"))document.documentElement.setAttribute("data-theme",s.theme);}catch(e){}})();
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Being the banker at a home poker game",
+  "description": "Running the money at a home poker game: collecting buy-ins, never banking from your own pocket, and cashing out in the right order.",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://homepokerledger.com/guides/being-the-banker"
+  },
+  "url": "https://homepokerledger.com/guides/being-the-banker",
+  "image": {
+    "@type": "ImageObject",
+    "url": "https://homepokerledger.com/og.png",
+    "width": 1200,
+    "height": 630
+  },
+  "datePublished": "2026-09-05T14:46:25+09:00",
+  "dateModified": "2026-09-08T16:23:14+09:00",
+  "author": {
+    "@type": "Organization",
+    "name": "Home Poker Ledger",
+    "url": "https://homepokerledger.com/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Home Poker Ledger",
+    "url": "https://homepokerledger.com/",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://homepokerledger.com/favicon-512.png",
+      "width": 512,
+      "height": 512
+    }
+  },
+  "inLanguage": "en",
+  "isAccessibleForFree": true
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home Poker Ledger",
+      "item": "https://homepokerledger.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://homepokerledger.com/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Being the banker at a home poker game",
+      "item": "https://homepokerledger.com/guides/being-the-banker"
+    }
+  ]
+}
+</script>
+</head>
+<body>
+
+<main class="table">
+
+  <header class="rail">
+    <div class="brand">
+      <div class="suits">&spades; &hearts; &diams; &clubs;</div>
+      <h1>Being the banker at a home poker game</h1>
+      <div class="sub">Running the money side</div>
+    </div>
+    <a class="back" href="../">&larr; Back to the ledger</a>
+  </header>
+
+  <article class="doc">
+
+    <p class="updated">Guides &middot; Running the game</p>
+
+    <p class="lede">Somebody has to hold the money. Done carelessly it becomes an hour of
+      your evening and an awkward conversation at the end; done well nobody notices it
+      happened at all.</p>
+
+    <h2>The job is bookkeeping, not custody</h2>
+    <p>The instinct is to think of the banker as the person holding a pile of cash. That
+      framing is what makes the role unpleasant. The actual job is to <strong>maintain an
+      accurate record of who has bought in for what</strong>. The cash is incidental &mdash;
+      in a game that settles by bank transfer there may be no cash at all.</p>
+    <p>Once you see it that way, the priorities reorder. Guarding the tin matters less than
+      never letting a buy-in go unrecorded.</p>
+
+    <h2>Collect at the start if you can</h2>
+    <p>Taking everyone's initial buy-in before the first hand is worth the two minutes. It
+      gets the least interesting part of the evening over with while everyone is standing
+      up anyway, and it means the only entries you make during play are rebuys.</p>
+    <p>If people are settling by transfer at the end rather than paying cash up front,
+      collect the <em>record</em> at the start regardless: names entered, buy-ins logged.
+      The bookkeeping should not wait for the money.</p>
+
+    <h2>Never bank out of your own pocket</h2>
+    <p>The single rule that keeps this clean. If you front someone's buy-in, or cover a
+      shortfall at the end from your own wallet to make the numbers work, you have merged
+      two ledgers and you will not be able to separate them at 2am.</p>
+    <p>If somebody needs to owe money, let them owe it explicitly &mdash; as a line in the
+      record, not as a quiet loan from the banker that nobody else can see.</p>
+
+    <h2>Keep the tray boring</h2>
+    <ul>
+      <li><strong>One tray, one place, one person's hands.</strong> Chips that live in
+        three places get counted twice or not at all.</li>
+      <li><strong>Returned chips go back immediately.</strong> A cashed-out player's stack
+        sitting beside the tray will be mistaken for someone's chips within the hour.</li>
+      <li><strong>Do not make change from the pot.</strong> Change comes from the tray.
+        Breaking a chip out of a live pot is how a pot ends up short and nobody can say by
+        how much.</li>
+    </ul>
+
+    <h2>Cashing out, in the right order</h2>
+    <p>At the end, the order of operations matters more than the speed:</p>
+    <ol>
+      <li>Everyone counts their own stack, in front of someone else.</li>
+      <li>The number is recorded &mdash; written down or entered &mdash; before the chips
+        move.</li>
+      <li>Chips go back to the tray.</li>
+      <li>Only when every player is recorded do you compare the total against buy-ins.</li>
+    </ol>
+    <p>Doing the comparison before everyone is counted invites the temptation to make a
+      late count &ldquo;fit&rdquo; the gap, which quietly hides the error rather than
+      finding it.</p>
+    <p>Pressing <b>Cash out</b> on each seat as you go turns that order into something
+      you can see. A settled seat is marked and its figure is locked; an unsettled one
+      is obviously still open. And if you press Calculate while some players are still
+      uncounted, it says so and names them &mdash; which is precisely the moment this
+      goes wrong.</p>
+
+    <h2>When it doesn't balance, say so immediately</h2>
+    <p>If the chips and the buy-ins disagree, announce it before you start settling.
+      A discrepancy discovered halfway through paying people out is significantly worse
+      than one announced at the start, because payments have already been made on the
+      basis of numbers that were wrong.</p>
+    <p>Home Poker Ledger checks this automatically and refuses to present a settlement as
+      balanced when it isn't &mdash; it names the direction and the amount. What to do
+      about it is a table decision, and
+      <a href="../how-it-works">how it works</a> describes the one convention the tool
+      can apply for you.</p>
+
+    <h2>Being the banker should rotate</h2>
+    <p>Not because anyone is untrustworthy, but because a single person doing it every week
+      accumulates quiet resentment on both sides &mdash; theirs for the work, everyone
+      else's for the dependence. It is a fifteen-minute job. Share it.</p>
+
+  </article>
+
+  <footer class="foot">
+    <a href="../">Ledger</a><span class="sep">&middot;</span><a href="../how-it-works">How it works</a><span class="sep">&middot;</span><a href="../guides/">Guides</a><br><a href="../privacy" hreflang="en">Privacy</a>&#8202;<a href="../privacy-ko" lang="ko" hreflang="ko" aria-label="개인정보처리방침 — the privacy policy in Korean">(한국어)</a><span class="sep">&middot;</span><a href="../terms">Terms</a><span class="sep">&middot;</span><a href="#" data-consent-reopen hidden>Cookie settings</a>
+  </footer>
+
+</main>
+
+<script src="../consent.js" defer></script>
+
+</body>
+</html>

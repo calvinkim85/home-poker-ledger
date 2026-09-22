@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!-- Partial CSP. script-src is deliberately absent: Google supports only strict
+     CSP with per-request nonces for AdSense (a domain allowlist breaks ad serving
+     as their domains rotate), and GitHub Pages serves static files and cannot
+     generate a nonce per request. frame-ancestors and X-Content-Type-Options are
+     header-only and cannot be set from a meta tag at all. What is here is the
+     subset that is both enforceable and safe for ads. See docs/launch-runbook.md. -->
+<meta http-equiv="Content-Security-Policy" content="object-src 'none'; base-uri 'none'; form-action 'none'; upgrade-insecure-requests">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#14523c">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="preload" href="fonts/plex-sans-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/bodoni-700-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/plex-mono-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" type="image/png" sizes="48x48" href="favicon-48.png">
+<link rel="icon" type="image/png" sizes="96x96" href="favicon-96.png">
+<link rel="icon" type="image/png" sizes="192x192" href="favicon-192.png">
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<link rel="apple-touch-icon" sizes="192x192" href="favicon-192.png">
+<title>Terms of Use — Home Poker Ledger</title>
+<meta name="description" content="The terms for using Home Poker Ledger: free, no warranty, your data stays on your device, and the arithmetic is not a referee.">
+<link rel="canonical" href="https://homepokerledger.com/terms">
+<link rel="stylesheet" href="site.css">
+<script>
+(function(){try{var s=JSON.parse(localStorage.getItem("poker.ledger.v1")||"null");
+if(s&&(s.theme==="dark"||s.theme==="light"))document.documentElement.setAttribute("data-theme",s.theme);}catch(e){}})();
+</script>
+</head>
+<body>
+
+<main class="table">
+
+  <header class="rail">
+    <div class="brand">
+      <div class="suits">&spades; &hearts; &diams; &clubs;</div>
+      <h1>Terms of Use</h1>
+      <div class="sub">Home Poker Ledger</div>
+    </div>
+    <a class="back" href="./">&larr; Back to the ledger</a>
+  </header>
+
+  <article class="doc">
+
+    <p class="updated">Last updated 5 September 2026</p>
+
+    <p class="lede">Home Poker Ledger is free, runs in your browser, and asks nothing of you.
+      These terms are short because the service is small.</p>
+
+    <h2>What this is</h2>
+    <p>Home Poker Ledger is a calculator. You enter what each player bought in for and what
+      they cashed out, and it works out who pays whom in as few transfers as possible.
+      It is a record-keeping aid for a game that already happened, away from this site.</p>
+    <p><strong>It is not a gambling service.</strong> No wagering, betting, staking, or
+      payment of any kind happens here. No money moves through this site. There is
+      nothing to deposit and nothing to win. It does not deal cards, run a game, match
+      players, or hold funds.</p>
+
+    <h2>It is free, and it stays free</h2>
+    <p>There is no charge, no account, no subscription, and no paid tier. The site is
+      supported by advertising. If that ever changes, the change will be announced on
+      the site before it takes effect, and the existing functionality will not be moved
+      behind a payment.</p>
+
+    <h2>Your data is yours</h2>
+    <p>Everything you type stays in your own browser. We do not receive it, store it, or
+      have any way to reach it. That also means <strong>we cannot recover it for you</strong>
+      &mdash; if you clear your browser data or press &ldquo;Clear all&rdquo;, the game is gone, and
+      there is no backup on our side. See the
+      <a href="privacy">Privacy Policy</a> for the detail.</p>
+
+    <h2>No warranty, and the arithmetic is not a referee</h2>
+    <p>The service is provided &ldquo;as is&rdquo;, without warranty of any kind. The settlement
+      it produces is arithmetic performed on the numbers you typed. It has been
+      tested extensively, but:</p>
+    <ul>
+      <li>If the numbers going in are wrong, the settlement coming out is wrong.</li>
+      <li>The &ldquo;cover the gap from the top&rdquo; option applies one particular convention
+        for handling a chip count that does not balance. It is a reasonable convention,
+        not a rule of the game, and it is optional for that reason.</li>
+      <li><strong>Who actually owes what at your table is between the people at your
+        table.</strong> This tool has no authority to settle a disagreement, and the operator
+        is not a party to it.</li>
+    </ul>
+    <p>To the fullest extent permitted by law, the operator is not liable for any loss
+      or dispute arising from use of this site. Nothing in these terms limits any right
+      you have under mandatory consumer-protection law that cannot be waived.</p>
+
+    <h2>Acceptable use</h2>
+    <p>Use it for its purpose. Do not attempt to use it to operate real-money gambling,
+      and do not misrepresent it as a gambling service. Do not enter other people's
+      personal information without their knowledge &mdash; initials work perfectly well.</p>
+
+    <h2>Availability</h2>
+    <p>The site is hosted on Cloudflare Pages and is offered without any uptime commitment.
+      It may be unavailable, changed, or discontinued at any time. Because the app runs
+      entirely in your browser, a page you already have open keeps working even if the
+      host does not.</p>
+
+    <h2>How you can check what it does</h2>
+    <p>Everything this site does happens in your own browser, which means you do not
+      have to take our word for any of it. Open your browser's developer tools and
+      watch the network tab while you use the calculator: no request carries your
+      numbers anywhere, because there is nowhere for them to go.</p>
+
+    <h2>Governing law and contact</h2>
+    <p>These terms are governed by the laws of the Republic of Korea, without limiting
+      any protection you are entitled to under the mandatory law of your own country of
+      residence.</p>
+    <div class="table-scroll">
+      <table>
+        <tbody>
+          <tr><th>Operated by</th><td>Home Poker Ledger</td></tr>
+          <tr><th>Contact</th><td><a href="mailto:service@homepokerledger.com">service@homepokerledger.com</a></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </article>
+
+  <footer class="foot">
+    <a href="./">Ledger</a><span class="sep">&middot;</span><a href="how-it-works">How it works</a><span class="sep">&middot;</span><a href="guides/">Guides</a><br>
+    <a href="privacy" hreflang="en">Privacy</a>&#8202;<a href="privacy-ko" lang="ko" hreflang="ko" aria-label="개인정보처리방침 — the privacy policy in Korean">(한국어)</a><span class="sep">&middot;</span><a href="terms">Terms</a><span class="sep">&middot;</span><a href="#" data-consent-reopen hidden>Cookie settings</a>
+  </footer>
+
+</main>
+
+<script src="consent.js" defer></script>
+
+</body>
+</html>

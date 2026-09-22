@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!-- Partial CSP. script-src is deliberately absent: Google supports only strict
+     CSP with per-request nonces for AdSense (a domain allowlist breaks ad serving
+     as their domains rotate), and GitHub Pages serves static files and cannot
+     generate a nonce per request. frame-ancestors and X-Content-Type-Options are
+     header-only and cannot be set from a meta tag at all. What is here is the
+     subset that is both enforceable and safe for ads. See docs/launch-runbook.md. -->
+<meta http-equiv="Content-Security-Policy" content="object-src 'none'; base-uri 'none'; form-action 'none'; upgrade-insecure-requests">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>How Home Poker Ledger works — the settlement arithmetic</title>
+<meta name="description" content="How the calculator turns buy-ins and cash-outs into the shortest list of payments: net positions, greedy pairing, the gap-covering rule, and integer money.">
+<meta name="theme-color" content="#14523c">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="canonical" href="https://homepokerledger.com/how-it-works">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Home Poker Ledger">
+<meta property="og:title" content="How Home Poker Ledger works — the settlement arithmetic">
+<meta property="og:description" content="How the calculator turns buy-ins and cash-outs into the shortest list of payments: net positions, greedy pairing, the gap-covering rule, and integer money.">
+<meta property="og:url" content="https://homepokerledger.com/how-it-works">
+<meta property="og:image" content="https://homepokerledger.com/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preload" href="fonts/plex-sans-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/bodoni-700-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/plex-mono-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" type="image/png" sizes="48x48" href="favicon-48.png">
+<link rel="icon" type="image/png" sizes="96x96" href="favicon-96.png">
+<link rel="icon" type="image/png" sizes="192x192" href="favicon-192.png">
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<link rel="apple-touch-icon" sizes="192x192" href="favicon-192.png">
+<link rel="stylesheet" href="site.css">
+<script>
+(function(){try{var s=JSON.parse(localStorage.getItem("poker.ledger.v1")||"null");
+if(s&&(s.theme==="dark"||s.theme==="light"))document.documentElement.setAttribute("data-theme",s.theme);}catch(e){}})();
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "How the poker settlement works",
+  "description": "How the calculator turns buy-ins and cash-outs into the shortest list of payments: net positions, greedy pairing, the gap-covering rule, and integer money.",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://homepokerledger.com/how-it-works"
+  },
+  "url": "https://homepokerledger.com/how-it-works",
+  "image": {
+    "@type": "ImageObject",
+    "url": "https://homepokerledger.com/og.png",
+    "width": 1200,
+    "height": 630
+  },
+  "datePublished": "2026-09-05T14:46:25+09:00",
+  "dateModified": "2026-09-08T16:28:21+09:00",
+  "author": {
+    "@type": "Organization",
+    "name": "Home Poker Ledger",
+    "url": "https://homepokerledger.com/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Home Poker Ledger",
+    "url": "https://homepokerledger.com/",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://homepokerledger.com/favicon-512.png",
+      "width": 512,
+      "height": 512
+    }
+  },
+  "inLanguage": "en",
+  "isAccessibleForFree": true
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home Poker Ledger",
+      "item": "https://homepokerledger.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "How the poker settlement works",
+      "item": "https://homepokerledger.com/how-it-works"
+    }
+  ]
+}
+</script>
+</head>
+<body>
+
+<main class="table">
+
+  <header class="rail">
+    <div class="brand">
+      <div class="suits">&spades; &hearts; &diams; &clubs;</div>
+      <h1>How the poker settlement works</h1>
+      <div class="sub">The settlement arithmetic, explained</div>
+    </div>
+    <a class="back" href="">&larr; Back to the ledger</a>
+  </header>
+
+  <article class="doc">
+
+    <p class="updated">How the settlement is calculated</p>
+
+    <p class="lede">Home Poker Ledger takes two numbers per player &mdash; what they put in and
+      what they took out &mdash; and turns them into the shortest list of payments that
+      settles the table. This page explains exactly what it does with those numbers,
+      because a tool that handles other people's money should not be a black box.</p>
+
+    <h2>Step one: reduce everyone to a single number</h2>
+    <p>Every player's position is one figure: <strong>net = cashed out &minus; total bought
+      in</strong>. Buy-ins are kept as separate entries rather than a running total, so the
+      record still shows who rebought and how often, but for settlement purposes only the
+      sum matters.</p>
+    <p>A player who bought in twice at $20 and finished with $65 has a net of
+      <strong>+$25</strong>. A player who bought in once and busted has <strong>&minus;$20</strong>.
+      Nobody's net depends on anyone else's &mdash; that is what makes the rest of this
+      tractable.</p>
+
+    <h2>Step two: check the books balance</h2>
+    <p>In a game with no house, the money that goes in is the money that comes out. Add
+      every net together and the total should be exactly zero. If it isn't, something is
+      wrong with the count, and no amount of clever settlement arithmetic will fix it.</p>
+    <p>So the calculator checks this first and tells you three things: whether there is a
+      discrepancy, which direction it runs, and how much it is. It will not quietly
+      distribute an error and present the result as if the night reconciled.</p>
+
+    <h2>Step three: pair the biggest winner with the biggest loser</h2>
+    <p>Once the nets sum to zero, the winners are owed precisely what the losers owe.
+      Settling is a matter of matching them up, and there are many valid ways to do it.
+      Most are needlessly tedious &mdash; six people making six separate transfers when
+      three would do.</p>
+    <p>The calculator uses a greedy pairing. It takes the largest amount owed and the
+      largest amount due, and settles the smaller of the two in a single payment. That
+      always zeroes out at least one player, so each payment removes someone from the
+      problem entirely.</p>
+    <p>With <em>n</em> players, this settles the table in <strong>at most n &minus; 1
+      payments</strong>, and usually fewer. A six-handed game where three people won and
+      three lost typically resolves in three or four transfers rather than nine.</p>
+
+    <h3>A worked example</h3>
+    <p>Four players finish at +$40, +$15, &minus;$25, &minus;$30. The largest debt
+      (&minus;$30) pays the largest credit (+$40), which settles $30 and leaves that
+      winner owed $10. Then &minus;$25 pays the remaining $10, leaving them owing $15,
+      which goes to the +$15 player. Three payments, four players, everyone square.</p>
+
+    <h2>Step four: the count that doesn't reconcile</h2>
+    <p>When the chips don't match the buy-ins and you have already looked for the
+      missing entry, someone has to absorb the difference. Splitting it equally across
+      the table punishes people who lost money already. Charging whoever miscounted
+      assumes you know who that was, and you usually don't.</p>
+    <p>The optional <strong>&ldquo;Cover the gap from the top&rdquo;</strong> setting
+      puts it on the players who finished ahead, beginning with the biggest winner. They
+      are the ones with winnings to give up, and a dent in a good night costs less than
+      deepening somebody's loss.</p>
+
+    <h3>The rule: nobody's placing changes</h3>
+    <p>This is the constraint that makes the option worth using rather than doing it by
+      hand, and it is the whole reason the arithmetic is not obvious. <strong>Whoever
+      finished first still finishes first. Second is still second.</strong> Only the
+      amounts move.</p>
+    <p>That is harder than it sounds. Take the obvious approach &mdash; put the whole gap
+      on the biggest winner &mdash; and if the top two finished close together, the
+      leader drops below second place. You have not settled the night; you have rewritten
+      who won it.</p>
+
+    <h3>How it actually decides</h3>
+    <p>It grows the group one player at a time, and stops at the first size that works:</p>
+    <ol>
+      <li><strong>Can the leader alone cover it</strong> and still finish above second
+        place? If yes, they do, and nobody else is touched.</li>
+      <li>If not, <strong>try the top two</strong> sharing it equally. Can they take half
+        each and both stay above third?</li>
+      <li>If not, <strong>the top three</strong> taking a third each. Then four. And so
+        on, as far as it needs to go.</li>
+    </ol>
+    <p>The first group that can absorb its share without anyone slipping below the player
+      beneath them is the group that pays.</p>
+
+    <h3>Worked examples</h3>
+    <p>Alice finishes <strong>+$40</strong>, Bob <strong>+$32</strong>.</p>
+    <ul>
+      <li><strong>$4 unaccounted.</strong> Alice covers it alone: +$36 against Bob's
+        +$32. She is still ahead, so nobody else is involved.</li>
+      <li><strong>$10 unaccounted.</strong> Alone, Alice would drop to +$30 &mdash;
+        behind Bob. So they halve it: <strong>+$35 and +$27</strong>. Alice still leads,
+        the gap is covered, and the order is unchanged.</li>
+    </ul>
+
+    <h3>The detail that took the most care</h3>
+    <p>When a gap does not divide evenly, somebody has to take the extra penny. That
+      penny goes to the <strong>bottom</strong> of the paying group, never the top.</p>
+    <p>It sounds like a triviality and it is not: hand the extra unit to the leader and
+      you can put them exactly one penny behind second place &mdash; the very outcome the
+      whole rule exists to prevent. The cheapest possible violation of the constraint,
+      and the easiest to miss.</p>
+
+    <h3>When the gap outruns the winnings</h3>
+    <p>If the shortfall is larger than everything the winners collectively won, no group
+      can absorb it and stay ranked. The calculator then spreads it across everyone,
+      zeroing out anyone who cannot cover their share and re-dividing what is left among
+      the rest.</p>
+    <p>This is only reachable on a badly wrong count &mdash; if you get here, the real
+      answer is that a buy-in went unrecorded, and it is worth another look before
+      accepting the result.</p>
+
+    <h3>Which side pays depends on which way the count is wrong</h3>
+    <p>Everything above describes the commoner case: <strong>more chips on the table
+      than money went in</strong>, usually a rebuy nobody recorded. The table is claiming
+      money that was never paid in, so the winners cannot all be paid in full &mdash; and
+      it is the winners who give up part of their win.</p>
+    <p>When the count runs the other way and the table is <strong>short</strong>, the
+      same logic runs in reverse. The losers collectively owe more than the winners are
+      claiming, so the <strong>biggest loser's debt comes down first</strong>, then the
+      two biggest, and so on &mdash; under the identical constraint that nobody's placing
+      changes.</p>
+
+    <h3>Leave it off if you can find the error</h3>
+    <p>The option is off by default, deliberately. A gap almost always means a rebuy
+      nobody wrote down, and finding it is strictly better than distributing it: the
+      books balance honestly and nobody gives up anything they won. Turn this on once you
+      have genuinely looked and the money is still missing.</p>
+
+    <h2>Cashing out a player who leaves early</h2>
+    <p>A player who leaves at 11pm is one of the two commonest reasons a count will not
+      reconcile. They count their chips, take their money, and the chips go back in the
+      tray &mdash; and if nobody wrote the number down first, it can never be checked,
+      because the evidence has been mixed back into the tray.</p>
+    <p>Each seat has a <b>Cash out</b> button for this. Enter their final count, press
+      it, and three things happen:</p>
+    <ul>
+      <li>The cash-out figure is <strong>locked</strong>, so it cannot drift later.</li>
+      <li><b>+ Rebuy</b> is disabled &mdash; they have left, so a further buy-in would be
+        an error rather than a choice.</li>
+      <li>The seat is <strong>marked</strong>, so a glance tells you who is still playing.</li>
+    </ul>
+    <p><b>Reopen</b> reverses it if they come back or the number was wrong.</p>
+    <p>It also guards the second commonest mistake. Press <b>Calculate settlement</b>
+      while some players are marked and others are not, and it names the ones still to
+      be counted. Settling before everyone is down means money moves, then the last
+      stack comes in wrong, and now you are unwinding payments as well as hunting an
+      error.</p>
+    <p>The button changes no arithmetic whatsoever. The same numbers settle identically
+      whether or not anyone presses it &mdash; it records <em>where you are</em> in the
+      night, not what anyone is owed.</p>
+
+    <h2>Rounding, and why yen and won behave differently</h2>
+    <p>All arithmetic is done in the currency's smallest unit &mdash; cents for dollars,
+      won for won &mdash; using integers, never floating point. This is not fussiness.
+      Storing $20.10 as a decimal and adding it up sixty times produces a total that is
+      off by a fraction of a cent, and a settlement that is off by a cent is a settlement
+      someone will argue about.</p>
+    <p>Seven currencies are supported: KRW, USD, JPY, CNY, EUR, GBP and SGD. Won and yen
+      have no minor unit, so the calculator shows no decimal places for them and rounds to
+      whole units. Entering &ldquo;20000&rdquo; in KRW means twenty thousand won, not two
+      hundred.</p>
+
+    <h2>What it does not do</h2>
+    <ul>
+      <li>It does not deal cards, run a game, or track anything during play.</li>
+      <li>It does not move money. It tells you who should pay whom; the paying is yours.</li>
+      <li>It does not send your numbers anywhere. There is no server &mdash; see the
+        <a href="privacy">privacy policy</a> for what that means in practice.</li>
+      <li>It does not decide disputes. If the table disagrees about what happened, that
+        is a conversation, not a calculation.</li>
+    </ul>
+
+    <p>Every rule above is covered by an automated test suite of several hundred cases,
+      including randomised tables checked to settle exactly and never to change anyone's
+      placing. The arithmetic is not trusted because we say so; it is checked on every
+      change.</p>
+
+  </article>
+
+  <footer class="foot">
+    <a href="">Ledger</a><span class="sep">&middot;</span><a href="how-it-works">How it works</a><span class="sep">&middot;</span><a href="guides/">Guides</a><br><a href="privacy" hreflang="en">Privacy</a>&#8202;<a href="privacy-ko" lang="ko" hreflang="ko" aria-label="개인정보처리방침 — the privacy policy in Korean">(한국어)</a><span class="sep">&middot;</span><a href="terms">Terms</a><span class="sep">&middot;</span><a href="#" data-consent-reopen hidden>Cookie settings</a>
+  </footer>
+
+</main>
+
+<script src="consent.js" defer></script>
+
+</body>
+</html>

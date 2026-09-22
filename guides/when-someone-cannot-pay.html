@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!-- Partial CSP. script-src is deliberately absent: Google supports only strict
+     CSP with per-request nonces for AdSense (a domain allowlist breaks ad serving
+     as their domains rotate), and GitHub Pages serves static files and cannot
+     generate a nonce per request. frame-ancestors and X-Content-Type-Options are
+     header-only and cannot be set from a meta tag at all. What is here is the
+     subset that is both enforceable and safe for ads. See docs/launch-runbook.md. -->
+<meta http-equiv="Content-Security-Policy" content="object-src 'none'; base-uri 'none'; form-action 'none'; upgrade-insecure-requests">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Someone can't pay after a home poker game: what to do</title>
+<meta name="description" content="How to prevent the most uncomfortable moment a home game produces, what to do when it happens anyway, and why making the numbers fit is the worst option.">
+<meta name="theme-color" content="#14523c">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="canonical" href="https://homepokerledger.com/guides/when-someone-cannot-pay">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Home Poker Ledger">
+<meta property="og:title" content="Someone can't pay after a home poker game: what to do">
+<meta property="og:description" content="How to prevent the most uncomfortable moment a home game produces, what to do when it happens anyway, and why making the numbers fit is the worst option.">
+<meta property="og:url" content="https://homepokerledger.com/guides/when-someone-cannot-pay">
+<meta property="og:image" content="https://homepokerledger.com/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preload" href="../fonts/plex-sans-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../fonts/bodoni-700-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../fonts/plex-mono-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" type="image/png" sizes="48x48" href="../favicon-48.png">
+<link rel="icon" type="image/png" sizes="96x96" href="../favicon-96.png">
+<link rel="icon" type="image/png" sizes="192x192" href="../favicon-192.png">
+<link rel="icon" type="image/svg+xml" href="../icon.svg">
+<link rel="apple-touch-icon" sizes="192x192" href="../favicon-192.png">
+<link rel="stylesheet" href="../site.css">
+<script>
+(function(){try{var s=JSON.parse(localStorage.getItem("poker.ledger.v1")||"null");
+if(s&&(s.theme==="dark"||s.theme==="light"))document.documentElement.setAttribute("data-theme",s.theme);}catch(e){}})();
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "When someone can't pay",
+  "description": "How to prevent the most uncomfortable moment a home game produces, what to do when it happens anyway, and why making the numbers fit is the worst option.",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://homepokerledger.com/guides/when-someone-cannot-pay"
+  },
+  "url": "https://homepokerledger.com/guides/when-someone-cannot-pay",
+  "image": {
+    "@type": "ImageObject",
+    "url": "https://homepokerledger.com/og.png",
+    "width": 1200,
+    "height": 630
+  },
+  "datePublished": "2026-09-07T21:30:39+09:00",
+  "dateModified": "2026-09-08T16:23:14+09:00",
+  "author": {
+    "@type": "Organization",
+    "name": "Home Poker Ledger",
+    "url": "https://homepokerledger.com/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Home Poker Ledger",
+    "url": "https://homepokerledger.com/",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://homepokerledger.com/favicon-512.png",
+      "width": 512,
+      "height": 512
+    }
+  },
+  "inLanguage": "en",
+  "isAccessibleForFree": true
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home Poker Ledger",
+      "item": "https://homepokerledger.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://homepokerledger.com/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "When someone can't pay",
+      "item": "https://homepokerledger.com/guides/when-someone-cannot-pay"
+    }
+  ]
+}
+</script>
+</head>
+<body>
+
+<main class="table">
+
+  <header class="rail">
+    <div class="brand">
+      <div class="suits">&spades; &hearts; &diams; &clubs;</div>
+      <h1>When someone can't pay</h1>
+      <div class="sub">Handling a shortfall</div>
+    </div>
+    <a class="back" href="../">&larr; Back to the ledger</a>
+  </header>
+
+  <article class="doc">
+
+    <p class="updated">Guides &middot; Settling up</p>
+
+    <p class="lede">Someone at the table cannot cover what they owe. It is the most
+      uncomfortable moment a home game produces, and it is almost entirely preventable
+      by decisions made hours earlier.</p>
+
+    <h2>Prevent it: collect at the start</h2>
+    <p>The single measure that removes this problem is taking the initial buy-in
+      <strong>before the first hand</strong>. Someone who cannot cover the buy-in finds
+      out while everyone is still standing around, which is awkward for a moment. The
+      alternative is finding out at 2am when they are down three buy-ins, which is
+      awkward for a friendship.</p>
+    <p>If your group settles by transfer rather than cash, collect the
+      <em>record</em> up front even when the money moves later: names entered, buy-ins
+      logged, before a card is dealt.</p>
+
+    <h2>Cap rebuys for the same reason</h2>
+    <p>Unlimited rebuys are how a $20 night becomes a $200 one without anyone deciding
+      it should. A limit &mdash; two rebuys, or a midnight cutoff &mdash; is not about
+      distrust. It is a guardrail that protects the person most likely to need it and
+      least likely to ask.</p>
+
+    <h2>When it happens anyway</h2>
+    <p>Deal with it as a group, at the table, before anyone leaves. The worst version is
+      the host quietly covering it and nobody else knowing, because the debt still
+      exists but now it is invisible and attached to a friendship.</p>
+
+    <h3>Write it down as a debt, not as a shortfall</h3>
+    <p>The person still owes what they owe. Record it explicitly &mdash; who owes whom,
+      how much, agreed when &mdash; and settle the rest of the table normally. This is
+      by far the cleanest option, because it keeps the arithmetic honest. The books
+      balance; one payment is simply outstanding.</p>
+
+    <h3>What not to do: make the numbers fit</h3>
+    <p>The tempting move is for someone to say &ldquo;call mine $30 less&rdquo; so the
+      totals reconcile and everyone can go home. It feels generous and it is a mistake.
+      One player has silently absorbed the whole thing without the table deciding that
+      was fair, and next week nobody remembers it happened.</p>
+    <p>If somebody genuinely wants to forgive part of a debt, that is a decision worth
+      making out loud, not disguised as a chip count.</p>
+
+    <h3>If they are short at cash-out rather than short on the buy-in</h3>
+    <p>This is a different problem and often not a payment problem at all. A player
+      whose chips do not match what they should have usually means a
+      <a href="settlement-mistakes">miscount somewhere at the table</a>, not
+      dishonesty. Recount before you conclude anything.</p>
+
+    <h2>The structural fix, if it recurs</h2>
+    <p>Once is an accident. Twice with the same person is information.</p>
+    <ul>
+      <li><strong>Lower the stakes.</strong> If someone cannot comfortably cover a
+        night, the game is priced above its table.</li>
+      <li><strong>Pay in before playing, no exceptions.</strong> Applied to everyone, it
+        singles nobody out.</li>
+      <li><strong>Cap the rebuys.</strong></li>
+    </ul>
+    <p>None of that requires a conversation about anyone's finances, which is the point.
+      A rule that applies to the whole table lets someone step back from a stake without
+      having to explain why.</p>
+
+    <h2>Keep the record either way</h2>
+    <p>Whatever the table decides, write down what was agreed &mdash; the amount, who it
+      is owed to, and when it is expected. Not because anyone is untrustworthy, but
+      because memory is, and an unwritten debt between friends turns into a
+      disagreement about what was said.</p>
+    <p><a href="../">The calculator</a> will tell you plainly when the money on the table
+      does not match the money that went in, and by how much. That number is where this
+      conversation should start.</p>
+
+  </article>
+
+  <footer class="foot">
+    <a href="../">Ledger</a><span class="sep">&middot;</span><a href="../how-it-works">How it works</a><span class="sep">&middot;</span><a href="../guides/">Guides</a><br><a href="../privacy" hreflang="en">Privacy</a>&#8202;<a href="../privacy-ko" lang="ko" hreflang="ko" aria-label="개인정보처리방침 — the privacy policy in Korean">(한국어)</a><span class="sep">&middot;</span><a href="../terms">Terms</a><span class="sep">&middot;</span><a href="#" data-consent-reopen hidden>Cookie settings</a>
+  </footer>
+
+</main>
+
+<script src="../consent.js" defer></script>
+
+</body>
+</html>

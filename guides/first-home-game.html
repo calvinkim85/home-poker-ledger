@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!-- Partial CSP. script-src is deliberately absent: Google supports only strict
+     CSP with per-request nonces for AdSense (a domain allowlist breaks ad serving
+     as their domains rotate), and GitHub Pages serves static files and cannot
+     generate a nonce per request. frame-ancestors and X-Content-Type-Options are
+     header-only and cannot be set from a meta tag at all. What is here is the
+     subset that is both enforceable and safe for ads. See docs/launch-runbook.md. -->
+<meta http-equiv="Content-Security-Policy" content="object-src 'none'; base-uri 'none'; form-action 'none'; upgrade-insecure-requests">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>How to run your first home poker game — Home Poker Ledger</title>
+<meta name="description" content="Everything a first-time host needs in order: choosing stakes, how many players, what to buy, the rules to agree before dealing, and how to settle up at the end.">
+<meta name="theme-color" content="#14523c">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="canonical" href="https://homepokerledger.com/guides/first-home-game">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Home Poker Ledger">
+<meta property="og:title" content="How to run your first home poker game — Home Poker Ledger">
+<meta property="og:description" content="Everything a first-time host needs in order: choosing stakes, how many players, what to buy, the rules to agree before dealing, and how to settle up at the end.">
+<meta property="og:url" content="https://homepokerledger.com/guides/first-home-game">
+<meta property="og:image" content="https://homepokerledger.com/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preload" href="../fonts/plex-sans-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../fonts/bodoni-700-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../fonts/plex-mono-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" type="image/png" sizes="48x48" href="../favicon-48.png">
+<link rel="icon" type="image/png" sizes="96x96" href="../favicon-96.png">
+<link rel="icon" type="image/png" sizes="192x192" href="../favicon-192.png">
+<link rel="icon" type="image/svg+xml" href="../icon.svg">
+<link rel="apple-touch-icon" sizes="192x192" href="../favicon-192.png">
+<link rel="stylesheet" href="../site.css">
+<script>
+(function(){try{var s=JSON.parse(localStorage.getItem("poker.ledger.v1")||"null");
+if(s&&(s.theme==="dark"||s.theme==="light"))document.documentElement.setAttribute("data-theme",s.theme);}catch(e){}})();
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "How to run your first home poker game",
+  "description": "Everything a first-time host needs in order: choosing stakes, how many players, what to buy, the rules to agree before dealing, and how to settle up at the end.",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://homepokerledger.com/guides/first-home-game"
+  },
+  "url": "https://homepokerledger.com/guides/first-home-game",
+  "image": {
+    "@type": "ImageObject",
+    "url": "https://homepokerledger.com/og.png",
+    "width": 1200,
+    "height": 630
+  },
+  "datePublished": "2026-09-07T21:30:39+09:00",
+  "dateModified": "2026-09-08T16:23:14+09:00",
+  "author": {
+    "@type": "Organization",
+    "name": "Home Poker Ledger",
+    "url": "https://homepokerledger.com/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Home Poker Ledger",
+    "url": "https://homepokerledger.com/",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://homepokerledger.com/favicon-512.png",
+      "width": 512,
+      "height": 512
+    }
+  },
+  "inLanguage": "en",
+  "isAccessibleForFree": true
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home Poker Ledger",
+      "item": "https://homepokerledger.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://homepokerledger.com/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "How to run your first home poker game",
+      "item": "https://homepokerledger.com/guides/first-home-game"
+    }
+  ]
+}
+</script>
+</head>
+<body>
+
+<main class="table">
+
+  <header class="rail">
+    <div class="brand">
+      <div class="suits">&spades; &hearts; &diams; &clubs;</div>
+      <h1>How to run your first home poker game</h1>
+      <div class="sub">Getting started</div>
+    </div>
+    <a class="back" href="../">&larr; Back to the ledger</a>
+  </header>
+
+  <article class="doc">
+
+    <p class="updated">Guides &middot; Getting started</p>
+
+    <p class="lede">Hosting your first home game is mostly logistics, and the parts
+      people get wrong are almost never the poker. Here is the whole thing in order,
+      from deciding stakes to paying everyone out.</p>
+
+    <h2>Decide the stakes before you invite anyone</h2>
+    <p>The single most important number, and the one to agree first, because it decides
+      everything else. A buy-in of <strong>$20</strong> is the most common starting
+      point for a friendly game; $25 and $50 are both normal. Above that you are no
+      longer running a casual night.</p>
+    <p>The test worth applying: <strong>nobody at the table should be able to lose an
+      amount that changes their week.</strong> If someone would have to think twice
+      about rebuying, the stake is too high for that group — and the person it is too
+      high for will not say so out loud.</p>
+
+    <h2>Six or seven players is the sweet spot</h2>
+    <p>Fewer than four and the game gets thin; more than eight and hands take long
+      enough that people start looking at their phones. Six or seven fits one table,
+      keeps everyone involved, and settles quickly at the end.</p>
+    <p>Invite one more than you want. Somebody always cancels.</p>
+
+    <h2>What you actually need</h2>
+    <ul>
+      <li><strong>Chips</strong> &mdash; about 50 to 60 per player, in three colours.
+        See <a href="chip-denominations">choosing chip values</a> for what those
+        colours should be worth.</li>
+      <li><strong>Two decks</strong> of cards, ideally plastic. One is being shuffled
+        while the other is dealt, which speeds the night up more than you would think.</li>
+      <li><strong>A table everyone can reach</strong>, and enough light to read a card
+        across it.</li>
+      <li><strong>A dealer button</strong> &mdash; any distinctive object works.</li>
+      <li><strong>Somebody keeping the record.</strong> See
+        <a href="being-the-banker">being the banker</a>.</li>
+    </ul>
+    <p>You do not need a felt table, a shuffler, or a timer. People buy those after
+      their third game, not their first.</p>
+
+    <h2>Agree the rules before the first hand</h2>
+    <p>Almost every end-of-night argument traces to something nobody decided at the
+      start. Five minutes now saves forty later:</p>
+    <ol>
+      <li><strong>What are we playing?</strong> Texas hold'em unless someone objects.</li>
+      <li><strong>Cash game or tournament?</strong> See
+        <a href="cash-game-or-tournament">which one suits a home game</a>.</li>
+      <li><strong>Rebuys &mdash; allowed, and until when?</strong> "Unlimited until
+        midnight" is a normal answer. Not having answered is what causes trouble. See
+        <a href="rebuys-and-late-entries">rebuys and late entries</a>.</li>
+      <li><strong>When does it end?</strong> A stated last hand stops the night
+        drifting to 3am.</li>
+      <li><strong>How do we settle?</strong> Cash, bank transfer, or an app. Agree it
+        before anyone is owed money.</li>
+    </ol>
+
+    <h2>Running the night</h2>
+    <p>Collect the buy-ins before the first hand. It is the least interesting part of
+      the evening and it is over fastest while everyone is still standing up.</p>
+    <p>Record every rebuy <em>as it happens</em>, as its own entry rather than adding to
+      a running total. A record reading &ldquo;20, 20, 20&rdquo; can be checked. One
+      reading &ldquo;60&rdquo; can only be believed.</p>
+    <p>When someone leaves early, write their count down <strong>before</strong> their
+      chips go back in the tray, and mark them cashed out so the number cannot drift
+      afterwards.</p>
+
+    <h2>Settling at the end</h2>
+    <p>In order, and the order matters:</p>
+    <ol>
+      <li>Everyone counts their own stack, in front of somebody else.</li>
+      <li>Each number is recorded before those chips move.</li>
+      <li>Only when every player is down do you compare the total against the buy-ins.</li>
+      <li>They should match exactly. If they do not, say so out loud before anyone pays
+        anyone.</li>
+    </ol>
+    <p><a href="../">The calculator</a> does the last part: enter what everyone bought
+      in for and cashed out with, and it works out who pays whom in the fewest
+      transfers. If the count does not balance it says so, in which direction, and by
+      how much.</p>
+
+    <h2>The things first-time hosts regret</h2>
+    <ul>
+      <li><strong>Not writing rebuys down.</strong> The commonest cause of a count that
+        will not reconcile.</li>
+      <li><strong>Stakes set to suit the richest person there.</strong></li>
+      <li><strong>No stated finish time.</strong></li>
+      <li><strong>Settling before everyone has counted.</strong> Money moves, then the
+        last stack comes in wrong, and now you are unwinding payments as well as hunting
+        an error. See <a href="settlement-mistakes">five ways a settlement goes
+        wrong</a>.</li>
+    </ul>
+    <p>None of these are poker problems. They are all bookkeeping, which is why they are
+      easy to fix once and never think about again.</p>
+
+  </article>
+
+  <footer class="foot">
+    <a href="../">Ledger</a><span class="sep">&middot;</span><a href="../how-it-works">How it works</a><span class="sep">&middot;</span><a href="../guides/">Guides</a><br><a href="../privacy" hreflang="en">Privacy</a>&#8202;<a href="../privacy-ko" lang="ko" hreflang="ko" aria-label="개인정보처리방침 — the privacy policy in Korean">(한국어)</a><span class="sep">&middot;</span><a href="../terms">Terms</a><span class="sep">&middot;</span><a href="#" data-consent-reopen hidden>Cookie settings</a>
+  </footer>
+
+</main>
+
+<script src="../consent.js" defer></script>
+
+</body>
+</html>

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!-- Partial CSP. script-src is deliberately absent: Google supports only strict
+     CSP with per-request nonces for AdSense (a domain allowlist breaks ad serving
+     as their domains rotate), and GitHub Pages serves static files and cannot
+     generate a nonce per request. frame-ancestors and X-Content-Type-Options are
+     header-only and cannot be set from a meta tag at all. What is here is the
+     subset that is both enforceable and safe for ads. See docs/launch-runbook.md. -->
+<meta http-equiv="Content-Security-Policy" content="object-src 'none'; base-uri 'none'; form-action 'none'; upgrade-insecure-requests">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Poker chip values and starting stacks — Home Poker Ledger</title>
+<meta name="description" content="How to pick chip denominations that fit your buy-in: the 1:40 ratio, why three colours beats five, which colours to avoid, and how many chips you need.">
+<meta name="theme-color" content="#14523c">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="canonical" href="https://homepokerledger.com/guides/chip-denominations">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Home Poker Ledger">
+<meta property="og:title" content="Poker chip values and starting stacks — Home Poker Ledger">
+<meta property="og:description" content="How to pick chip denominations that fit your buy-in: the 1:40 ratio, why three colours beats five, which colours to avoid, and how many chips you need.">
+<meta property="og:url" content="https://homepokerledger.com/guides/chip-denominations">
+<meta property="og:image" content="https://homepokerledger.com/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preload" href="../fonts/plex-sans-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../fonts/bodoni-700-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../fonts/plex-mono-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" type="image/png" sizes="48x48" href="../favicon-48.png">
+<link rel="icon" type="image/png" sizes="96x96" href="../favicon-96.png">
+<link rel="icon" type="image/png" sizes="192x192" href="../favicon-192.png">
+<link rel="icon" type="image/svg+xml" href="../icon.svg">
+<link rel="apple-touch-icon" sizes="192x192" href="../favicon-192.png">
+<link rel="stylesheet" href="../site.css">
+<script>
+(function(){try{var s=JSON.parse(localStorage.getItem("poker.ledger.v1")||"null");
+if(s&&(s.theme==="dark"||s.theme==="light"))document.documentElement.setAttribute("data-theme",s.theme);}catch(e){}})();
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Poker chip values and starting stacks",
+  "description": "How to pick chip denominations that fit your buy-in: the 1:40 ratio, why three colours beats five, which colours to avoid, and how many chips you need.",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://homepokerledger.com/guides/chip-denominations"
+  },
+  "url": "https://homepokerledger.com/guides/chip-denominations",
+  "image": {
+    "@type": "ImageObject",
+    "url": "https://homepokerledger.com/og.png",
+    "width": 1200,
+    "height": 630
+  },
+  "datePublished": "2026-09-05T14:46:25+09:00",
+  "dateModified": "2026-09-08T16:23:14+09:00",
+  "author": {
+    "@type": "Organization",
+    "name": "Home Poker Ledger",
+    "url": "https://homepokerledger.com/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Home Poker Ledger",
+    "url": "https://homepokerledger.com/",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://homepokerledger.com/favicon-512.png",
+      "width": 512,
+      "height": 512
+    }
+  },
+  "inLanguage": "en",
+  "isAccessibleForFree": true
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home Poker Ledger",
+      "item": "https://homepokerledger.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://homepokerledger.com/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Poker chip values and starting stacks",
+      "item": "https://homepokerledger.com/guides/chip-denominations"
+    }
+  ]
+}
+</script>
+</head>
+<body>
+
+<main class="table">
+
+  <header class="rail">
+    <div class="brand">
+      <div class="suits">&spades; &hearts; &diams; &clubs;</div>
+      <h1>Poker chip values and starting stacks</h1>
+      <div class="sub">Choosing denominations and starting stacks</div>
+    </div>
+    <a class="back" href="../">&larr; Back to the ledger</a>
+  </header>
+
+  <article class="doc">
+
+    <p class="updated">Guides &middot; Setting up</p>
+
+    <p class="lede">Chip denominations are the most common thing a new home game gets
+      wrong, and the mistake is nearly always the same: too many colours, and a smallest
+      chip worth so little that nobody uses it.</p>
+
+    <h2>The ratio that actually matters</h2>
+    <p>Forget the specific numbers for a moment. What determines whether a chip set works
+      is the relationship between the smallest chip and a starting stack. The useful
+      target is roughly <strong>1:40</strong> &mdash; your smallest denomination should be
+      about one fortieth of what each player starts with.</p>
+    <p>Go much finer than that and the small chips pile up unused, because no bet is ever
+      small enough to need them. Go much coarser and you cannot make a meaningful raise
+      early on without committing a large fraction of your stack.</p>
+    <p>For a $20 buy-in, that puts the smallest chip at around 50 cents. For a ₩50,000
+      buy-in, around ₩1,000. For a $100 buy-in, around $2.50, which you would round to
+      $1 or $5 depending on how deep you want the early play to feel.</p>
+
+    <h2>Three denominations is usually right</h2>
+    <p>Four is defensible for a long tournament-style game. Five is showing off. Most home
+      games run better on three, because every extra colour is another thing to count at
+      2am when the settlement is already contentious.</p>
+    <p>A workable three-chip spread for a $20 buy-in:</p>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>Colour</th><th>Value</th><th>Per stack</th><th>Total</th></tr></thead>
+        <tbody>
+          <tr><td>White</td><td>$0.50</td><td>10</td><td>$5.00</td></tr>
+          <tr><td>Red</td><td>$1.00</td><td>10</td><td>$10.00</td></tr>
+          <tr><td>Green</td><td>$5.00</td><td>1</td><td>$5.00</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Twenty-one chips, $20 exactly, and a stack that is physically easy to check &mdash;
+      if the tall column looks about ten high and there is one green, it is probably right.</p>
+
+    <h2>Make the stack countable at a glance</h2>
+    <p>This is the part people skip. A starting stack should be verifiable without
+      counting individual chips, because you will need to do it repeatedly &mdash; on
+      every rebuy, and again at cash-out.</p>
+    <p>Give each denomination a count that is a round number, ideally the same one. Ten
+      whites and ten reds is instantly checkable. Seven whites and thirteen reds is not,
+      and the difference costs you real minutes across an evening.</p>
+
+    <h2>Colours to avoid</h2>
+    <ul>
+      <li><strong>Blue and green together</strong> under warm indoor light, which is most
+        home games. They are the pair most often confused, and they are usually adjacent
+        in value, which is exactly when a mistake is expensive.</li>
+      <li><strong>Two shades of the same colour.</strong> Light blue and dark blue read as
+        one denomination across a table.</li>
+      <li><strong>Anything matching your table felt.</strong> A green chip on green felt is
+        a chip that will be missed at cash-out, and a missed chip is a count that does not
+        reconcile.</li>
+    </ul>
+    <p>The conventional casino ordering &mdash; white, red, green, black, purple &mdash;
+      exists because those five are distinguishable under bad light at speed. There is no
+      prize for originality here.</p>
+
+    <h2>Do you have enough chips?</h2>
+    <p>A rough check: you want about <strong>50 to 60 chips per player</strong> in the set
+      overall, which allows for rebuys without needing to break the bank mid-game. A
+      300-chip set comfortably handles five or six players with rebuys, and gets tight at
+      eight.</p>
+    <p>If you are short, raise the denominations rather than reducing the starting stack.
+      A shallow stack changes how the game plays; a coarser chip only changes how it
+      looks.</p>
+
+    <h2>Write the values down</h2>
+    <p>Put the denominations on a piece of paper next to the tray, in the colours
+      themselves if you can. It sounds unnecessary until someone who arrived late asks
+      what a green is worth mid-hand, and gets a different answer from two people.</p>
+    <p>Whatever you settle on, the values only matter at the end if they were the same
+      values all night. Agree them before the first hand, along with the
+      <a href="rebuys-and-late-entries">rebuy rules</a>.</p>
+
+  </article>
+
+  <footer class="foot">
+    <a href="../">Ledger</a><span class="sep">&middot;</span><a href="../how-it-works">How it works</a><span class="sep">&middot;</span><a href="../guides/">Guides</a><br><a href="../privacy" hreflang="en">Privacy</a>&#8202;<a href="../privacy-ko" lang="ko" hreflang="ko" aria-label="개인정보처리방침 — the privacy policy in Korean">(한국어)</a><span class="sep">&middot;</span><a href="../terms">Terms</a><span class="sep">&middot;</span><a href="#" data-consent-reopen hidden>Cookie settings</a>
+  </footer>
+
+</main>
+
+<script src="../consent.js" defer></script>
+
+</body>
+</html>

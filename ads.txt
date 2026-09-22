@@ -1,0 +1,11 @@
+# ads.txt — https://iabtechlab.com/ads-txt/
+#
+# Nothing is being sold here yet. This file is served so that, if this site is ever
+# approved for Google AdSense, enabling it is one line rather than a deploy dance.
+#
+# After approval, replace everything below with the single line AdSense gives you.
+# It looks like this, with your own publisher ID in place of the zeros:
+#
+# google.com, pub-0000000000000000, DIRECT, f08c47fec0942fa0
+#
+# See ADSENSE.md in this repository for the full checklist.

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!-- Partial CSP. script-src is deliberately absent: Google supports only strict
+     CSP with per-request nonces for AdSense (a domain allowlist breaks ad serving
+     as their domains rotate), and GitHub Pages serves static files and cannot
+     generate a nonce per request. frame-ancestors and X-Content-Type-Options are
+     header-only and cannot be set from a meta tag at all. What is here is the
+     subset that is both enforceable and safe for ads. See docs/launch-runbook.md. -->
+<meta http-equiv="Content-Security-Policy" content="object-src 'none'; base-uri 'none'; form-action 'none'; upgrade-insecure-requests">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Should you rake a home poker game?</title>
+<meta name="description" content="Why taking a cut of the pot changes what your game is, what it costs the table over a season, and fairer ways to cover pizza and cards.">
+<meta name="theme-color" content="#14523c">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="canonical" href="https://homepokerledger.com/guides/raking-a-home-game">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Home Poker Ledger">
+<meta property="og:title" content="Should you rake a home poker game?">
+<meta property="og:description" content="Why taking a cut of the pot changes what your game is, what it costs the table over a season, and fairer ways to cover pizza and cards.">
+<meta property="og:url" content="https://homepokerledger.com/guides/raking-a-home-game">
+<meta property="og:image" content="https://homepokerledger.com/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preload" href="../fonts/plex-sans-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../fonts/bodoni-700-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../fonts/plex-mono-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" type="image/png" sizes="48x48" href="../favicon-48.png">
+<link rel="icon" type="image/png" sizes="96x96" href="../favicon-96.png">
+<link rel="icon" type="image/png" sizes="192x192" href="../favicon-192.png">
+<link rel="icon" type="image/svg+xml" href="../icon.svg">
+<link rel="apple-touch-icon" sizes="192x192" href="../favicon-192.png">
+<link rel="stylesheet" href="../site.css">
+<script>
+(function(){try{var s=JSON.parse(localStorage.getItem("poker.ledger.v1")||"null");
+if(s&&(s.theme==="dark"||s.theme==="light"))document.documentElement.setAttribute("data-theme",s.theme);}catch(e){}})();
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Should you rake a home game?",
+  "description": "Why taking a cut of the pot changes what your game is, what it costs the table over a season, and fairer ways to cover pizza and cards.",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://homepokerledger.com/guides/raking-a-home-game"
+  },
+  "url": "https://homepokerledger.com/guides/raking-a-home-game",
+  "image": {
+    "@type": "ImageObject",
+    "url": "https://homepokerledger.com/og.png",
+    "width": 1200,
+    "height": 630
+  },
+  "datePublished": "2026-09-17T09:14:36-05:00",
+  "dateModified": "2026-09-17T09:14:36-05:00",
+  "author": {
+    "@type": "Organization",
+    "name": "Home Poker Ledger",
+    "url": "https://homepokerledger.com/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Home Poker Ledger",
+    "url": "https://homepokerledger.com/",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://homepokerledger.com/favicon-512.png",
+      "width": 512,
+      "height": 512
+    }
+  },
+  "inLanguage": "en",
+  "isAccessibleForFree": true
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home Poker Ledger",
+      "item": "https://homepokerledger.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://homepokerledger.com/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Should you rake a home game?",
+      "item": "https://homepokerledger.com/guides/raking-a-home-game"
+    }
+  ]
+}
+</script>
+</head>
+<body>
+
+<main class="table">
+
+  <header class="rail">
+    <div class="brand">
+      <div class="suits">&spades; &hearts; &diams; &clubs;</div>
+      <h1>Should you take a rake?</h1>
+      <div class="sub">Covering the costs</div>
+    </div>
+    <a class="back" href="../">&larr; Back to the ledger</a>
+  </header>
+
+  <article class="doc">
+
+    <p class="updated">Guides &middot; Running the game</p>
+
+    <p class="lede">Somebody always suggests it, usually kindly: take a dollar out of
+      each pot to cover the pizza. It sounds reasonable and it is the single change most
+      likely to turn your game into something you did not intend to run.</p>
+
+    <h2>What a rake actually is</h2>
+    <p>A rake is money removed from the pot and kept by the house rather than won by a
+      player. It is how card rooms make money, and it is the thing that distinguishes a
+      business from a game among friends.</p>
+
+    <h2>It changes what your game is</h2>
+    <p>In many places the line between a lawful social game and an unlawful gambling
+      operation is drawn precisely here: whether anyone profits from running it, as
+      opposed to from playing in it. A host who takes a cut has, in the eyes of a lot of
+      rules, stopped being a player and started being an operator.</p>
+    <p><strong>This is not legal advice and the law varies enormously</strong> by country
+      and by state. If anyone at your table is seriously proposing a rake, that is the
+      point to check what your own jurisdiction actually says &mdash; not to take a
+      stranger's word for it, including this page's.</p>
+
+    <h2>What it costs the table</h2>
+    <p>Set the law aside for a moment; the arithmetic alone is discouraging. A dollar a
+      pot across thirty pots an hour is $30 an hour leaving the table. Over a four-hour
+      night that is $120 removed from a game where the total buy-ins might be $160.</p>
+    <p>In a home game the money is meant to move between friends and roughly even out
+      over a season. A rake means it does not even out &mdash; it drains, slowly, from
+      everyone. The players who notice first are the regulars, and they are the ones you
+      least want to lose.</p>
+
+    <h2>Fairer ways to cover the costs</h2>
+    <p>The underlying problem is real: hosting costs money, and it is usually the same
+      person paying it.</p>
+    <ul>
+      <li><strong>Split the costs directly.</strong> Five pounds each for food, collected
+        alongside the buy-in and recorded separately from the game. Everyone can see
+        exactly what it is.</li>
+      <li><strong>The host does not pay.</strong> The other players cover the host's
+        share of food and drink. Simple, transparent, and it survives the host
+        changing.</li>
+      <li><strong>Rotate the hosting.</strong> The cost evens out across the season
+        without anyone tracking anything.</li>
+      <li><strong>Everyone brings something.</strong> Least accounting of all.</li>
+    </ul>
+
+    <h2>If your group still wants a contribution</h2>
+    <p>Make it a <strong>flat, fixed amount agreed in advance and collected with the
+      buy-in</strong> &mdash; never a share of pots. A fixed contribution is visible,
+      the same for everyone, and does not scale with how well the game runs.</p>
+    <p>Record it separately from the ledger. Money that covers pizza is not money in the
+      game, and mixing the two guarantees a count that does not reconcile at the end of
+      the night. <a href="being-the-banker">More on keeping the money straight here.</a></p>
+
+    <h2>The short answer</h2>
+    <p>No. Cover the costs openly and keep the pot for the players.</p>
+
+  </article>
+
+  <footer class="foot">
+    <a href="../">Ledger</a><span class="sep">&middot;</span><a href="../how-it-works">How it works</a><span class="sep">&middot;</span><a href="../guides/">Guides</a><br><a href="../privacy" hreflang="en">Privacy</a>&#8202;<a href="../privacy-ko" lang="ko" hreflang="ko" aria-label="개인정보처리방침 — the privacy policy in Korean">(한국어)</a><span class="sep">&middot;</span><a href="../terms">Terms</a><span class="sep">&middot;</span><a href="#" data-consent-reopen hidden>Cookie settings</a>
+  </footer>
+
+</main>
+
+<script src="../consent.js" defer></script>
+
+</body>
+</html>

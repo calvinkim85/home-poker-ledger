@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!-- Partial CSP. script-src is deliberately absent: Google supports only strict
+     CSP with per-request nonces for AdSense (a domain allowlist breaks ad serving
+     as their domains rotate), and GitHub Pages serves static files and cannot
+     generate a nonce per request. frame-ancestors and X-Content-Type-Options are
+     header-only and cannot be set from a meta tag at all. What is here is the
+     subset that is both enforceable and safe for ads. See docs/launch-runbook.md. -->
+<meta http-equiv="Content-Security-Policy" content="object-src 'none'; base-uri 'none'; form-action 'none'; upgrade-insecure-requests">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Privacy Policy — Home Poker Ledger</title>
+<meta name="description" content="What Home Poker Ledger stores, what it does not, and the two third parties involved: Cloudflare Pages and Google AdSense. Fonts are self-hosted.">
+<meta name="theme-color" content="#14523c">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="canonical" href="https://homepokerledger.com/privacy">
+<link rel="alternate" hreflang="ko" href="https://homepokerledger.com/privacy-ko">
+<link rel="alternate" hreflang="en" href="https://homepokerledger.com/privacy">
+<link rel="preload" href="fonts/plex-sans-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/bodoni-700-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/plex-mono-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" type="image/png" sizes="48x48" href="favicon-48.png">
+<link rel="icon" type="image/png" sizes="96x96" href="favicon-96.png">
+<link rel="icon" type="image/png" sizes="192x192" href="favicon-192.png">
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<link rel="apple-touch-icon" sizes="192x192" href="favicon-192.png">
+<link rel="stylesheet" href="site.css">
+<script>
+/* Match whatever side the app is on, before first paint, so moving between the
+   calculator and this page doesn't flash the other theme. */
+(function(){try{var s=JSON.parse(localStorage.getItem("poker.ledger.v1")||"null");
+if(s&&(s.theme==="dark"||s.theme==="light"))document.documentElement.setAttribute("data-theme",s.theme);}catch(e){}})();
+</script>
+</head>
+<body>
+
+<main class="table">
+
+  <header class="rail">
+    <div class="brand">
+      <div class="suits">&spades; &hearts; &diams; &clubs;</div>
+      <h1>Privacy Policy</h1>
+      <div class="sub">Home Poker Ledger</div>
+    </div>
+    <a class="back" href="./">&larr; Back to the ledger</a>
+  </header>
+
+  <article class="doc">
+
+    <p class="updated">Last updated 5 September 2026 &middot; <a href="privacy-ko">한국어 개인정보처리방침</a></p>
+
+    <p class="lede">Home Poker Ledger is a calculator that runs entirely in your browser.
+      It has no accounts, no server, and no database. The numbers you type are never
+      sent anywhere. This page explains that in detail, and is honest about the two
+      third parties that are involved despite it.</p>
+
+    <h2>The short version</h2>
+    <ul>
+      <li>Everything you enter &mdash; player names, buy-ins, cash-outs, your currency
+        and theme &mdash; is stored <strong>only in your own browser</strong>, and only so the
+        page still has your game when you come back to it.</li>
+      <li>None of it is transmitted to us or to anyone else. There is nowhere for it
+        to go: this site is static files with no backend.</li>
+      <li>Two third parties do see that <em>a visit happened</em>, and your IP address
+        along with it: our host and our advertising provider.
+        They are named below.</li>
+      <li>You can erase everything this site has stored by pressing
+        <strong>Clear all</strong> in the app, or by clearing site data in your browser.</li>
+    </ul>
+
+    <h2>What is stored on your device</h2>
+    <p>The app writes a single entry to your browser's <code>localStorage</code> under the
+      key <code>poker.ledger.v1</code>. It contains exactly this:</p>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>What</th><th>Why</th><th>How long</th></tr></thead>
+        <tbody>
+          <tr><td>Player names, as you typed them</td><td>So the seats still have names when you reopen the page</td><td>Until you clear it</td></tr>
+          <tr><td>Buy-in amounts and cash-out amounts</td><td>So a game in progress survives a refresh or a closed tab</td><td>Until you clear it</td></tr>
+          <tr><td>Selected currency and standard buy-in</td><td>So you don't reset them every session</td><td>Until you clear it</td></tr>
+          <tr><td>Light or dark preference</td><td>So the page opens on the side you chose</td><td>Until you clear it</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>This never leaves your device. It is not synced, not backed up by us, and not
+      readable by us. A game entered on your phone will not appear on your laptop &mdash;
+      that is a direct consequence of this design, not an oversight.</p>
+    <p><strong>Player names are the one field where you could enter someone else's personal
+      information.</strong> You do not have to use real names, and nothing in the app requires
+      them. Initials or nicknames work exactly as well.</p>
+
+    <h2>Third parties that see your visit</h2>
+    <p>We do not send them anything about your game. They see the request for the page
+      itself, which necessarily includes your IP address.</p>
+
+    <h3>Cloudflare Pages &mdash; hosting</h3>
+    <p>The site is served by Cloudflare Pages, operated by Cloudflare, Inc. in the
+      United States. Cloudflare receives your IP address and standard request
+      information in order to deliver the page, and keeps its own server logs. We have
+      no access to those logs and cannot query them.
+      See <a href="https://www.cloudflare.com/privacypolicy/" rel="noopener noreferrer" target="_blank">Cloudflare's Privacy Policy</a>.</p>
+
+    <h3>Typefaces — served by us</h3>
+    <p>The three typefaces this site uses are served from this site itself. They used
+      to be loaded from Google Fonts, which meant Google received your IP address on
+      every visit. <strong>That request no longer happens</strong> and Google Fonts is no
+      longer involved in any way.</p>
+
+    <h3>Google AdSense — advertising</h3>
+    <p>This site is supported by advertising supplied by Google AdSense, operated by
+      Google LLC in the United States. <em>If you are not seeing any ads on this site yet,
+      the account is still pending approval and nothing described in this section is
+      happening.</em></p>
+    <p>Where ads are shown, Google and its partners use cookies and similar device
+      identifiers to serve and measure them, and may use them to personalise ads based
+      on your prior visits to this and other sites. Google's use of advertising cookies
+      is described in
+      <a href="https://policies.google.com/technologies/partner-sites" rel="noopener noreferrer" target="_blank">How Google uses information from sites that use its services</a>.</p>
+    <p>You can control this directly:</p>
+    <ul>
+      <li>Turn off personalised advertising at
+        <a href="https://myadcenter.google.com/" rel="noopener noreferrer" target="_blank">Google My Ad Center</a>.</li>
+      <li>Opt out of third-party vendor cookies at
+        <a href="https://optout.aboutads.info/" rel="noopener noreferrer" target="_blank">aboutads.info</a>.</li>
+      <li>Block or delete cookies for this site in your browser settings. The calculator
+        keeps working with every cookie blocked &mdash; it does not use cookies at all.</li>
+      <li>Where we are required to ask for your consent before non-essential cookies are
+        set, we ask before anything is loaded, and you can change your answer at any time
+        from the link in the footer.</li>
+    </ul>
+
+    <h2>What we do not do</h2>
+    <ul>
+      <li>No analytics. There is no Google Analytics, no Plausible, no Fathom, no
+        page-view counter of any kind.</li>
+      <li>No accounts, no email collection, no newsletter, no contact form.</li>
+      <li>No error or crash reporting service.</li>
+      <li>No selling or sharing of personal information. We have none to sell.</li>
+      <li>No AI or machine-learning processing of anything you enter.</li>
+    </ul>
+
+    <h2>Transfers outside your country</h2>
+    <p>Both third parties above are United States companies and process the request
+      data described in the United States. If you are in Korea, this is a cross-border
+      transfer of personal information; the recipients, their purposes, the data
+      involved, and the retention position are set out in the sections above and in the
+      Korean version of this policy.</p>
+
+    <h2>Children</h2>
+    <p>This site is not directed at children. It is a tool for settling accounts after a
+      home card game, and it is not intended for, and not knowingly used to collect any
+      information from, anyone under 14 in Korea or under 13 in the United States.
+      Because the site collects nothing, there is nothing for us to delete; if you
+      believe a child has entered personal information into their own browser on this
+      site, pressing <strong>Clear all</strong> removes it.</p>
+
+    <h2>How deletion actually works</h2>
+    <p>There is no separate archive, no "deleted items" store, and no staging area that
+      data passes through on its way out. It is held in exactly one place &mdash; your
+      browser &mdash; so your deleting it <em>is</em> the deletion process. No approval
+      from us is involved, and none is possible.</p>
+    <p>Two ways to do it, both immediate and both irreversible:</p>
+    <ul>
+      <li>Press <strong>Clear all</strong> in the app.</li>
+      <li>Clear this site's data in your browser settings.</li>
+    </ul>
+    <p>Either wipes the <code>localStorage</code> entry. Nothing is recoverable
+      afterwards, by you or by us, because no copy exists anywhere else. Nothing is ever
+      printed to paper.</p>
+
+    <h2>What we never collect</h2>
+    <p>We collect none of the categories Korean law treats as <strong>sensitive
+      information</strong> &mdash; beliefs, political opinion, union or party membership,
+      health, sex life, genetic or biometric data, criminal record, race or ethnicity
+      &mdash; and none of the <strong>unique identifiers</strong> either: resident
+      registration numbers, passport, driving licence, or foreign registration numbers.
+      We also do not carry out pseudonymised-data processing.</p>
+
+    <h2>Your rights</h2>
+    <p>Because the site holds no personal information about you on any server, most
+      rights are exercised directly and instantly: pressing <strong>Clear all</strong> in the
+      app, or clearing site data in your browser, deletes everything this site has ever
+      stored about you. There is no copy anywhere else.</p>
+    <p>You still have the rights given to you by the law that applies to you &mdash; in
+      Korea, the rights to access, correct, delete, and suspend processing of your
+      personal information under Articles 35 to 37 of the Personal Information Protection
+      Act; in the United States, the rights your state grants you. To exercise any of
+      them, or to ask anything about this policy, write to the contact below.</p>
+    <p>A <strong>parent or legal guardian</strong> of a child under 14 may exercise those
+      same rights on the child's behalf. You may also act through an authorised
+      representative. We act on any request without delay and never charge for it.</p>
+
+    <h2>Who is responsible</h2>
+    <div class="table-scroll">
+      <table>
+        <tbody>
+          <tr><th>Privacy Officer</th><td>Home Poker Ledger — Privacy Enquiries</td></tr>
+          <tr><th>Contact</th><td><a href="mailto:service@homepokerledger.com">service@homepokerledger.com</a></td></tr>
+          <tr><th>Site</th><td>https://homepokerledger.com/</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Article 30 of Korea's Personal Information Protection Act requires this policy to
+      publish <em>either</em> the Privacy Officer's name <em>or</em> the name of the function
+      that handles privacy enquiries, together with contact details. This site is operated
+      by one individual, who is designated as Privacy Officer under Article 31 and remains
+      personally responsible for it; what is published here is the function, and the
+      address below reaches that person directly and is read.</p>
+    <p>If you are in Korea and are not satisfied with our response, you can also contact
+      the Personal Information Dispute Mediation Committee (privacy.go.kr, 118), the
+      Korea Internet &amp; Security Agency's Privacy Portal, or the Personal Information
+      Protection Commission.</p>
+
+    <h2>Changes</h2>
+    <p>If this policy changes in a way that affects you &mdash; a new third party, a new
+      category of data &mdash; the date at the top changes and the change is described here.</p>
+
+  </article>
+
+  <footer class="foot">
+    <a href="./">Ledger</a><span class="sep">·</span><a href="how-it-works">How it works</a><span class="sep">·</span><a href="guides/">Guides</a><br>
+    <a href="privacy" hreflang="en">Privacy</a>&#8202;<a href="privacy-ko" lang="ko" hreflang="ko" aria-label="개인정보처리방침 — the privacy policy in Korean">(한국어)</a><span class="sep">·</span><a href="terms">Terms</a><span class="sep">&middot;</span><a href="#" data-consent-reopen hidden>Cookie settings</a>
+  </footer>
+
+</main>
+
+<script src="consent.js" defer></script>
+
+</body>
+</html>

@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="object-src 'none'; base-uri 'none'; form-action 'none'; upgrade-insecure-requests">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>홈 포커 정산 계산기 — 누가 누구에게 얼마</title>
+<meta name="description" content="홈 포커가 끝나면 바이인과 최종 칩만 입력하세요. 누가 누구에게 얼마를 보내야 하는지 가장 적은 횟수로 계산해 드립니다. 무료, 가입 없음, 계산은 브라우저 안에서만.">
+<meta name="theme-color" content="#14523c">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="naver-site-verification" content="1fbc33b127a1a4b818631086bbfc73da88280353" />
+<link rel="canonical" href="https://homepokerledger.com/ko/">
+<link rel="alternate" hreflang="ko" href="https://homepokerledger.com/ko/">
+<link rel="alternate" hreflang="en" href="https://homepokerledger.com/">
+<link rel="alternate" hreflang="x-default" href="https://homepokerledger.com/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="홈 포커 정산 계산기">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:title" content="홈 포커 정산 계산기 — 누가 누구에게 얼마">
+<meta property="og:description" content="바이인과 최종 칩만 입력하면 정산이 끝납니다. 무료, 가입 없음.">
+<meta property="og:url" content="https://homepokerledger.com/ko/">
+<meta property="og:image" content="https://homepokerledger.com/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" type="image/png" sizes="192x192" href="../favicon-192.png">
+<link rel="icon" type="image/svg+xml" href="../icon.svg">
+<link rel="apple-touch-icon" sizes="192x192" href="../favicon-192.png">
+<link rel="alternate" type="application/rss+xml" title="홈 홀덤 가이드" href="rss.xml">
+<link rel="stylesheet" href="../site.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "홈 포커 정산 계산기",
+  "url": "https://homepokerledger.com/ko/",
+  "inLanguage": "ko",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "All",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "KRW" },
+  "description": "홈 포커가 끝난 뒤 바이인과 최종 칩을 입력하면 누가 누구에게 얼마를 보내야 하는지 가장 적은 횟수로 계산합니다.",
+  "featureList": [
+    "가장 적은 횟수로 정산",
+    "리바이를 한 건씩 따로 기록",
+    "칩 합계가 바이인과 맞지 않으면 알려 줌",
+    "정산 내역을 날짜와 함께 복사",
+    "서버 없이 브라우저에서만 동작"
+  ]
+}
+</script>
+<style>
+/* @STYLE */
+
+  /* --- Korean page only --- */
+
+  /* The shared block tracks small labels wide and uppercases them, which suits
+     Latin small caps and ruins Hangul: "전체 내역" comes out as "전 체 내 역",
+     reading as spaced-out text rather than as a heading. Korean has no case, so
+     text-transform does nothing for it either. */
+  /* Korean label typography.
+
+     The shared labels are 9px monospace, and every bit of their legibility comes
+     from text-transform:uppercase plus .19em tracking — that is what makes them
+     read as small caps rather than as shrunken text. Hangul takes neither: it has
+     no case, and tracking turns "전체 내역" into "전 체 내 역".
+
+     Stripping those two properties alone was the mistake. It left 9px of grey text
+     in a monospace face with no Korean glyphs, so the labels stopped looking like
+     labels. Korean needs the same hierarchy built the way Korean builds it: the
+     body face, a size that is actually readable, and weight instead of tracking.
+
+     Numbers deliberately stay monospace — tabular figures are what make columns of
+     money line up, and that is worth more than consistency with the labels. */
+  .lbl, .count, .tally .lbl,
+  .summary caption, .summary thead th,
+  .brand .sub, .seat-head .banker-tag, .seat-head .settled-tag,
+  .banner .head, .btn, .hint, .updated{
+    font-family:var(--body);
+    letter-spacing:0;
+    text-transform:none;
+  }
+  /* Small and light, not bold. The English labels read as a schematic because they
+     are tiny and muted; making the Korean ones larger and heavier turned them into
+     ordinary form text, which is the opposite of the intended look. Hangul will not
+     take .19em, but it takes a hair of tracking without spacing out — enough to keep
+     the label feeling deliberate at this size. */
+  .lbl, .tally .lbl{ font-size:.68rem; font-weight:500; letter-spacing:.04em; opacity:.85; }
+  .summary caption, .summary thead th{ font-size:.7rem; font-weight:500; letter-spacing:.04em; opacity:.85; }
+  .count{ font-size:.74rem; font-weight:500; letter-spacing:.04em; }
+  .brand .sub{ font-size:.76rem; font-weight:400; letter-spacing:.04em; margin-top:8px; opacity:.8; }
+  .banner .head{ font-size:.95rem; font-weight:700; }
+  .btn{ font-size:.8rem; font-weight:500; letter-spacing:.03em; }
+  .btn.tiny{ font-size:.72rem; }
+  .seat-head .banker-tag, .seat-head .settled-tag{ font-size:.64rem; font-weight:600; }
+  .hint{ font-size:.78rem; }
+
+  /* The header carried two bordered boxes fighting each other — the theme button
+     and an English link wearing .back, which is the guide pages' "go back" chrome.
+     Only one of them is a control. */
+  /* On a phone the rail wraps and the language link was dropping onto a line of its
+     own, left-aligned under the subtitle, reading as an orphan. Grouped with the
+     theme button so the two travel together at any width. */
+  .rail-actions{ display:flex; align-items:center; gap:12px; margin-left:auto; }
+
+  /* The tip's heading is small-caps Latin by default; Hangul takes neither the case
+     nor the tracking. The mode names inside sentences use <strong> rather than <b>
+     precisely because .tip b is display:block, which would put "그대로 보기" on its
+     own line and strand the particle that follows it. */
+  .tip b{
+    font-family:var(--body); font-size:.72rem; font-weight:600;
+    letter-spacing:.04em; text-transform:none;
+  }
+  .tip strong{ font-weight:700; color:var(--ink); }
+  .tip, .tip p, .tip-foot, .eg span{ letter-spacing:0; }
+
+  .rail .back{
+    border:0; padding:0; font-size:.78rem; font-family:var(--body);
+    letter-spacing:0; text-transform:none; opacity:.7;
+  }
+  .rail .back:hover{ opacity:1; }
+
+
+  .ko-sub{ font-size:.8rem; letter-spacing:0; }
+
+  /* Was a bare <a>, so it rendered in default browser blue — the one thing on the
+     page that looked unstyled next to the English version. */
+  .ko-guidelink{
+    margin:16px 0 0; display:flex; gap:10px; align-items:baseline; flex-wrap:wrap;
+    font-size:.8rem;
+  }
+  .ko-guidelink a{ color:var(--gold); text-decoration:none; font-weight:500; }
+  .ko-guidelink a:hover{ text-decoration:underline; }
+  .ko-guidelink span{ color:var(--ink-soft); letter-spacing:.03em; }
+  .ko-seat{ display:grid; gap:10px; }
+  .ko-row{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+  .ko-pay{ display:flex; align-items:center; gap:10px; padding:10px 14px;
+           background:var(--card-sunk); border:1px solid var(--card-edge);
+           border-radius:10px; margin-bottom:8px; font-family:var(--mono); }
+  .ko-pay .who{ font-family:var(--body); font-weight:600; }
+  .ko-pay .amt{ margin-left:auto; font-weight:700; }
+  .ko-note{ font-size:.85rem; color:var(--ink-soft); }
+  .ko-doc h2{ margin-top:26px; }
+  .ko-doc p{ line-height:1.75; }
+</style>
+</head>
+<body>
+
+<main class="table">
+
+  <header class="rail">
+    <div class="brand">
+      <div class="suits">&spades; &hearts; &diams; &clubs;</div>
+      <h1>홈 포커 정산 계산기</h1>
+      <div class="sub ko-sub">바이인 &middot; 최종 칩 &middot; 누가 누구에게</div>
+    </div>
+    <div class="rail-actions">
+      <button class="btn ghost" id="themeBtn" type="button" aria-label="화면 밝기 바꾸기">
+        <span id="themeName">밤</span>
+      </button>
+      <a class="back" href="../" hreflang="en">English</a>
+    </div>
+  </header>
+
+  <section class="setup">
+    <div class="field">
+      <label class="lbl" for="cur">화폐</label>
+      <select id="cur"></select>
+    </div>
+    <div class="field">
+      <label class="lbl" for="def">기본 바이인</label>
+      <div class="money w-default">
+        <span class="cur" id="defCur">₩</span>
+        <input type="text" id="def" inputmode="numeric" value="30,000">
+      </div>
+    </div>
+    <div class="field">
+      <label class="lbl" for="roundTo">반올림</label>
+      <select id="roundTo"></select>
+    </div>
+    <div class="field" id="roundDestField" hidden>
+      <label class="lbl" for="roundDest">남는 돈</label>
+      <select id="roundDest"></select>
+    </div>
+    <div class="field">
+      <label class="lbl" for="payVia">정산 방식</label>
+      <select id="payVia"></select>
+    </div>
+    <div class="field grow">
+      <div class="check-row">
+        <label class="lbl" for="gapMode">칩이 안 맞으면</label>
+        <button class="info" type="button" id="gapInfo"
+                aria-expanded="false" aria-controls="gapTip"
+                aria-label="차이를 어떻게 처리하는지 설명">?</button>
+      </div>
+      <select id="gapMode"></select>
+      <span class="hint" id="gapHint">차이를 보여 주고 자리에서 정합니다.</span>
+
+      <div class="tip" id="gapTip" role="tooltip" hidden>
+        <b>어떻게 되나요</b>
+        <p>칩 합계가 바이인과 맞지 않으면 주인 없는 돈이 생깁니다. 답은 셋이고, 누가 현금을
+          들고 있었는지에 따라 달라집니다.</p>
+        <p><strong>그대로 보기</strong>는 아무것도 정산하지 않고 차이만 보여 줍니다. 차이가 크면 대개
+          진짜 기록 실수라서, 떠안을 게 아니라 찾아야 합니다.</p>
+        <p><strong>뱅커가 부담</strong>은 대부분의 주최자가 하는 방식이고, 뱅커로 지정된 자리가 있어야
+          합니다. 한 사람이 밤새 현금을 들고 있었다면 차이도 그 사람 몫입니다.</p>
+        <p><strong>딴 사람들이 부담</strong>은 뱅커가 없는 판을 위한 것입니다. 차이가 딴 사람들 쪽에,
+          가장 많이 딴 사람부터 얹힙니다.</p>
+        <p>혼자 크게 이긴 사람이 있으면 그 사람이 다 감당합니다. 1등을 내줄 만큼은 아니니까요.</p>
+        <p>1, 2등이 비슷하면 한 명이 다 떠안을 때 순위가 뒤집힙니다. 그래서 나눕니다.
+          둘이면 반씩, 셋이면 3분의 1씩.</p>
+        <div class="eg">
+          <span class="eg-h">민수 +₩40,000 &middot; 지훈 +₩32,000</span>
+          <span><b>₩4,000</b> 차이 &rarr; 민수가 혼자 부담 &rarr; +₩36,000 / +₩32,000</span>
+          <span><b>₩10,000</b> &rarr; 혼자 내면 지훈에게 밀리므로 반씩 &rarr; +₩35,000 / +₩27,000</span>
+        </div>
+        <p class="tip-foot">칩이 <em>모자라는</em> 경우도 같은 방식입니다 &mdash; 가장 많이
+          잃은 사람의 빚부터 줄어듭니다.</p>
+      </div>
+    </div>
+    <div class="setup-foot">
+      <div class="count">인원 <b id="count">0</b> / 10</div>
+      <div class="count" id="bankOut" hidden></div>
+      <div class="spacer"></div>
+      <button class="btn" id="add" type="button">+ 플레이어 추가</button>
+    </div>
+  </section>
+
+  <p class="notice" id="notice" hidden role="status"></p>
+
+  <section class="players" id="players"></section>
+
+  <div class="actions">
+    <button class="btn primary" id="calc" type="button">정산하기</button>
+    <div class="spacer"></div>
+    <button class="btn ghost" id="reset" type="button">새 게임</button>
+    <button class="btn ghost" id="clear" type="button">전체 삭제</button>
+  </div>
+
+  <section class="result" id="result" hidden aria-live="polite"></section>
+
+  <p class="ko-guidelink"><a href="guides/">홈 홀덤 가이드</a>
+    <span>칩 세팅 &middot; 블라인드 &middot; 정산 &middot; 숫자가 안 맞을 때</span></p>
+
+  <details class="guide">
+    <summary>홈 포커 정산은 이렇게 합니다</summary>
+    <div class="doc ko-doc">
+
+      <h2>판돈을 한곳에 모으지 마세요</h2>
+      <p>홈 게임에는 하우스가 없습니다. 들어온 돈이 그대로 나가는 구조라서, 끝나고 나면 각자의
+        <strong>순손익</strong>만 남습니다. 최종 칩에서 그날 넣은 바이인을 전부 뺀 금액입니다.
+        2만 원씩 두 번 넣고 6만 5천 원으로 끝났다면 2만 5천 원이 남은 것이고, 한 번 넣고 다 잃었다면
+        2만 원이 빈 것입니다.</p>
+      <p>모두의 순손익을 더하면 계산이 맞을 때 정확히 0이 됩니다. 딴 사람이 받아야 할 돈과 잃은 사람이
+        내야 할 돈이 정확히 같다는 뜻입니다. 그러면 남은 일은 둘을 가장 적은 횟수로 맞춰 주는 것뿐입니다.
+        여섯 명이 여섯 번 송금할 이유가 없습니다. 가장 많이 딴 사람과 가장 많이 잃은 사람부터 차례로
+        묶으면 <em>n</em>명은 언제나 <em>n</em>&nbsp;&minus;&nbsp;1번 안에 끝납니다.</p>
+
+      <h2>칩이 안 맞을 때</h2>
+      <p>칩 합계가 바이인 합계와 다르면 이 페이지가 얼마나 차이 나는지 알려 줍니다. 숫자를 억지로
+        맞추지 않습니다. 대부분은 아무도 적지 않은 리바이 한 건이고, 차이 금액이 누군가의 바이인과
+        똑같이 떨어진다면 거의 확실히 그 경우입니다.</p>
+      <p>칩이 모자라면 판에 올라온 돈보다 센 칩이 적다는 뜻이라 누군가의 최종 칩을 덜 셌을 가능성이
+        큽니다. 칩이 더 많으면 기록되지 않은 바이인이 있다는 뜻입니다. 어느 쪽이든 먼저 찾아보고,
+        그래도 안 맞으면 누가 감당할지 그 자리에서 말로 정하세요.</p>
+
+      <h2>정산 내역은 남겨 두세요</h2>
+      <p>현금은 영수증이 없습니다. 그래서 몇 주 뒤에 &ldquo;나 그때 받았나?&rdquo;가 나오면 아무도
+        증명하지 못합니다. <strong>정산 내역 복사</strong>를 누르면 날짜가 찍힌 요약이 복사됩니다.
+        누가 누구에게 얼마인지, 각자 얼마 넣고 얼마 가져갔는지, 차이가 있었다면 그것까지 그대로
+        들어갑니다. 헤어지기 전에 단톡방에 붙여 넣으세요. 그날은 아무 비용도 들지 않고, 나중에
+        말이 나오면 그걸로 끝납니다.</p>
+
+      <h2>입력한 숫자는 어디에도 올라가지 않습니다</h2>
+      <p>계산은 전부 이 브라우저 안에서 끝납니다. 서버가 없고, 가입도 없고, 이름과 금액이 밖으로
+        나가지 않습니다. 대신 휴대폰에서 입력한 게임은 노트북에 나타나지 않습니다. 무료이고 앞으로도
+        무료입니다.</p>
+
+    </div>
+  </details>
+
+  <footer class="foot">
+    입력한 내용은 이 브라우저에만 남습니다 &mdash; 아무것도 전송되지 않습니다.<br>
+    <a href="guides/">가이드</a><span class="sep">&middot;</span><a href="../" hreflang="en">English version</a><span class="sep">&middot;</span><a href="../privacy-ko">개인정보처리방침</a><span class="sep">&middot;</span><a href="../terms" hreflang="en">Terms</a>
+  </footer>
+
+</main>
+
+<script>
+(function(){
+  "use strict";
+
+  var KEY = "poker.ledger.ko.v1";
+  var MIN_PLAYERS = 2, MAX_PLAYERS = 10;
+  var state = { players: [], defaultBuyIn: 30000, currency: "KRW",
+                gapMode: "show", payVia: "fewest", roundTo: 0, roundDest: 0 };
+  var themeState = null;
+  var root = document.documentElement;
+
+/* @CORE */
+
+  /* 받침이 있으면 '이', 없으면 '가'. 한글이 아니면 붙이지 않는다 —
+     "Mike이"보다 "Mike"가 낫다. */
+  /* The shared listNames() joins with " and ", which is correct English and wrong
+     everywhere on this page. Korean joins a final pair with 와/과 — 와 after a vowel,
+     과 after a final consonant — and separates the rest with commas.
+
+     Written here rather than parameterising the shared one: the choice of particle
+     depends on the preceding syllable, so it is not a separator that can be passed
+     in, it is a rule about the word before it. */
+  function koList(arr){
+    var parts = arr.map(function(x){ return x.name + "(" + fmt(x.amt) + ")"; });
+    if(parts.length === 1) return parts[0];
+    var last = parts[parts.length - 1];
+    var head = parts.slice(0, -1);
+    /* The particle agrees with the NAME it follows, not with the formatted amount,
+       so it is measured against the name, not a string that ends in ")". */
+    var p = particle(arr[arr.length - 2].name, "과", "와");
+    return p ? head.join(", ") + p + " " + last : head.join(", ") + ", " + last;
+  }
+
+  /* 받침이 있으면 앞것, 없으면 뒷것. 한글이 아니면 빈 문자열 — "Mike이"보다
+     "Mike"가 낫고, 목록에서는 부르는 쪽이 쉼표로 대신 잇는다.
+
+     particle()은 조사만, josa()는 단어에 조사를 붙여서 돌려준다. 이 둘을 헷갈려서
+     목록이 "민수(₩20,000)민수와 서연(₩10,000)"으로 나갔다. */
+  function particle(word, withBatchim, without){
+    var c = word.charCodeAt(word.length - 1);
+    if(c < 0xAC00 || c > 0xD7A3) return "";
+    return (c - 0xAC00) % 28 !== 0 ? withBatchim : without;
+  }
+  function josa(word, withBatchim, without){
+    return word + particle(word, withBatchim, without);
+  }
+
+  var el = function(tag, cls, text){
+    var n = document.createElement(tag);
+    if(cls) n.className = cls;
+    if(text != null) n.textContent = text;
+    return n;
+  };
+  var $ = function(id){ return document.getElementById(id); };
+  var playersEl = $("players"), resultEl = $("result"), noticeEl = $("notice");
+  var curSel = $("cur"), defInput = $("def"), defCur = $("defCur"), countOut = $("count");
+  var addBtn = $("add");
+
+  function seat(i){
+    return { name: "플레이어 " + (i + 1), buyIns: [state.defaultBuyIn], cashOut: 0,
+             done: false, banker: false, owed: 0 };
+  }
+  function nameOf(p, i){ return p.name || "플레이어 " + (i + 1); }
+  /* The shared validator fills a missing name with "Player 3". Correct behaviour,
+     wrong language — relabel after validating rather than forking the validator. */
+  function koNames(p, i){
+    if(p.name === "Player " + (i + 1)) p.name = "플레이어 " + (i + 1);
+    return p;
+  }
+
+  /* Theme is a site-wide preference, not a per-language one: the English app and
+     every guide already read it from this key, so a reader who picked Day should not
+     get a dark page by clicking through to Korean. Only the theme field is touched. */
+  /* 주입된 배열을 한국어로 갈아 끼운다. 인덱스와 값은 그대로이므로 readDest나
+     roundDestName 같은 공유 함수는 손대지 않는다 — 바뀌는 건 문구뿐이다. */
+  ROUND_DESTS = ["음료·안주", "주최자", "하이핸드 적립", "다음 판", "한 판으로 결정"];
+  /* 통화 이름만 한국어로. 기호와 소수 자릿수는 공유 테이블 그대로 쓴다 — 원과 엔이
+     소수점 없이 찍히는 규칙이 거기 있고, 그건 옮겨 적을 값이 아니다. */
+  var KO_CURRENCY_NAME = {
+    USD:"미국 달러", EUR:"유로", GBP:"영국 파운드", SGD:"싱가포르 달러",
+    CNY:"중국 위안", JPY:"일본 엔", KRW:"한국 원"
+  };
+  function curName(){ return KO_CURRENCY_NAME[state.currency] || cur().name; }
+  var GAP_LABEL = { show:"그대로 보기", top:"딴 사람들이 부담", banker:"뱅커가 부담" };
+  var GAP_HINT = {
+    show: "차이를 보여 주고 자리에서 정합니다.",
+    top: "딴 사람들 쪽에 얹습니다. 등수는 바뀌지 않습니다.",
+    banker: "차이를 전부 뱅커가 떠안습니다. 대부분의 주최자가 이렇게 합니다."
+  };
+  var PAY_LABEL = { fewest:"최소 횟수", banker:"뱅커를 통해" };
+
+  var THEME_KEY = "poker.ledger.v1";
+  var KO_THEME_LABEL = { dark: "밤", light: "낮" };
+  function readSiteTheme(){
+    try{
+      var s = JSON.parse(localStorage.getItem(THEME_KEY) || "null");
+      return s && THEMES.indexOf(s.theme) >= 0 ? s.theme : null;
+    }catch(e){ return null; }
+  }
+  function writeSiteTheme(){
+    try{
+      var s = JSON.parse(localStorage.getItem(THEME_KEY) || "null") || {};
+      s.theme = themeState;
+      localStorage.setItem(THEME_KEY, JSON.stringify(s));
+    }catch(e){}
+  }
+  function applyTheme(){
+    root.setAttribute("data-theme", themeState);
+    document.getElementById("themeName").textContent = KO_THEME_LABEL[themeState];
+  }
+
+  function save(){
+    try{
+      localStorage.setItem(KEY, JSON.stringify({
+        players: state.players.map(function(p){
+          return { name:p.name, buyIns:p.buyIns.slice(), cashOut:p.cashOut,
+                   done:p.done === true, banker:p.banker === true, owed:p.owed || 0 };
+        }),
+        defaultBuyIn: state.defaultBuyIn, currency: state.currency,
+        gapMode: state.gapMode, payVia: state.payVia,
+        roundTo: state.roundTo, roundDest: state.roundDest
+      }));
+    }catch(e){}
+  }
+  function clampUnits(c){
+    if(typeof c !== "number" || !isFinite(c) || c < 0) return 0;
+    return Math.min(Math.round(c), MAX_AMOUNT * minor(state.currency));
+  }
+  function load(){
+    try{
+      var s = JSON.parse(localStorage.getItem(KEY) || "null");
+      if(!s) return false;
+      state.currency = Object.prototype.hasOwnProperty.call(CURRENCIES, s.currency) ? s.currency : "KRW";
+      if(typeof s.defaultBuyIn === "number" && isFinite(s.defaultBuyIn) && s.defaultBuyIn >= 0){
+        state.defaultBuyIn = Math.round(s.defaultBuyIn);
+      }
+      if(!Array.isArray(s.players) || s.players.length < MIN_PLAYERS) return false;
+      /* readPlayers is the English app's validator, shared rather than copied, so the
+         bounds on a hostile store are identical on both pages. Its fallback name is
+         English; only the label is swapped, never the checks. */
+      var loaded = readPlayers(s.players);
+      if(!loaded) return false;
+      state.players = loaded.map(koNames);
+      state.gapMode = readGapMode(s.gapMode, s.absorb);
+      state.payVia = readPayVia(s.payVia);
+      state.roundTo = readRound(s.roundTo, state.currency);
+      state.roundDest = readDest(s.roundDest);
+      dropModesWithoutBanker();
+      return true;
+    }catch(e){ return false; }
+  }
+
+  function notice(t){
+    if(!t){ noticeEl.hidden = true; noticeEl.textContent = ""; return; }
+    noticeEl.textContent = t; noticeEl.hidden = false;
+  }
+  function hideResult(){ resultEl.hidden = true; resultEl.textContent = ""; }
+
+  function renderSeat(p, idx){
+    var s = el("section", "seat" + (p.done ? " settled" : ""));
+    var head = el("div", "seat-head");
+    head.appendChild(el("span", "seat-no", String(idx + 1)));
+    var name = el("input");
+    name.type = "text"; name.value = p.name; name.maxLength = 40;
+    name.setAttribute("aria-label", (idx + 1) + "번 플레이어 이름");
+    name.addEventListener("input", function(){ p.name = name.value; save(); });
+    head.appendChild(name);
+    s.appendChild(head);
+
+    if(p.done) head.appendChild(el("span", "settled-tag", "정산 완료"));
+    if(p.banker) head.appendChild(el("span", "banker-tag", "뱅커"));
+
+    var tools = el("div", "seat-tools");
+    var rebuy = el("button", "btn tiny", "+ 리바이");
+    rebuy.type = "button";
+    rebuy.disabled = p.done === true;
+    if(rebuy.disabled) rebuy.title = "정산이 끝난 사람입니다. 다시 열면 바이인을 추가할 수 있습니다.";
+    rebuy.addEventListener("click", function(){
+      if(p.buyIns.length >= MAX_BUYINS){
+        notice("한 사람당 바이인은 " + MAX_BUYINS + "건까지입니다. 금액을 고쳐 주세요.");
+        return;
+      }
+      p.buyIns.push(state.defaultBuyIn); save(); render();
+    });
+    tools.appendChild(rebuy);
+
+    /* 먼저 일어나는 사람이 정산이 깨지는 가장 흔한 지점 — 그 자리에서 숫자를 잠가 둔다.
+       가이드(정산하는 법)가 독자에게 시키는 동작이므로 버튼이 없으면 글과 도구가 어긋난다. */
+    var done = el("button", "btn tiny" + (p.done ? " ghost" : ""), p.done ? "다시 열기" : "정산 완료");
+    done.type = "button";
+    done.title = p.done ? "이 사람을 다시 게임에 넣습니다" : "최종 칩을 확정하고 잠급니다";
+    done.setAttribute("aria-pressed", p.done ? "true" : "false");
+    done.addEventListener("click", function(){
+      p.done = !p.done; save(); hideResult(); render();
+    });
+    tools.appendChild(done);
+
+    var bank = el("button", "btn tiny" + (p.banker ? "" : " ghost"), "뱅커");
+    bank.type = "button";
+    bank.title = p.banker ? "현금을 들고 있는 사람입니다. 누르면 해제됩니다."
+                          : "현금을 들고 있는 사람으로 지정합니다";
+    bank.setAttribute("aria-pressed", p.banker ? "true" : "false");
+    bank.addEventListener("click", function(){
+      setBanker(p.banker ? -1 : idx);
+      dropModesWithoutBanker();
+      save(); hideResult(); render();
+    });
+    tools.appendChild(bank);
+
+    var rm = el("button", "btn tiny ghost", "삭제");
+    rm.type = "button";
+    rm.disabled = state.players.length <= MIN_PLAYERS;
+    if(rm.disabled) rm.title = "최소 " + MIN_PLAYERS + "명은 있어야 합니다.";
+    rm.addEventListener("click", function(){
+      state.players.splice(idx, 1); save(); hideResult(); render();
+    });
+    tools.appendChild(rm);
+    s.appendChild(tools);
+
+    var stakes = el("div", "stakes");
+    var left = el("div");
+    left.appendChild(el("span", "lbl", "바이인"));
+    var chips = el("div", "chips");
+    p.buyIns.forEach(function(amt, bi){
+      var chip = el("span", "chip");
+      chip.appendChild(el("span", "cur", cur().sym));
+      var inp = el("input");
+      inp.type = "text";
+      inp.inputMode = cur().dec === 0 ? "numeric" : "decimal";
+      inp.value = toInput(amt);
+      inp.setAttribute("aria-label", (idx + 1) + "번 플레이어 " + (bi + 1) + "번째 바이인");
+      inp.addEventListener("input", function(){
+        var v = parseMoney(inp.value);
+        inp.classList.toggle("bad", v === null);
+        if(v !== null){ p.buyIns[bi] = v; save(); tally(); }
+      });
+      inp.addEventListener("blur", function(){
+        if(parseMoney(inp.value) !== null) inp.value = toInput(p.buyIns[bi]);
+      });
+      chip.appendChild(inp);
+      var x = el("button", "x", "×");
+      x.type = "button";
+      x.setAttribute("aria-label", (bi + 1) + "번째 바이인 삭제");
+      x.addEventListener("click", function(){
+        p.buyIns.splice(bi, 1); save(); render();
+      });
+      chip.appendChild(x);
+      chips.appendChild(chip);
+    });
+    if(!p.buyIns.length) chips.appendChild(el("span", "ko-note", "바이인이 없습니다 — 리바이를 누르세요"));
+    left.appendChild(chips);
+
+    var cashWrap = el("div");
+    cashWrap.style.marginTop = "14px";
+    cashWrap.appendChild(el("span", "lbl", "최종 칩"));
+    var money = el("div", "money");
+    money.style.maxWidth = "170px";
+    money.style.marginTop = "6px";
+    var cash = el("input");
+    cash.type = "text";
+    cash.inputMode = cur().dec === 0 ? "numeric" : "decimal";
+    cash.value = toInput(p.cashOut);
+    cash.setAttribute("aria-label", (idx + 1) + "번 플레이어 최종 칩");
+    if(p.done){
+      cash.readOnly = true;
+      cash.title = "잠겨 있습니다. 다시 열기를 누르면 수정할 수 있습니다.";
+    }
+    cash.addEventListener("input", function(){
+      var v = parseMoney(cash.value);
+      cash.classList.toggle("bad", v === null);
+      if(v !== null){ p.cashOut = v; save(); tally(); }
+    });
+    cash.addEventListener("blur", function(){
+      if(parseMoney(cash.value) !== null) cash.value = toInput(p.cashOut);
+    });
+    money.appendChild(cash);
+    cashWrap.appendChild(money);
+
+    /* 외상은 뱅커에게 지는 빚이라 뱅커가 없으면 갚을 상대가 없고, 뱅커 본인은
+       자기에게 빚질 수 없다. 그래서 의미가 있는 자리에만 나온다. */
+    if(bankerIndex(state.players) >= 0 && !p.banker){
+      var ow = el("div");
+      ow.style.marginTop = "14px";
+      ow.appendChild(el("span", "lbl", "외상"));
+      var owMoney = el("div", "money");
+      owMoney.style.maxWidth = "170px";
+      owMoney.style.marginTop = "6px";
+      var owed = el("input");
+      owed.type = "text";
+      owed.inputMode = cur().dec === 0 ? "numeric" : "decimal";
+      owed.value = toInput(p.owed || 0);
+      owed.setAttribute("aria-label", (idx + 1) + "번 플레이어가 아직 내지 않은 바이인");
+      owed.title = "칩은 받았는데 아직 돈이 안 들어온 금액";
+      owed.addEventListener("input", function(){
+        var v = parseMoney(owed.value);
+        /* 받은 칩보다 많이 빚질 수는 없다. */
+        var bad = v === null || v > totalIn(p);
+        owed.classList.toggle("bad", bad);
+        if(!bad){ p.owed = v; save(); tally(); }
+      });
+      owed.addEventListener("blur", function(){
+        var v = parseMoney(owed.value);
+        if(v !== null && v <= totalIn(p)) owed.value = toInput(p.owed || 0);
+      });
+      owMoney.appendChild(owed);
+      ow.appendChild(owMoney);
+      cashWrap.appendChild(ow);
+    }
+    left.appendChild(cashWrap);
+    stakes.appendChild(left);
+
+    var t = el("div", "tally");
+    var inBox = el("div");
+    inBox.appendChild(el("span", "lbl", "넣은 돈"));
+    var inVal = el("span", "v"); inVal.dataset.role = "in";
+    inBox.appendChild(inVal); t.appendChild(inBox);
+    var netBox = el("div");
+    netBox.appendChild(el("span", "lbl", "손익"));
+    var netVal = el("span", "v"); netVal.dataset.role = "net";
+    netBox.appendChild(netVal); t.appendChild(netBox);
+    stakes.appendChild(t);
+    s.appendChild(stakes);
+    return s;
+  }
+
+  function tally(){
+    Array.prototype.forEach.call(playersEl.children, function(node, i){
+      var p = state.players[i];
+      if(!p) return;
+      var iv = node.querySelector('[data-role="in"]');
+      var nv = node.querySelector('[data-role="net"]');
+      var n = netOf(p);
+      if(iv) iv.textContent = fmt(totalIn(p));
+      if(nv){
+        nv.textContent = fmtSigned(n);
+        nv.className = "v " + (n > 0 ? "up" : n < 0 ? "down" : "flat");
+      }
+    });
+    renderBankCheck();
+  }
+
+  function buildPickers(){
+    var hasBanker = bankerIndex(state.players) >= 0;
+    var rs = $("roundTo");
+    rs.textContent = "";
+    var ex = document.createElement("option");
+    ex.value = "0"; ex.textContent = "그대로";
+    rs.appendChild(ex);
+    (cur().step || []).forEach(function(step){
+      var o = document.createElement("option");
+      o.value = String(step); o.textContent = fmt(step) + " 단위로 내림";
+      rs.appendChild(o);
+    });
+    var ds = $("roundDest");
+    if(!ds.options.length){
+      ROUND_DESTS.forEach(function(name, i){
+        var o = document.createElement("option");
+        o.value = String(i); o.textContent = name;
+        ds.appendChild(o);
+      });
+    }
+    var gs = $("gapMode"), ps = $("payVia");
+    gs.textContent = ""; ps.textContent = "";
+    /* 뱅커가 없으면 "뱅커가 부담"은 고를 수 없어야 한다. 아무 일도 안 하는 선택지는
+       없는 선택지보다 나쁘다. */
+    GAP_MODES.forEach(function(m){
+      if(m === "banker" && !hasBanker) return;
+      var o = document.createElement("option");
+      o.value = m; o.textContent = GAP_LABEL[m];
+      gs.appendChild(o);
+    });
+    PAY_MODES.forEach(function(m){
+      if(m === "banker" && !hasBanker) return;
+      var o = document.createElement("option");
+      o.value = m; o.textContent = PAY_LABEL[m];
+      ps.appendChild(o);
+    });
+    dropModesWithoutBanker();
+    state.roundTo = roundStep();
+    rs.value = String(state.roundTo);
+    ds.value = String(state.roundDest);
+    $("roundDestField").hidden = state.roundTo === 0;
+    gs.value = state.gapMode;
+    ps.value = state.payVia;
+    $("gapHint").textContent = GAP_HINT[state.gapMode];
+  }
+
+  /* 뱅커가 현금을 들고 있을 때 지금 금고에 얼마가 있어야 하는지. 한 시간에 한 번
+     세어 보면 오차가 그 한 시간 안에 갇힌다. */
+  function renderBankCheck(){
+    var b = bankCheck(state.players);
+    var on = bankerIndex(state.players) >= 0 && b.credit > 0;
+    var out = $("bankOut");
+    out.hidden = !on;
+    if(on){
+      out.textContent = "";
+      out.appendChild(document.createTextNode("금고에 있어야 할 돈 "));
+      out.appendChild(el("b", null, fmt(b.cash)));
+      out.appendChild(document.createTextNode(" · 외상 " + fmt(b.credit)));
+    }
+  }
+
+  function render(){
+    playersEl.textContent = "";
+    state.players.forEach(function(p, i){ playersEl.appendChild(renderSeat(p, i)); });
+    countOut.textContent = state.players.length;
+    addBtn.disabled = state.players.length >= MAX_PLAYERS;
+    addBtn.title = addBtn.disabled ? "한 테이블은 " + MAX_PLAYERS + "명까지입니다." : "";
+    defInput.value = toInput(state.defaultBuyIn);
+    defCur.textContent = cur().sym;
+    curSel.value = state.currency;
+    buildPickers();
+    tally();
+  }
+
+  function summaryText(res, rows, potIn, potOut, diff, adjHead, plan,
+                       bankerLabel, bankerGap, owing){
+    var lines = ["포커 정산", curName() + " (" + state.currency + ") 기준", ""];
+    if(res.transfers.length){
+      res.transfers.forEach(function(t){
+        lines.push(t.from + " → " + t.to + "  " + fmt(t.cents));
+      });
+    }else{
+      lines.push("보낼 돈이 없습니다 — 모두 본전입니다.");
+    }
+    lines.push("", "플레이어별 손익:");
+    rows.forEach(function(r){
+      lines.push("  " + r.name + ": " + fmtSigned(r.net) +
+                 "  (넣은 돈 " + fmt(r.inn) + ", 받는 칩 " + fmt(r.out) + ")" +
+                 (adjHead && r.net !== r.adjNet ? "  -> 차이 반영 후 " + fmtSigned(r.adjNet) : ""));
+    });
+    if(bankerLabel){
+      lines.push("", "모두 " + bankerLabel + "님과만 주고받습니다.");
+    }
+    if(bankerGap){
+      /* 한 줄이다. push(a, b)는 두 줄이 되고, 영어판에서 똑같이 한 번 틀렸다. */
+      lines.push((bankerLabel || "뱅커") + "님이 " + (bankerGap > 0
+        ? "차이 " + fmt(bankerGap) + "을 부담합니다."
+        : "남은 " + fmt(-bankerGap) + "을 가져갑니다."));
+    }
+    if(owing && owing.length){
+      lines.push("", "위 송금과 별개로 금고에 갚을 돈:");
+      owing.forEach(function(c){ lines.push("  " + c.name + ": " + fmt(c.amt)); });
+    }
+    if(plan && plan.left > 0){
+      lines.push("", "최종 칩을 " + fmt(plan.step) + " 단위로 내림했습니다.",
+        "남는 " + fmt(plan.left) + " → " + roundDestName() + ".");
+    }
+    lines.push("", "총 바이인 " + fmt(potIn) + " / 총 최종 칩 " + fmt(potOut));
+    if(diff !== 0){
+      lines.push("주의: 칩이 " + fmt(Math.abs(diff)) + (diff < 0 ? " 모자랍니다." : " 더 많습니다."));
+    }
+    var now = new Date(), pad = function(n){ return (n < 10 ? "0" : "") + n; };
+    lines.push("", "정산일 " + now.getFullYear() + "-" + pad(now.getMonth() + 1) + "-" +
+      pad(now.getDate()) + " · homepokerledger.com/ko");
+    return lines.join("\n");
+  }
+
+  function calculate(){
+    var players = state.players;
+
+    /* 가이드가 말하는 순서 위반 — 한 명이라도 안 센 상태에서 송금이 시작되면
+       마지막 숫자가 들어왔을 때 이미 보낸 돈까지 되돌려야 한다. */
+    var settled = players.filter(function(p){ return p.done === true; });
+    var waiting = players.filter(function(p){ return p.done !== true; })
+                         .map(function(p, i){ return nameOf(p, i); });
+    notice(settled.length > 0 && waiting.length > 0
+      ? "아직 안 센 사람: " + waiting.join(", ") +
+        ". 다 세기 전에 정산하면 보낸 돈을 되돌려야 합니다."
+      : "");
+
+    var potIn = 0, potOut = 0;
+    players.forEach(function(p){ potIn += totalIn(p); potOut += p.cashOut; });
+    var diff = potOut - potIn;
+
+    /* 반올림은 칩을 실제로 건네는 행위라 순손익보다 먼저 온다. diff는 건드리지 않는다 —
+       칩이 맞는지는 반올림과 무관하게 답이 나와야 한다. */
+    var plan = roundingPlan(players);
+    var raw = players.map(function(p, i){
+      return { name: nameOf(p, i), net: plan.paid[i] - totalIn(p) };
+    });
+
+    var bIdx = bankerIndex(players);
+    var adj = { entries: raw, taken: {}, side: null };
+    if(diff !== 0 && state.gapMode === "top"){
+      adj = absorbGap(raw, diff);
+    }else if(diff !== 0 && state.gapMode === "banker" && bIdx >= 0){
+      adj = { entries: gapToBanker(raw, bIdx, diff), taken: {}, side: null };
+    }
+    var gapOnBanker = diff !== 0 && state.gapMode === "banker" && bIdx >= 0;
+    var adjHead = adjustedColumn(adj, gapOnBanker);
+
+    var entries = adj.entries;
+    if(plan.left > 0){
+      entries = entries.concat([{ name: roundDestName(), net: plan.left }]);
+    }
+    var viaBanker = state.payVia === "banker" && bIdx >= 0;
+    var res = viaBanker ? settleViaBanker(entries, bIdx) : settleNets(entries);
+
+    var rows = players.map(function(p, i){
+      return { name: nameOf(p, i), inn: totalIn(p), out: plan.paid[i],
+               net: raw[i].net, adjNet: adj.entries[i].net, cut: adj.taken[i] || 0 };
+    }).sort(function(a, b){ return b.net - a.net; });
+
+    resultEl.textContent = "";
+    resultEl.hidden = false;
+    resultEl.appendChild(el("h2", null, "정산 결과 · " + state.currency));
+
+    var banner = el("div", "banner " + (diff === 0 ? "ok" : "warn"));
+    if(diff === 0){
+      banner.appendChild(el("span", "head", "계산이 맞습니다"));
+      banner.appendChild(document.createTextNode(
+        "총 바이인과 총 최종 칩이 모두 " + fmt(potIn) + "입니다."));
+    }else{
+      banner.appendChild(el("span", "head", diff < 0 ? "칩이 모자랍니다" : "칩이 더 많습니다"));
+      banner.appendChild(document.createTextNode(
+        "바이인 " + fmt(potIn) + ", 최종 칩 " + fmt(potOut) + " — " +
+        fmt(Math.abs(diff)) + " 차이입니다. " +
+        (diff < 0 ? "누군가의 최종 칩을 덜 셌을 수 있습니다."
+                  : "적지 않은 바이인이 있을 가능성이 큽니다.")));
+      if(adj.side){
+        var who = Object.keys(adj.taken).map(function(k){
+          return { name: raw[k].name, amt: adj.taken[k] };
+        }).sort(function(a, b){ return b.amt - a.amt; });
+        var line = el("div");
+        line.style.marginTop = "8px";
+        line.textContent = (adj.side === "winners"
+          ? koList(who) + " 쪽에서 그만큼 덜 가져갑니다."
+          : koList(who) + " 쪽 빚이 그만큼 줄어듭니다.") +
+          " 등수는 바뀌지 않습니다.";
+        banner.appendChild(line);
+      }else if(gapOnBanker){
+        var bl = el("div");
+        bl.style.marginTop = "8px";
+        bl.textContent = entries[bIdx].name + "님이 " +
+          (diff > 0 ? "차이 " + fmt(diff) + "을 부담합니다."
+                    : "남은 " + fmt(-diff) + "을 가져갑니다.");
+        banner.appendChild(bl);
+      }else if(state.payVia === "banker" && bIdx >= 0 && res.carried){
+        /* 배정하지 않아도, 전부 뱅커를 거치면 뱅커가 그대로 떠안는다. 말해 준다. */
+        var cl = el("div");
+        cl.style.marginTop = "8px";
+        cl.textContent = raw[bIdx].name + "님이 모든 돈을 거치므로 차이 " +
+          fmt(Math.abs(res.carried)) +
+          (res.carried > 0 ? "을 그대로 떠안게 됩니다." : "을 그대로 가져가게 됩니다.");
+        banner.appendChild(cl);
+      }
+    }
+    resultEl.appendChild(banner);
+
+    if(!potIn && !potOut){
+      resultEl.appendChild(el("p", "ko-note", "아직 입력된 금액이 없습니다."));
+      return;
+    }
+
+    if(viaBanker){
+      resultEl.appendChild(el("p", "ko-note",
+        "모두 " + entries[bIdx].name + "님과만 주고받습니다."));
+    }
+
+    if(res.transfers.length){
+      var list = el("div");
+      res.transfers.forEach(function(t){
+        var row = el("div", "ko-pay");
+        row.appendChild(el("span", "who", t.from));
+        row.appendChild(el("span", null, "→"));
+        row.appendChild(el("span", "who", t.to));
+        row.appendChild(el("span", "amt", fmt(t.cents)));
+        list.appendChild(row);
+      });
+      resultEl.appendChild(list);
+    }else{
+      resultEl.appendChild(el("p", null, "보낼 돈이 없습니다. 모두 본전입니다."));
+    }
+
+    if(res.unpaid && res.unpaid.length){
+      resultEl.appendChild(el("p", "ko-note",
+        koList(res.unpaid) + " 받을 돈이 남았지만 낼 사람이 없습니다. 칩 계산을 다시 확인해 주세요."));
+    }
+    if(res.unowed && res.unowed.length){
+      resultEl.appendChild(el("p", "ko-note",
+        koList(res.unowed) + " 낼 돈이 남았지만 받을 사람이 없습니다. 칩 계산을 다시 확인해 주세요."));
+    }
+
+    var owing = bIdx >= 0 ? creditors(players) : [];
+    if(owing.length){
+      var ol = el("p", "ko-note",
+        "위 송금과 별개로 아직 금고에 갚지 않은 돈: " +
+        owing.map(function(c){ return c.name + " " + fmt(c.amt); }).join(", ") + ".");
+      resultEl.appendChild(ol);
+    }
+
+    var tbl = el("table", "summary");
+    tbl.appendChild(el("caption", null, "전체 내역"));
+    var thead = el("thead"), hr = el("tr");
+    var heads = ["플레이어", "넣은 돈", "받는 칩", "손익"];
+    if(adjHead) heads.push(adj.side ? "부담 후" : "차이 반영 후");
+    heads.forEach(function(h){ hr.appendChild(el("th", null, h)); });
+    thead.appendChild(hr); tbl.appendChild(thead);
+    var tb = el("tbody");
+    rows.forEach(function(r){
+      var tr = el("tr");
+      tr.appendChild(el("td", null, r.name));
+      tr.appendChild(el("td", null, fmt(r.inn)));
+      tr.appendChild(el("td", null, fmt(r.out)));
+      var nd = el("td", null, fmtSigned(r.net));
+      nd.style.color = r.net > 0 ? "var(--win)" : r.net < 0 ? "var(--loss)" : "var(--flat)";
+      if(adjHead) nd.style.opacity = ".55";
+      tr.appendChild(nd);
+      if(adjHead){
+        var ad = el("td", null, fmtSigned(r.adjNet) + (r.cut ? "  (-" + fmt(r.cut) + ")" : ""));
+        ad.style.color = r.adjNet > 0 ? "var(--win)" : r.adjNet < 0 ? "var(--loss)" : "var(--flat)";
+        if(r.cut) ad.style.fontWeight = "600";
+        tr.appendChild(ad);
+      }
+      tb.appendChild(tr);
+    });
+    tbl.appendChild(tb);
+    var tf = el("tfoot");
+    if(plan.left > 0){
+      var cr = el("tr", "change");
+      cr.appendChild(el("td", null, "남는 돈 → " + roundDestName()));
+      cr.appendChild(el("td", null, ""));
+      cr.appendChild(el("td", null, fmt(plan.left)));
+      cr.appendChild(el("td", null, ""));
+      if(adjHead) cr.appendChild(el("td", null, ""));
+      tf.appendChild(cr);
+    }
+    var fr = el("tr");
+    fr.appendChild(el("td", null, "합계"));
+    fr.appendChild(el("td", null, fmt(potIn)));
+    fr.appendChild(el("td", null, fmt(potOut)));
+    fr.appendChild(el("td", null, fmtSigned(diff)));
+    if(adjHead) fr.appendChild(el("td", null, fmt(0)));
+    tf.appendChild(fr); tbl.appendChild(tf);
+    resultEl.appendChild(tbl);
+
+    var actions = el("div", "actions");
+    var copy = el("button", "btn", "정산 내역 복사");
+    copy.type = "button";
+    copy.addEventListener("click", function(){
+      var text = summaryText(res, rows, potIn, potOut, diff, adjHead, plan,
+        viaBanker ? entries[bIdx].name : null,
+        /* 차이를 뱅커에게 배정했으면 이미 순손익에 반영돼 carried는 0이다. 배정하지
+           않았는데 전부 뱅커를 거치면, 돈을 들고 있다는 이유만으로 그대로 떠안는다.
+           이 값이 존재하는 이유가 바로 그 조용한 경우를 막기 위해서다. */
+        gapOnBanker ? diff : (viaBanker ? res.carried : 0), owing);
+      var back = function(){ copy.textContent = "정산 내역 복사"; };
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(text).then(function(){
+          copy.textContent = "복사했습니다"; setTimeout(back, 1600);
+        }, function(){ copy.textContent = "⌘C를 누르세요"; setTimeout(back, 1600); });
+      }else{ copy.textContent = "⌘C를 누르세요"; setTimeout(back, 1600); }
+    });
+    actions.appendChild(copy);
+
+    /* 링크는 URL 프래그먼트에 담긴다. 프래그먼트는 어떤 브라우저도 서버로 보내지 않으므로
+       "입력한 숫자는 전송되지 않는다"는 약속이 링크에서도 그대로 유지된다. */
+    var share = el("button", "btn", "공유 링크 복사");
+    share.type = "button";
+    share.addEventListener("click", function(){
+      var url = koShareUrl();
+      var back2 = function(){ share.textContent = "공유 링크 복사"; };
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(url).then(function(){
+          share.textContent = "링크를 복사했습니다"; setTimeout(back2, 1600);
+        }, function(){ share.textContent = "⌘C를 누르세요"; setTimeout(back2, 1600); });
+      }else{ share.textContent = "⌘C를 누르세요"; setTimeout(back2, 1600); }
+    });
+    actions.appendChild(share);
+    resultEl.appendChild(actions);
+  }
+
+  CURRENCY_ORDER.forEach(function(code){
+    var c = CURRENCIES[code];
+    var o = document.createElement("option");
+    o.value = code;
+    o.textContent = c.sym + "  " + (KO_CURRENCY_NAME[code] || c.name);
+    curSel.appendChild(o);
+  });
+  curSel.addEventListener("change", function(){
+    var from = state.currency;
+    var to = Object.prototype.hasOwnProperty.call(CURRENCIES, curSel.value) ? curSel.value : "KRW";
+    if(from === to) return;
+    var rounded = convertAll(from, to);
+    state.currency = to;
+    save(); hideResult(); render();
+    notice(rounded ? "금액을 " + (KO_CURRENCY_NAME[to] || CURRENCIES[to].name) +
+                     " 단위에 맞춰 반올림했습니다." : "");
+  });
+  defInput.addEventListener("input", function(){
+    var v = parseMoney(defInput.value);
+    defInput.classList.toggle("bad", v === null);
+    if(v !== null){ state.defaultBuyIn = v; save(); }
+  });
+  addBtn.addEventListener("click", function(){
+    if(state.players.length >= MAX_PLAYERS) return;
+    state.players.push(seat(state.players.length));
+    save(); hideResult(); render();
+  });
+  /* 공유 링크는 한국어 페이지를 가리켜야 한다 — 영어 앱의 SHARE_BASE를 그대로 쓰면
+     받는 사람이 영어 화면을 연다. */
+  function koShareUrl(){
+    return shareUrl().replace("https://homepokerledger.com/#g=",
+                              "https://homepokerledger.com/ko/#g=");
+  }
+
+  /* 설명은 물어볼 때만 연다. 영어판은 이 패널을 select의 focus에 물려 두는 바람에
+     드롭다운을 누를 때마다 고르려는 선택지 위로 설명이 덮였다. 여는 손잡이는 "?"
+     버튼이고, 컨트롤 자체는 아니다. */
+  var gapTip = $("gapTip"), gapInfo = $("gapInfo"), gapTipPinned = false;
+  function showGapTip(){
+    gapTip.hidden = false;
+    gapInfo.setAttribute("aria-expanded", "true");
+  }
+  function hideGapTip(force){
+    if(gapTipPinned && !force) return;
+    gapTipPinned = false;
+    gapTip.hidden = true;
+    gapInfo.setAttribute("aria-expanded", "false");
+  }
+  gapInfo.addEventListener("mouseenter", showGapTip);
+  gapInfo.addEventListener("mouseleave", function(){ hideGapTip(); });
+  gapInfo.addEventListener("focus", showGapTip);
+  gapInfo.addEventListener("blur", function(){ if(!gapTipPinned) hideGapTip(); });
+  gapInfo.addEventListener("click", function(){
+    if(gapTipPinned) hideGapTip(true);
+    else { gapTipPinned = true; showGapTip(); }
+  });
+  document.addEventListener("keydown", function(e){
+    if(e.key === "Escape" && !gapTip.hidden){ hideGapTip(true); gapInfo.focus(); }
+  });
+  document.addEventListener("click", function(e){
+    if(gapTipPinned && !gapTip.contains(e.target) && !gapInfo.contains(e.target)){
+      hideGapTip(true);
+    }
+  });
+
+  $("roundTo").addEventListener("change", function(){
+    state.roundTo = readRound(parseInt($("roundTo").value, 10), state.currency);
+    $("roundDestField").hidden = state.roundTo === 0;
+    save(); hideResult();
+  });
+  $("roundDest").addEventListener("change", function(){
+    state.roundDest = readDest(parseInt($("roundDest").value, 10));
+    save(); hideResult();
+  });
+  $("gapMode").addEventListener("change", function(){
+    state.gapMode = readGapMode($("gapMode").value, false);
+    $("gapHint").textContent = GAP_HINT[state.gapMode];
+    save(); hideResult();
+  });
+  $("payVia").addEventListener("change", function(){
+    state.payVia = readPayVia($("payVia").value);
+    save(); hideResult();
+  });
+
+  document.getElementById("themeBtn").addEventListener("click", function(){
+    themeState = THEMES[(THEMES.indexOf(themeState) + 1) % THEMES.length];
+    applyTheme(); writeSiteTheme();
+  });
+  $("clear").addEventListener("click", function(){
+    if(!confirm("모두 지우고 빈 자리 두 개로 시작할까요?")) return;
+    state.players = [seat(0), seat(1)];
+    notice(""); save(); hideResult(); render();
+  });
+
+  $("calc").addEventListener("click", calculate);
+  $("reset").addEventListener("click", function(){
+    if(!confirm("새 게임을 시작할까요? 이름은 남고 금액만 초기화됩니다.")) return;
+    state.players.forEach(function(p){
+      p.buyIns = [state.defaultBuyIn]; p.cashOut = 0;
+    });
+    notice(""); save(); hideResult(); render();
+  });
+
+  themeState = readSiteTheme() || systemTheme();
+  applyTheme();
+
+  /* 링크가 저장된 게임을 이긴다. 단, 절대 저장하지 않는다 — 남의 링크를 열었다고
+     내 게임이 덮어써지면 안 된다. */
+  var shared = decodeShare(typeof location !== "undefined" ? location.hash : "");
+  if(shared){
+    state.currency = shared.currency;
+    state.gapMode = shared.gapMode;
+    state.payVia = shared.payVia;
+    state.roundTo = shared.roundTo;
+    state.roundDest = shared.roundDest;
+    state.players = shared.players.map(koNames);
+    dropModesWithoutBanker();
+  }else if(!load()){
+    state.players = [seat(0), seat(1)];
+  }
+  render();
+  if(shared) calculate();
+})();
+</script>
+
+</body>
+</html>

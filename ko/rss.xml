@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>홈 홀덤 가이드</title>
+    <link>https://homepokerledger.com/ko/</link>
+    <description>홈 홀덤을 여는 사람을 위한 짧은 가이드 모음.</description>
+    <language>ko-KR</language>
+    <lastBuildDate>Fri, 18 Sep 2026 10:00:00 +0000</lastBuildDate>
+    <atom:link href="https://homepokerledger.com/ko/rss.xml" rel="self" type="application/rss+xml"/>
+    <item>
+      <title>블라인드와 바이인 정하기 — 홈 홀덤 판 크기</title>
+      <link>https://homepokerledger.com/ko/guides/blinds</link>
+      <guid isPermaLink="true">https://homepokerledger.com/ko/guides/blinds</guid>
+      <description>바이인에 맞는 블라인드, 100BB가 기준인 이유, 그리고 판돈을 올리는 것이 홈 게임을 가장 빨리 죽이는 이유.</description>
+      <pubDate>Fri, 18 Sep 2026 10:00:00 +0000</pubDate>
+    </item>
+    <item>
+      <title>홈 홀덤 칩 세팅 — 단위와 개수 정하기</title>
+      <link>https://homepokerledger.com/ko/guides/chips</link>
+      <guid isPermaLink="true">https://homepokerledger.com/ko/guides/chips</guid>
+      <description>바이인에 맞는 칩 단위 고르는 법, 인원별로 필요한 칩 개수, 그리고 색을 늘릴수록 게임이 느려지는 이유.</description>
+      <pubDate>Fri, 18 Sep 2026 10:00:00 +0000</pubDate>
+    </item>
+    <item>
+      <title>칩이 안 맞을 때 — 원인 찾는 순서와 누가 감당할지</title>
+      <link>https://homepokerledger.com/ko/guides/count-off</link>
+      <guid isPermaLink="true">https://homepokerledger.com/ko/guides/count-off</guid>
+      <description>총 바이인과 총 칩이 다를 때 원인을 찾는 순서와, 끝내 안 맞으면 누가 감당하는 게 맞는지 정리했습니다.</description>
+      <pubDate>Fri, 18 Sep 2026 10:00:00 +0000</pubDate>
+    </item>
+    <item>
+      <title>홈 포커 정산하는 법 — 누가 누구에게 얼마를 보낼까</title>
+      <link>https://homepokerledger.com/ko/guides/settlement</link>
+      <guid isPermaLink="true">https://homepokerledger.com/ko/guides/settlement</guid>
+      <description>홈 포커가 끝나면 각자의 순손익만 남습니다. 송금 횟수를 최소로 줄여 정산하는 방법과, 자리에서 바로 확인하는 순서를 정리했습니다.</description>
+      <pubDate>Fri, 18 Sep 2026 10:00:00 +0000</pubDate>
+    </item>
+  </channel>
+</rss>

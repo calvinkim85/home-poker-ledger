@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!-- Partial CSP. script-src is deliberately absent: Google supports only strict
+     CSP with per-request nonces for AdSense (a domain allowlist breaks ad serving
+     as their domains rotate), and GitHub Pages serves static files and cannot
+     generate a nonce per request. frame-ancestors and X-Content-Type-Options are
+     header-only and cannot be set from a meta tag at all. What is here is the
+     subset that is both enforceable and safe for ads. See docs/launch-runbook.md. -->
+<meta http-equiv="Content-Security-Policy" content="object-src 'none'; base-uri 'none'; form-action 'none'; upgrade-insecure-requests">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Running a home poker game with beginners at the table</title>
+<meta name="description" content="How to include someone who has never played without slowing the game to a crawl or taking all their money in an hour.">
+<meta name="theme-color" content="#14523c">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="canonical" href="https://homepokerledger.com/guides/beginners-at-the-table">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Home Poker Ledger">
+<meta property="og:title" content="Running a home poker game with beginners at the table">
+<meta property="og:description" content="How to include someone who has never played without slowing the game to a crawl or taking all their money in an hour.">
+<meta property="og:url" content="https://homepokerledger.com/guides/beginners-at-the-table">
+<meta property="og:image" content="https://homepokerledger.com/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preload" href="../fonts/plex-sans-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../fonts/bodoni-700-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../fonts/plex-mono-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" type="image/png" sizes="48x48" href="../favicon-48.png">
+<link rel="icon" type="image/png" sizes="96x96" href="../favicon-96.png">
+<link rel="icon" type="image/png" sizes="192x192" href="../favicon-192.png">
+<link rel="icon" type="image/svg+xml" href="../icon.svg">
+<link rel="apple-touch-icon" sizes="192x192" href="../favicon-192.png">
+<link rel="stylesheet" href="../site.css">
+<script>
+(function(){try{var s=JSON.parse(localStorage.getItem("poker.ledger.v1")||"null");
+if(s&&(s.theme==="dark"||s.theme==="light"))document.documentElement.setAttribute("data-theme",s.theme);}catch(e){}})();
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Beginners at the table",
+  "description": "How to include someone who has never played without slowing the game to a crawl or taking all their money in an hour.",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://homepokerledger.com/guides/beginners-at-the-table"
+  },
+  "url": "https://homepokerledger.com/guides/beginners-at-the-table",
+  "image": {
+    "@type": "ImageObject",
+    "url": "https://homepokerledger.com/og.png",
+    "width": 1200,
+    "height": 630
+  },
+  "datePublished": "2026-09-17T20:46:45-05:00",
+  "dateModified": "2026-09-17T20:46:45-05:00",
+  "author": {
+    "@type": "Organization",
+    "name": "Home Poker Ledger",
+    "url": "https://homepokerledger.com/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Home Poker Ledger",
+    "url": "https://homepokerledger.com/",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://homepokerledger.com/favicon-512.png",
+      "width": 512,
+      "height": 512
+    }
+  },
+  "inLanguage": "en",
+  "isAccessibleForFree": true
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home Poker Ledger",
+      "item": "https://homepokerledger.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://homepokerledger.com/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Beginners at the table",
+      "item": "https://homepokerledger.com/guides/beginners-at-the-table"
+    }
+  ]
+}
+</script>
+</head>
+<body>
+
+<main class="table">
+
+  <header class="rail">
+    <div class="brand">
+      <div class="suits">&spades; &hearts; &diams; &clubs;</div>
+      <h1>Beginners at the table</h1>
+      <div class="sub">Making a first game work</div>
+    </div>
+    <a class="back" href="../">&larr; Back to the ledger</a>
+  </header>
+
+  <article class="doc">
+
+    <p class="updated">Guides &middot; Running the game</p>
+
+    <p class="lede">Every home game needs new players eventually, and every new player's
+      first night decides whether there is a second one. It is worth a little
+      deliberate effort.</p>
+
+    <h2>Tell them the money part first</h2>
+    <p>Beginners worry about the stakes far more than about the rules, and they rarely
+      ask. Say it unprompted in the invitation: what the buy-in is, whether they can
+      rebuy, and roughly what a bad night costs.</p>
+    <p>&ldquo;It is $20 to sit down, and the worst case is you lose that and maybe one
+      more&rdquo; is a genuinely reassuring sentence. Vagueness is what makes people
+      decline.</p>
+
+    <h2>Consider a lower buy-in for the night</h2>
+    <p>If your regular game is above what a first-timer would be comfortable losing, drop
+      the stakes for the evening rather than letting them play scared. A beginner playing
+      for money that frightens them folds everything, has no fun, and does not come
+      back.</p>
+    <p>The regulars lose nothing real by playing a cheaper night occasionally.
+      <a href="blinds-and-stacks">Lower the buy-in and the blinds together</a> so the
+      game still plays properly.</p>
+
+    <h2>What to actually explain</h2>
+    <p>Not everything. Hand rankings and the order of betting is enough to start; the
+      rest is absorbed by playing.</p>
+    <ul>
+      <li>Hand rankings, on a card left in front of them &mdash; nobody memorises them in
+        one evening and nobody should have to ask twice.</li>
+      <li>How betting goes round, and that they can always ask what it costs to call.</li>
+      <li>That they can take their time.</li>
+    </ul>
+    <p>What not to do is narrate strategy at them mid-hand. It is well meant and it is
+      overwhelming.</p>
+
+    <h2>Protect them from the table, gently</h2>
+    <p>Two habits make a big difference:</p>
+    <ul>
+      <li><strong>Nobody coaches a player who is in a hand against them.</strong> Help
+        before and after, not during.</li>
+      <li><strong>Announce bets clearly out loud.</strong> Beginners cannot read chip
+        stacks yet and will not admit it.</li>
+    </ul>
+    <p>Slow-rolling, needling, and lengthy post-hand analysis of their mistakes are how
+      you end up short a player.</p>
+
+    <h2>If they lose it all in an hour</h2>
+    <p>It happens, and it is the moment that decides whether they return. Offer the rebuy
+      the same way you would to anyone &mdash; casually, once, without making it a
+      discussion about their play. If they decline, do not press.</p>
+    <p>A beginner who busts early and then spends three hours watching has had a bad
+      evening regardless of how friendly everyone was. Deal them in to the next hand of
+      something social, or simply make sure they are not sitting alone behind the
+      table.</p>
+
+    <h2>Ask them back quickly</h2>
+    <p>The single most effective thing, and the one most hosts forget. Invite them to the
+      next game within a day or two, while it is still a good memory and before they have
+      decided they were out of their depth.</p>
+
+    <h2>Let the count be visible</h2>
+    <p>New players are quietly anxious about whether the money is being handled fairly,
+      especially if everyone else has known each other for years.</p>
+    <p>Collect buy-ins openly, record rebuys where people can see, and do the settle-up
+      in front of the table rather than in someone's head. Watching the totals reconcile
+      is the thing that tells a newcomer this is a game and not a hustle &mdash;
+      <a href="settlement-mistakes">and it protects the regulars too</a>.</p>
+
+  </article>
+
+  <footer class="foot">
+    <a href="../">Ledger</a><span class="sep">&middot;</span><a href="../how-it-works">How it works</a><span class="sep">&middot;</span><a href="../guides/">Guides</a><br><a href="../privacy" hreflang="en">Privacy</a>&#8202;<a href="../privacy-ko" lang="ko" hreflang="ko" aria-label="개인정보처리방침 — the privacy policy in Korean">(한국어)</a><span class="sep">&middot;</span><a href="../terms">Terms</a><span class="sep">&middot;</span><a href="#" data-consent-reopen hidden>Cookie settings</a>
+  </footer>
+
+</main>
+
+<script src="../consent.js" defer></script>
+
+</body>
+</html>

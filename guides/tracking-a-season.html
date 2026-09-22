@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!-- Partial CSP. script-src is deliberately absent: Google supports only strict
+     CSP with per-request nonces for AdSense (a domain allowlist breaks ad serving
+     as their domains rotate), and GitHub Pages serves static files and cannot
+     generate a nonce per request. frame-ancestors and X-Content-Type-Options are
+     header-only and cannot be set from a meta tag at all. What is here is the
+     subset that is both enforceable and safe for ads. See docs/launch-runbook.md. -->
+<meta http-equiv="Content-Security-Policy" content="object-src 'none'; base-uri 'none'; form-action 'none'; upgrade-insecure-requests">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tracking results across a season of home poker games</title>
+<meta name="description" content="How to keep a record across weeks without it becoming a chore, what is worth recording, and why settling every night beats carrying balances forward.">
+<meta name="theme-color" content="#14523c">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="canonical" href="https://homepokerledger.com/guides/tracking-a-season">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Home Poker Ledger">
+<meta property="og:title" content="Tracking results across a season of home poker games">
+<meta property="og:description" content="How to keep a record across weeks without it becoming a chore, what is worth recording, and why settling every night beats carrying balances forward.">
+<meta property="og:url" content="https://homepokerledger.com/guides/tracking-a-season">
+<meta property="og:image" content="https://homepokerledger.com/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preload" href="../fonts/plex-sans-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../fonts/bodoni-700-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../fonts/plex-mono-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" type="image/png" sizes="48x48" href="../favicon-48.png">
+<link rel="icon" type="image/png" sizes="96x96" href="../favicon-96.png">
+<link rel="icon" type="image/png" sizes="192x192" href="../favicon-192.png">
+<link rel="icon" type="image/svg+xml" href="../icon.svg">
+<link rel="apple-touch-icon" sizes="192x192" href="../favicon-192.png">
+<link rel="stylesheet" href="../site.css">
+<script>
+(function(){try{var s=JSON.parse(localStorage.getItem("poker.ledger.v1")||"null");
+if(s&&(s.theme==="dark"||s.theme==="light"))document.documentElement.setAttribute("data-theme",s.theme);}catch(e){}})();
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Tracking a season of home games",
+  "description": "How to keep a record across weeks without it becoming a chore, what is worth recording, and why settling every night beats carrying balances forward.",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://homepokerledger.com/guides/tracking-a-season"
+  },
+  "url": "https://homepokerledger.com/guides/tracking-a-season",
+  "image": {
+    "@type": "ImageObject",
+    "url": "https://homepokerledger.com/og.png",
+    "width": 1200,
+    "height": 630
+  },
+  "datePublished": "2026-09-17T09:14:36-05:00",
+  "dateModified": "2026-09-17T09:14:36-05:00",
+  "author": {
+    "@type": "Organization",
+    "name": "Home Poker Ledger",
+    "url": "https://homepokerledger.com/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Home Poker Ledger",
+    "url": "https://homepokerledger.com/",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://homepokerledger.com/favicon-512.png",
+      "width": 512,
+      "height": 512
+    }
+  },
+  "inLanguage": "en",
+  "isAccessibleForFree": true
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home Poker Ledger",
+      "item": "https://homepokerledger.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://homepokerledger.com/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Tracking a season of home games",
+      "item": "https://homepokerledger.com/guides/tracking-a-season"
+    }
+  ]
+}
+</script>
+</head>
+<body>
+
+<main class="table">
+
+  <header class="rail">
+    <div class="brand">
+      <div class="suits">&spades; &hearts; &diams; &clubs;</div>
+      <h1>Tracking a season</h1>
+      <div class="sub">The running total</div>
+    </div>
+    <a class="back" href="../">&larr; Back to the ledger</a>
+  </header>
+
+  <article class="doc">
+
+    <p class="updated">Guides &middot; Settling up</p>
+
+    <p class="lede">Once a group has played together for a few months, somebody asks who
+      is actually up. Keeping that record is easy. Keeping it without it quietly becoming
+      a debt ledger is the part worth thinking about.</p>
+
+    <h2>Settle every night. Track separately.</h2>
+    <p>This is the whole rule, and everything else follows from it.</p>
+    <p><strong>Every night ends square.</strong> Debts do not roll forward to next week.
+      The season record is a scoreboard kept alongside that, not a running tab.</p>
+    <p>Groups that carry balances discover the same thing eventually: the amounts get
+      large enough to matter, nobody remembers how they got that way, and an evening
+      that was supposed to be fun now involves a disagreement about February. A friend
+      who owes you $200 accumulated over eight weeks is a different relationship from a
+      friend you played cards with.</p>
+
+    <h2>What is worth recording</h2>
+    <p>Four things per player per night, and no more:</p>
+    <ul>
+      <li>The date</li>
+      <li>What they bought in for, total</li>
+      <li>What they cashed out</li>
+      <li>The difference</li>
+    </ul>
+    <p>That is enough to produce every number anyone will ask for: the season total, the
+      best night, how often somebody plays. Recording hands, positions, or who won what
+      pot is a project that gets abandoned by week three.</p>
+
+    <h2>Keep it somewhere boring</h2>
+    <p>A shared spreadsheet with one row per player per night is genuinely the right
+      tool. One column of dates, one of names, three of numbers.</p>
+    <p>The practical trick is doing it <strong>at the table</strong>, while the count is
+      fresh, rather than promising to enter it tomorrow. The easiest version: once the
+      night is settled, copy the summary and paste it into the group chat. The record
+      exists, everyone can see it, and nobody had to maintain anything.</p>
+
+    <h2>What the numbers will show you</h2>
+    <p>Two patterns are worth watching for, and neither is about poker.</p>
+    <p><strong>Somebody consistently down.</strong> Over a season, variance explains a
+      lot &mdash; but a player who is down every single week, or down more than they can
+      comfortably lose, is a reason to look at the stakes rather than at them. Lowering
+      the buy-in is a decision the table can make without anyone having to say why.
+      <a href="when-someone-cannot-pay">More on that here.</a></p>
+    <p><strong>Somebody consistently up by a lot.</strong> Usually they are simply
+      better. It is still worth knowing, because a game where the outcome is predictable
+      stops being interesting for everyone else, and that is how home games quietly
+      die.</p>
+
+    <h2>Keep it light</h2>
+    <p>The season table is a social object, not an accounting system. It exists so people
+      can argue about who is the best player, which is most of the fun.</p>
+    <p>The moment it starts feeling like a balance sheet, it has stopped doing its job
+      &mdash; and that is usually a sign the stakes drifted up, not that the spreadsheet
+      needs more columns. <a href="paying-up">More on moving the money here.</a></p>
+
+  </article>
+
+  <footer class="foot">
+    <a href="../">Ledger</a><span class="sep">&middot;</span><a href="../how-it-works">How it works</a><span class="sep">&middot;</span><a href="../guides/">Guides</a><br><a href="../privacy" hreflang="en">Privacy</a>&#8202;<a href="../privacy-ko" lang="ko" hreflang="ko" aria-label="개인정보처리방침 — the privacy policy in Korean">(한국어)</a><span class="sep">&middot;</span><a href="../terms">Terms</a><span class="sep">&middot;</span><a href="#" data-consent-reopen hidden>Cookie settings</a>
+  </footer>
+
+</main>
+
+<script src="../consent.js" defer></script>
+
+</body>
+</html>

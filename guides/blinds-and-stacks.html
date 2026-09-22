@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!-- Partial CSP. script-src is deliberately absent: Google supports only strict
+     CSP with per-request nonces for AdSense (a domain allowlist breaks ad serving
+     as their domains rotate), and GitHub Pages serves static files and cannot
+     generate a nonce per request. frame-ancestors and X-Content-Type-Options are
+     header-only and cannot be set from a meta tag at all. What is here is the
+     subset that is both enforceable and safe for ads. See docs/launch-runbook.md. -->
+<meta http-equiv="Content-Security-Policy" content="object-src 'none'; base-uri 'none'; form-action 'none'; upgrade-insecure-requests">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Blinds and starting stacks for a home poker game</title>
+<meta name="description" content="Picking blinds that fit your buy-in, why 100 big blinds is the usual starting stack, and how blind levels work if you are running a tournament.">
+<meta name="theme-color" content="#14523c">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="canonical" href="https://homepokerledger.com/guides/blinds-and-stacks">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Home Poker Ledger">
+<meta property="og:title" content="Blinds and starting stacks for a home poker game">
+<meta property="og:description" content="Picking blinds that fit your buy-in, why 100 big blinds is the usual starting stack, and how blind levels work if you are running a tournament.">
+<meta property="og:url" content="https://homepokerledger.com/guides/blinds-and-stacks">
+<meta property="og:image" content="https://homepokerledger.com/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preload" href="../fonts/plex-sans-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../fonts/bodoni-700-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../fonts/plex-mono-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" type="image/png" sizes="48x48" href="../favicon-48.png">
+<link rel="icon" type="image/png" sizes="96x96" href="../favicon-96.png">
+<link rel="icon" type="image/png" sizes="192x192" href="../favicon-192.png">
+<link rel="icon" type="image/svg+xml" href="../icon.svg">
+<link rel="apple-touch-icon" sizes="192x192" href="../favicon-192.png">
+<link rel="stylesheet" href="../site.css">
+<script>
+(function(){try{var s=JSON.parse(localStorage.getItem("poker.ledger.v1")||"null");
+if(s&&(s.theme==="dark"||s.theme==="light"))document.documentElement.setAttribute("data-theme",s.theme);}catch(e){}})();
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Blinds and starting stacks",
+  "description": "Picking blinds that fit your buy-in, why 100 big blinds is the usual starting stack, and how blind levels work if you are running a tournament.",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://homepokerledger.com/guides/blinds-and-stacks"
+  },
+  "url": "https://homepokerledger.com/guides/blinds-and-stacks",
+  "image": {
+    "@type": "ImageObject",
+    "url": "https://homepokerledger.com/og.png",
+    "width": 1200,
+    "height": 630
+  },
+  "datePublished": "2026-09-17T09:14:36-05:00",
+  "dateModified": "2026-09-17T09:14:36-05:00",
+  "author": {
+    "@type": "Organization",
+    "name": "Home Poker Ledger",
+    "url": "https://homepokerledger.com/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Home Poker Ledger",
+    "url": "https://homepokerledger.com/",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://homepokerledger.com/favicon-512.png",
+      "width": 512,
+      "height": 512
+    }
+  },
+  "inLanguage": "en",
+  "isAccessibleForFree": true
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home Poker Ledger",
+      "item": "https://homepokerledger.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://homepokerledger.com/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Blinds and starting stacks",
+      "item": "https://homepokerledger.com/guides/blinds-and-stacks"
+    }
+  ]
+}
+</script>
+</head>
+<body>
+
+<main class="table">
+
+  <header class="rail">
+    <div class="brand">
+      <div class="suits">&spades; &hearts; &diams; &clubs;</div>
+      <h1>Blinds and starting stacks</h1>
+      <div class="sub">How deep to start</div>
+    </div>
+    <a class="back" href="../">&larr; Back to the ledger</a>
+  </header>
+
+  <article class="doc">
+
+    <p class="updated">Guides &middot; Setting up</p>
+
+    <p class="lede">&ldquo;What stakes are we playing?&rdquo; is really two questions:
+      how much does it cost to sit down, and how deep is that in big blinds. Get the
+      second one wrong and the game plays badly however friendly the table is.</p>
+
+    <h2>The 100 big blind standard</h2>
+    <p>A starting stack of <strong>100 big blinds</strong> is the default in cash games
+      everywhere, and it is the default for a reason: it leaves room to play after the
+      flop without anyone being committed by their first raise.</p>
+    <p>So the blinds fall out of the buy-in rather than the other way round. Divide by
+      100 and you have your big blind:</p>
+    <ul>
+      <li><strong>$20 buy-in</strong> &rarr; 10c/20c</li>
+      <li><strong>$50 buy-in</strong> &rarr; 25c/50c</li>
+      <li><strong>$100 buy-in</strong> &rarr; 50c/$1</li>
+    </ul>
+    <p>Pick the buy-in your group is comfortable losing on a bad night, then let the
+      blinds follow. That order matters: a table that sets blinds first tends to arrive
+      at a buy-in nobody quite agreed to.</p>
+
+    <h2>Why too shallow plays worse than too small</h2>
+    <p>A 30 big blind stack is not a cheaper game, it is a different one. Every hand
+      becomes a decision about whether to commit everything before the flop, which is
+      neither much fun nor much poker.</p>
+    <p>If the stakes feel too high, lower the buy-in and the blinds together. Keep the
+      ratio; change the numbers.</p>
+    <p>The opposite &mdash; 300 big blinds deep &mdash; makes for a slow, cautious game
+      where the blinds are too small to be worth contesting. Some groups like it. Most
+      find the night drags.</p>
+
+    <h2>Top-ups during the night</h2>
+    <p>In a cash game a player can usually buy back up to the starting stack whenever
+      they like. Agree whether they can go <em>deeper</em> than it &mdash; a player
+      sitting 300 big blinds deep against a table of 100 changes the game for everyone
+      else.</p>
+    <p>Whatever you decide, each top-up is a separate buy-in and has to be recorded as
+      one, or the count will not reconcile at the end of the night.
+      <a href="rebuys-and-late-entries">More on recording rebuys here.</a></p>
+
+    <h2>If you are running a tournament</h2>
+    <p>Tournaments need blinds that <em>rise</em>, and the structure decides how long the
+      night is far more than the buy-in does.</p>
+    <ul>
+      <li><strong>Starting stack:</strong> 50 to 100 big blinds. Deeper is a longer
+        night.</li>
+      <li><strong>Levels:</strong> 15 to 20 minutes for a weeknight game; 20 to 30 if you
+        want real play.</li>
+      <li><strong>Progression:</strong> roughly 1.5&times; each level. Doubling ends
+        things abruptly.</li>
+      <li><strong>Antes:</strong> skip them for a casual game. They speed things up and
+        complicate the count.</li>
+    </ul>
+    <p>The difference between the two formats is mostly a money question rather than a
+      poker one &mdash; there is
+      <a href="cash-game-or-tournament">a guide on choosing between them</a>.</p>
+
+    <h2>Do not move the blinds mid-game</h2>
+    <p>Raising the stakes at midnight because the game got quiet is how somebody ends up
+      playing for money they did not agree to. If the stakes are wrong, note it and
+      change them next time.</p>
+
+  </article>
+
+  <footer class="foot">
+    <a href="../">Ledger</a><span class="sep">&middot;</span><a href="../how-it-works">How it works</a><span class="sep">&middot;</span><a href="../guides/">Guides</a><br><a href="../privacy" hreflang="en">Privacy</a>&#8202;<a href="../privacy-ko" lang="ko" hreflang="ko" aria-label="개인정보처리방침 — the privacy policy in Korean">(한국어)</a><span class="sep">&middot;</span><a href="../terms">Terms</a><span class="sep">&middot;</span><a href="#" data-consent-reopen hidden>Cookie settings</a>
+  </footer>
+
+</main>
+
+<script src="../consent.js" defer></script>
+
+</body>
+</html>

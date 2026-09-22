@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<!-- Partial CSP. script-src is deliberately absent: Google supports only strict
+     CSP with per-request nonces for AdSense (a domain allowlist breaks ad serving
+     as their domains rotate), and GitHub Pages serves static files and cannot
+     generate a nonce per request. frame-ancestors and X-Content-Type-Options are
+     header-only and cannot be set from a meta tag at all. What is here is the
+     subset that is both enforceable and safe for ads. See docs/launch-runbook.md. -->
+<meta http-equiv="Content-Security-Policy" content="object-src 'none'; base-uri 'none'; form-action 'none'; upgrade-insecure-requests">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>개인정보처리방침 — Home Poker Ledger</title>
+<meta name="description" content="Home Poker Ledger가 저장하는 정보와 저장하지 않는 정보, 관여하는 두 곳의 제3자, 그리고 「개인정보 보호법」에 따른 이용자의 권리를 정리한 개인정보처리방침입니다.">
+<meta name="theme-color" content="#14523c">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="canonical" href="https://homepokerledger.com/privacy-ko">
+<link rel="alternate" hreflang="en" href="https://homepokerledger.com/privacy">
+<link rel="alternate" hreflang="ko" href="https://homepokerledger.com/privacy-ko">
+<link rel="preload" href="fonts/plex-sans-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/bodoni-700-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/plex-mono-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" type="image/png" sizes="48x48" href="favicon-48.png">
+<link rel="icon" type="image/png" sizes="96x96" href="favicon-96.png">
+<link rel="icon" type="image/png" sizes="192x192" href="favicon-192.png">
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<link rel="apple-touch-icon" sizes="192x192" href="favicon-192.png">
+<link rel="stylesheet" href="site.css">
+<script>
+(function(){try{var s=JSON.parse(localStorage.getItem("poker.ledger.v1")||"null");
+if(s&&(s.theme==="dark"||s.theme==="light"))document.documentElement.setAttribute("data-theme",s.theme);}catch(e){}})();
+</script>
+</head>
+<body>
+
+<main class="table">
+
+  <header class="rail">
+    <div class="brand">
+      <div class="suits">&spades; &hearts; &diams; &clubs;</div>
+      <h1>개인정보처리방침</h1>
+      <div class="sub">Home Poker Ledger</div>
+    </div>
+    <a class="back" href="./">&larr; 정산기로 돌아가기</a>
+  </header>
+
+  <article class="doc">
+
+    <p class="updated">최종 수정일 2026년 9월 5일 &middot; <a href="privacy">English privacy policy</a></p>
+
+    <p class="lede">Home Poker Ledger(이하 &ldquo;서비스&rdquo;)는 전적으로 이용자의 브라우저
+      안에서만 동작하는 계산기입니다. 회원가입도, 서버도, 데이터베이스도 없습니다.
+      이용자가 입력한 숫자는 어디로도 전송되지 않습니다. 다만 그럼에도 관여하게 되는
+      두 곳의 제3자가 있으며, 이 방침은 그 부분까지 숨기지 않고 밝힙니다.</p>
+
+    <h2>제1조 (개인정보의 처리 목적)</h2>
+    <p>서비스는 이용자를 식별하기 위한 개인정보를 서버에 수집하거나 보관하지 않습니다.
+      이용자의 브라우저에 저장되는 정보는 오직 <strong>이용자가 입력하던 게임 기록을
+      다시 방문했을 때 그대로 이어서 볼 수 있도록 하기 위한 목적</strong>으로만
+      이용됩니다. 그 밖의 목적으로는 이용하지 않습니다.</p>
+
+    <h2>제2조 (처리하는 개인정보의 항목)</h2>
+    <p>서비스가 이용자의 브라우저 <code>localStorage</code>에 <code>poker.ledger.v1</code>
+      이라는 이름으로 저장하는 항목은 다음이 전부입니다.</p>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>항목</th><th>이용 목적</th><th>보유 기간</th></tr></thead>
+        <tbody>
+          <tr><td>이용자가 직접 입력한 참가자 이름</td><td>재방문 시 자리 이름 유지</td><td>이용자가 삭제할 때까지</td></tr>
+          <tr><td>바이인 금액 및 최종 정산 금액</td><td>새로고침·탭 종료 후에도 진행 중인 게임 유지</td><td>이용자가 삭제할 때까지</td></tr>
+          <tr><td>선택한 통화 및 기본 바이인 금액</td><td>매번 다시 설정하지 않도록 함</td><td>이용자가 삭제할 때까지</td></tr>
+          <tr><td>화면 테마(밝게/어둡게)</td><td>선택한 화면 모드 유지</td><td>이용자가 삭제할 때까지</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>위 정보는 이용자의 기기를 벗어나지 않습니다. 동기화되지 않으며, 운영자가
+      백업하거나 열람할 수 없습니다. 휴대폰에서 입력한 게임이 노트북에서 보이지 않는
+      것은 이러한 설계에 따른 당연한 결과입니다.</p>
+    <p>서비스는 「개인정보 보호법」 제23조의 <strong>민감정보</strong>(사상·신념, 노동조합·
+      정당의 가입·탈퇴, 정치적 견해, 건강, 성생활, 유전정보, 생체인식정보, 범죄경력,
+      인종·민족에 관한 정보)와 제24조의 <strong>고유식별정보</strong>(주민등록번호, 여권번호,
+      운전면허번호, 외국인등록번호)를 <strong>일절 수집하지 않습니다.</strong> 따라서
+      민감정보의 공개 가능성 및 비공개를 선택하는 방법에 관한 사항은 해당되지 않습니다.
+      같은 법 제28조의2 및 제28조의3에 따른 <strong>가명정보 처리</strong>도 하지 않습니다.</p>
+    <p><strong>참가자 이름은 이용자가 타인의 개인정보를 입력할 수 있는 유일한
+      항목입니다.</strong> 실명을 사용할 필요는 없으며, 이니셜이나 별명을 쓰더라도 기능은
+      완전히 동일하게 동작합니다.</p>
+
+    <h2>제3조 (개인정보의 처리·보유 기간 및 파기절차·파기방법)</h2>
+    <p><strong>보유 기간.</strong> 서비스는 서버에 개인정보를 보유하지 않으므로 서버 측
+      보유 기간이 존재하지 않습니다. 이용자의 브라우저에 저장된 정보는 이용자가 직접
+      삭제할 때까지 해당 기기에만 보관됩니다.</p>
+    <p><strong>파기절차.</strong> 서비스는 파기 대상 개인정보를 별도의 데이터베이스로
+      옮기거나 분리 보관하는 절차를 두지 않습니다. 보관 위치가 이용자의 기기 한 곳뿐이므로
+      이용자의 삭제 행위가 곧 파기 절차이며, 운영자의 승인이나 개입이 필요하지 않습니다.</p>
+    <p><strong>파기방법.</strong> 전자적 파일 형태로 저장된 정보는 브라우저의
+      <code>localStorage</code>에서 <strong>즉시 삭제</strong>되어 복구할 수 없습니다.
+      삭제 방법은 다음 두 가지입니다.</p>
+    <ul>
+      <li>앱 화면의 <strong>&ldquo;Clear all(전체 지우기)&rdquo;</strong> 버튼을 누르는 방법</li>
+      <li>브라우저 설정에서 이 사이트의 사이트 데이터를 삭제하는 방법</li>
+    </ul>
+    <p>어느 방법으로든 삭제되면 다른 곳에 사본이 남지 않으며, 운영자는 파기된 정보를
+      복원할 수단을 가지고 있지 않습니다. 종이에 출력된 개인정보는 존재하지 않습니다.</p>
+
+    <h2>제4조 (개인정보의 제3자 제공)</h2>
+    <p>서비스는 이용자가 입력한 게임 데이터를 제3자에게 제공하지 않습니다. 제공할 수
+      있는 경로 자체가 존재하지 않습니다.</p>
+
+    <h2>제5조 (개인정보 처리의 위탁 및 국외 이전)</h2>
+    <p>다만 아래 두 곳은 서비스 제공 과정에서 이용자의 <strong>IP 주소와 브라우저
+      정보</strong>를 전달받게 되며, 모두 미국에 소재합니다. 이는 개인정보의 국외 이전에
+      해당합니다.</p>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>이전받는 자</th><th>이전 국가·목적</th><th>이전 항목</th><th>보유 기간</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>Cloudflare, Inc.<br>(Cloudflare Pages)</td>
+            <td>미국 &middot; 웹사이트 호스팅 및 페이지 전송</td>
+            <td>IP 주소, 접속 일시, User-Agent 등 통상적 요청 정보</td>
+            <td>Cloudflare의 서버 로그 정책에 따름(운영자는 접근 불가)</td>
+          </tr>
+          <tr>
+            <td>Google LLC<br>(Google AdSense)</td>
+            <td>미국 &middot; 광고 게재 및 성과 측정</td>
+            <td>IP 주소, 쿠키 및 유사 기기 식별자, 광고 조회·클릭 기록</td>
+            <td>Google의 정책에 따름</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p>화면에 사용되는 글꼴은 이 사이트에서 직접 제공합니다. 과거에는 Google Fonts에서
+      불러왔고 그때는 방문할 때마다 Google이 이용자의 IP 주소를 전달받았으나,
+      <strong>해당 요청은 더 이상 발생하지 않으며</strong> Google Fonts는 이 서비스와
+      아무런 관련이 없습니다.</p>
+    <p>이용자는 위 국외 이전에 동의하지 않을 수 있습니다. 광고 쿠키에 대한 동의는
+      화면 하단의 링크에서 언제든지 철회할 수 있으며, 동의를 거부하거나 철회하더라도
+      정산기의 모든 기능은 아무런 제한 없이 이용할 수 있습니다.</p>
+
+    <h2>제6조 (자동 수집 장치의 설치·운영 및 그 거부에 관한 사항)</h2>
+    <p>서비스 자체는 쿠키를 사용하지 않습니다. 계산기 기능은 모든 쿠키를 차단한
+      상태에서도 정상적으로 동작합니다.</p>
+    <p>광고가 게재되는 경우 Google 및 그 파트너가 광고 게재와 측정을 위해 쿠키 및
+      유사한 기기 식별자를 사용합니다. 거부 방법은 다음과 같습니다.</p>
+    <ul>
+      <li>화면 하단의 <strong>&ldquo;쿠키 설정&rdquo;</strong> 링크에서 동의를 언제든지 변경·철회</li>
+      <li><a href="https://myadcenter.google.com/" rel="noopener noreferrer" target="_blank">Google 내 광고 센터</a>에서 맞춤형 광고 사용 중지</li>
+      <li><a href="https://optout.aboutads.info/" rel="noopener noreferrer" target="_blank">aboutads.info</a>에서 제3자 광고 쿠키 일괄 거부</li>
+      <li>브라우저 설정에서 이 사이트의 쿠키를 차단하거나 삭제</li>
+    </ul>
+
+    <h2>제7조 (정보주체의 권리·의무 및 행사방법)</h2>
+    <p>서비스는 서버에 개인정보를 보유하지 않으므로, 대부분의 권리는 이용자가 직접
+      즉시 행사할 수 있습니다. 앱의 <strong>&ldquo;Clear all&rdquo;</strong> 버튼 또는 브라우저의
+      사이트 데이터 삭제로 이 사이트가 저장한 모든 정보가 완전히 삭제됩니다.</p>
+    <p>이와 별개로 이용자는 「개인정보 보호법」 제35조부터 제37조까지에 따라 개인정보의
+      <strong>열람, 정정·삭제, 처리정지</strong>를 요구할 권리를 가지며, 아래 개인정보
+      보호책임자에게 서면 또는 전자우편으로 요구할 수 있습니다.</p>
+    <p>만 14세 미만 아동의 <strong>법정대리인</strong>은 해당 아동을 대리하여 위 권리를
+      동일하게 행사할 수 있습니다. 다만 서비스는 아동의 개인정보를 수집하지 않으며,
+      아동이 자신의 기기에 입력한 정보는 제3조의 방법으로 법정대리인이 직접 파기할 수
+      있습니다.</p>
+    <p>권리 행사는 대리인을 통하여도 할 수 있으며, 이 경우 「개인정보 처리 방법에 관한
+      고시」 별지 제11호 서식에 따른 위임장을 제출하여야 합니다. 서비스는 정보주체의
+      요구에 지체 없이 조치하며, 그 처리에 어떠한 비용도 청구하지 않습니다.</p>
+
+    <h2>제8조 (만 14세 미만 아동)</h2>
+    <p>서비스는 아동을 대상으로 하지 않습니다. 홈 카드게임 이후의 정산을 위한
+      도구이며, 만 14세 미만 아동의 개인정보를 수집할 의도가 없고 실제로 수집하지도
+      않습니다. 수집하는 정보가 없으므로 운영자가 삭제할 대상도 존재하지 않으나,
+      아동이 자신의 브라우저에 입력한 정보는 <strong>&ldquo;Clear all&rdquo;</strong> 버튼으로
+      삭제됩니다.</p>
+
+    <h2>제9조 (개인정보의 안전성 확보조치)</h2>
+    <p>서비스는 모든 통신을 HTTPS로 암호화하여 제공하며(HSTS 적용), 서버에 개인정보를
+      저장하지 않는 구조 자체를 가장 근본적인 안전성 확보조치로 삼고 있습니다.
+      보관하지 않는 정보는 유출될 수 없습니다.</p>
+
+    <h2>제10조 (개인정보 보호책임자)</h2>
+    <div class="table-scroll">
+      <table>
+        <tbody>
+          <tr><th>개인정보 보호업무 담당</th><td>Home Poker Ledger 개인정보보호 담당</td></tr>
+          <tr><th>연락처</th><td><a href="mailto:service@homepokerledger.com">service@homepokerledger.com</a></td></tr>
+          <tr><th>사이트 주소</th><td>https://homepokerledger.com/</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>「개인정보 보호법」 제30조는 개인정보처리방침에 <em>개인정보 보호책임자의 성명
+      <strong>또는</strong> 개인정보 보호업무 및 관련 고충사항을 처리하는 부서의 명칭</em>과
+      연락처를 공개하도록 정하고 있습니다. 이 사이트는 1인이 운영하며, 해당 운영자가
+      같은 법 제31조에 따른 개인정보 보호책임자로 지정되어 최종적인 책임을 집니다.
+      위에는 담당 명칭을 공개하며, 아래 연락처로 해당 책임자에게 직접 연결됩니다.</p>
+
+    <h2>제11조 (권익침해 구제방법)</h2>
+    <p>이용자는 개인정보 침해에 대한 상담이나 분쟁 해결이 필요한 경우 아래 기관에
+      문의할 수 있습니다.</p>
+    <ul>
+      <li>개인정보 분쟁조정위원회 &mdash; privacy.go.kr / 국번 없이 1833-6972</li>
+      <li>개인정보침해 신고센터(한국인터넷진흥원) &mdash; privacy.kisa.or.kr / 국번 없이 118</li>
+      <li>대검찰청 사이버수사과 &mdash; spo.go.kr / 국번 없이 1301</li>
+      <li>경찰청 사이버수사국 &mdash; ecrm.police.go.kr / 국번 없이 182</li>
+    </ul>
+
+    <h2>제12조 (개인정보처리방침의 변경)</h2>
+    <p>이 방침의 내용이 이용자에게 영향을 주는 방향으로 변경되는 경우 &mdash; 새로운
+      제3자가 추가되거나 처리 항목이 늘어나는 경우 등 &mdash; 최상단의 날짜를 갱신하고
+      변경 내용을 이 문서에 기재합니다.</p>
+
+  </article>
+
+  <footer class="foot">
+    <a href="./">정산기</a><span class="sep">·</span><a href="how-it-works">사용법</a><span class="sep">·</span><a href="guides/">가이드</a><br>
+    <a href="privacy" hreflang="en">Privacy</a>&#8202;<a href="privacy-ko" lang="ko" hreflang="ko" aria-label="개인정보처리방침 — the privacy policy in Korean">(한국어)</a><span class="sep">·</span><a href="terms">Terms</a><span class="sep">&middot;</span><a href="#" data-consent-reopen hidden>쿠키 설정</a>
+  </footer>
+
+</main>
+
+<script src="consent.js" defer></script>
+
+</body>
+</html>

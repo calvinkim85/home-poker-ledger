@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="object-src 'none'; base-uri 'none'; form-action 'none'; upgrade-insecure-requests">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>홈 포커 정산하는 법 — 누가 누구에게 얼마를 보낼까</title>
+<meta name="description" content="홈 포커가 끝나면 각자의 순손익만 남습니다. 송금 횟수를 최소로 줄여 정산하는 방법과, 자리에서 바로 확인하는 순서를 정리했습니다.">
+<meta name="theme-color" content="#14523c">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="canonical" href="https://homepokerledger.com/ko/guides/settlement">
+<link rel="alternate" hreflang="ko" href="https://homepokerledger.com/ko/guides/settlement">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="홈 포커 정산 계산기">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:title" content="홈 포커 정산하는 법 — 누가 누구에게 얼마를 보낼까">
+<meta property="og:description" content="홈 포커가 끝나면 각자의 순손익만 남습니다. 송금 횟수를 최소로 줄여 정산하는 방법과, 자리에서 바로 확인하는 순서를 정리했습니다.">
+<meta property="og:url" content="https://homepokerledger.com/ko/guides/settlement">
+<meta property="og:image" content="https://homepokerledger.com/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" type="image/png" sizes="192x192" href="../../favicon-192.png">
+<link rel="icon" type="image/svg+xml" href="../../icon.svg">
+<link rel="apple-touch-icon" sizes="192x192" href="../../favicon-192.png">
+<link rel="stylesheet" href="../../site.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "정산하는 법",
+  "description": "홈 포커가 끝나면 각자의 순손익만 남습니다. 송금 횟수를 최소로 줄여 정산하는 방법과, 자리에서 바로 확인하는 순서를 정리했습니다.",
+  "inLanguage": "ko",
+  "mainEntityOfPage": { "@type": "WebPage", "@id": "https://homepokerledger.com/ko/guides/settlement" },
+  "url": "https://homepokerledger.com/ko/guides/settlement",
+  "image": { "@type": "ImageObject", "url": "https://homepokerledger.com/og.png", "width": 1200, "height": 630 },
+  "datePublished": "2026-09-18T10:00:00+09:00",
+  "dateModified": "2026-09-18T10:00:00+09:00",
+  "author": { "@type": "Organization", "name": "홈 포커 정산 계산기" },
+  "publisher": { "@type": "Organization", "name": "홈 포커 정산 계산기",
+    "logo": { "@type": "ImageObject", "url": "https://homepokerledger.com/favicon-192.png" } }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "홈 포커 정산 계산기", "item": "https://homepokerledger.com/ko/" },
+    { "@type": "ListItem", "position": 2, "name": "가이드", "item": "https://homepokerledger.com/ko/guides/" },
+    { "@type": "ListItem", "position": 3, "name": "정산하는 법", "item": "https://homepokerledger.com/ko/guides/settlement" }
+  ]
+}
+</script>
+<style>
+/* Self-hosted fonts — no third-party request, and no round trip to discover the
+   URLs. Google Fonts required fetching a stylesheet from fonts.googleapis.com before
+   the browser could even learn where the font files were, then a second connection to
+   fonts.gstatic.com to get them. Both are gone.
+
+   These are the exact woff2 subsets Google served, so the bytes on the wire are
+   unchanged; only the origin is. IBM Plex and Bodoni Moda are both SIL OFL 1.1,
+   which permits this — see fonts/OFL.txt.
+
+   unicode-range means a browser fetches only the subsets a page actually needs;
+   latin-ext is what carries the won sign, so a KRW user pulls it and nobody else does.
+   The card suits and the transfer arrow are outside both subsets and fall back to a
+   system font, exactly as they did before. */
+@font-face{
+  font-family:'Bodoni Moda';
+  font-style:normal;
+  font-weight:700;
+  font-display:swap;
+  src:url(fonts/bodoni-700-latin.woff2) format('woff2');
+  unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face{
+  font-family:'Bodoni Moda';
+  font-style:normal;
+  font-weight:700;
+  font-display:swap;
+  src:url(fonts/bodoni-700-latin-ext.woff2) format('woff2');
+  unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face{
+  font-family:'IBM Plex Sans';
+  font-style:normal;
+  font-weight:400;
+  font-display:swap;
+  src:url(fonts/plex-sans-400-latin.woff2) format('woff2');
+  unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face{
+  font-family:'IBM Plex Sans';
+  font-style:normal;
+  font-weight:400;
+  font-display:swap;
+  src:url(fonts/plex-sans-400-latin-ext.woff2) format('woff2');
+  unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face{
+  font-family:'IBM Plex Sans';
+  font-style:normal;
+  font-weight:500;
+  font-display:swap;
+  src:url(fonts/plex-sans-500-latin.woff2) format('woff2');
+  unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face{
+  font-family:'IBM Plex Sans';
+  font-style:normal;
+  font-weight:500;
+  font-display:swap;
+  src:url(fonts/plex-sans-500-latin-ext.woff2) format('woff2');
+  unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face{
+  font-family:'IBM Plex Sans';
+  font-style:normal;
+  font-weight:600;
+  font-display:swap;
+  src:url(fonts/plex-sans-600-latin.woff2) format('woff2');
+  unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face{
+  font-family:'IBM Plex Sans';
+  font-style:normal;
+  font-weight:600;
+  font-display:swap;
+  src:url(fonts/plex-sans-600-latin-ext.woff2) format('woff2');
+  unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face{
+  font-family:'IBM Plex Sans';
+  font-style:normal;
+  font-weight:700;
+  font-display:swap;
+  src:url(fonts/plex-sans-700-latin.woff2) format('woff2');
+  unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face{
+  font-family:'IBM Plex Sans';
+  font-style:normal;
+  font-weight:700;
+  font-display:swap;
+  src:url(fonts/plex-sans-700-latin-ext.woff2) format('woff2');
+  unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face{
+  font-family:'IBM Plex Mono';
+  font-style:normal;
+  font-weight:400;
+  font-display:swap;
+  src:url(fonts/plex-mono-400-latin.woff2) format('woff2');
+  unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face{
+  font-family:'IBM Plex Mono';
+  font-style:normal;
+  font-weight:400;
+  font-display:swap;
+  src:url(fonts/plex-mono-400-latin-ext.woff2) format('woff2');
+  unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face{
+  font-family:'IBM Plex Mono';
+  font-style:normal;
+  font-weight:500;
+  font-display:swap;
+  src:url(fonts/plex-mono-500-latin.woff2) format('woff2');
+  unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face{
+  font-family:'IBM Plex Mono';
+  font-style:normal;
+  font-weight:500;
+  font-display:swap;
+  src:url(fonts/plex-mono-500-latin-ext.woff2) format('woff2');
+  unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face{
+  font-family:'IBM Plex Mono';
+  font-style:normal;
+  font-weight:600;
+  font-display:swap;
+  src:url(fonts/plex-mono-600-latin.woff2) format('woff2');
+  unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face{
+  font-family:'IBM Plex Mono';
+  font-style:normal;
+  font-weight:600;
+  font-display:swap;
+  src:url(fonts/plex-mono-600-latin-ext.woff2) format('woff2');
+  unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face{
+  font-family:'IBM Plex Mono';
+  font-style:normal;
+  font-weight:700;
+  font-display:swap;
+  src:url(fonts/plex-mono-700-latin.woff2) format('woff2');
+  unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face{
+  font-family:'IBM Plex Mono';
+  font-style:normal;
+  font-weight:700;
+  font-display:swap;
+  src:url(fonts/plex-mono-700-latin-ext.woff2) format('woff2');
+  unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+  :root{
+    --display:'Bodoni Moda',Didot,'Bodoni MT',Georgia,serif;
+    --body:'IBM Plex Sans','Helvetica Neue',Arial,sans-serif;
+    --mono:'IBM Plex Mono','SFMono-Regular',Consolas,monospace;
+
+    --felt:#1d6b4f;
+    --felt-deep:#14523c;
+    --rail:#6b3f22;
+    --card:#fbf7ef;
+    --card-edge:#ddd2bd;
+    --card-sunk:#f2ebdd;
+    --ink:#22201c;
+    --ink-soft:#716a5d;
+    --gold:#84662c;
+    --win:#1c7a4f;
+    --loss:#b23b34;
+    --flat:#716a5d;
+    --alert:#9f6028;
+    --alert-bg:#fdf1df;
+    --ok-bg:#e9f5ed;
+    --chip:#f4ede0;
+    --chip-edge:#c8b998;
+    --shadow:rgba(10,26,20,.42);
+    --on-felt:#fcfaf5;
+    --on-felt-dim:#dfe8e2;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --felt:#0d3527;
+      --felt-deep:#07231a;
+      --rail:#2e1c10;
+      --card:#161c1a;
+      --card-edge:#2c3a35;
+      --card-sunk:#101614;
+      --ink:#eee7da;
+      --ink-soft:#93a09a;
+      --gold:#d8b061;
+      --win:#5fcf94;
+      --loss:#f0776c;
+      --flat:#93a09a;
+      --alert:#eca85e;
+      --alert-bg:#2a1f10;
+      --ok-bg:#10261b;
+      --chip:#1d2623;
+      --chip-edge:#3a4a44;
+      --shadow:rgba(0,0,0,.6);
+      --on-felt:#eef3ef;
+      --on-felt-dim:#a9bbb2;
+    }
+  }
+  :root[data-theme="dark"]{
+    --felt:#0d3527;
+    --felt-deep:#07231a;
+    --rail:#2e1c10;
+    --card:#161c1a;
+    --card-edge:#2c3a35;
+    --card-sunk:#101614;
+    --ink:#eee7da;
+    --ink-soft:#93a09a;
+    --gold:#d8b061;
+    --win:#5fcf94;
+    --loss:#f0776c;
+    --flat:#93a09a;
+    --alert:#eca85e;
+    --alert-bg:#2a1f10;
+    --ok-bg:#10261b;
+    --chip:#1d2623;
+    --chip-edge:#3a4a44;
+    --shadow:rgba(0,0,0,.6);
+    --on-felt:#eef3ef;
+    --on-felt-dim:#a9bbb2;
+  }
+
+  *{ box-sizing:border-box; }
+
+  body{
+    margin:0;
+    color:var(--ink);
+    font-family:var(--body);
+    background-color:var(--felt);
+    background-image:
+      radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--felt) 55%, #ffffff) 0%, transparent 62%),
+      repeating-linear-gradient(45deg, color-mix(in srgb, var(--felt-deep) 40%, transparent) 0 2px, transparent 2px 6px);
+    min-height:100vh;
+  }
+  img{ max-width:100%; }
+  [hidden]{ display:none !important; }
+
+  .table{
+    max-width:840px;
+    margin:clamp(12px,3vw,44px) auto;
+    padding:0 clamp(10px,2.4vw,20px) clamp(40px,6vw,70px);
+  }
+
+  /* ---- header ---- */
+  .rail{
+    background:var(--card);
+    border:1px solid var(--card-edge);
+    border-radius:14px;
+    box-shadow:0 20px 44px -26px var(--shadow);
+    padding:clamp(16px,3vw,24px) clamp(16px,3vw,26px);
+    display:flex;
+    align-items:center;
+    gap:14px;
+    flex-wrap:wrap;
+  }
+  .brand{ flex:1 1 auto; min-width:0; }
+  .suits{
+    font-size:.86rem;
+    letter-spacing:.32em;
+    color:var(--gold);
+    margin-bottom:2px;
+  }
+  h1{
+    font-family:var(--display);
+    font-weight:700;
+    font-size:clamp(1.6rem,3.4vw+.7rem,2.5rem);
+    line-height:1.05;
+    margin:0;
+    letter-spacing:.01em;
+  }
+  .sub{
+    font-family:var(--mono);
+    font-size:.6rem;
+    letter-spacing:.19em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    margin-top:6px;
+  }
+  .lbl{
+    font-family:var(--mono);
+    font-size:.57rem;
+    letter-spacing:.19em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    display:block;
+  }
+
+  /* ---- buttons ---- */
+  .btn{
+    font-family:var(--mono);
+    text-transform:uppercase;
+    letter-spacing:.13em;
+    font-size:.66rem;
+    padding:11px 15px;
+    border:1.5px solid var(--card-edge);
+    border-radius:8px;
+    background:var(--card);
+    color:var(--ink);
+    cursor:pointer;
+    transition:background .15s ease, color .15s ease, border-color .15s ease;
+  }
+  .btn:hover:not(:disabled){ background:var(--ink); color:var(--card); border-color:var(--ink); }
+  .btn:focus-visible{ outline:2px solid var(--gold); outline-offset:2px; }
+  .btn:disabled{ opacity:.35; cursor:not-allowed; }
+  .btn.primary{
+    background:var(--felt-deep);
+    border-color:var(--felt-deep);
+    color:var(--on-felt);
+    font-size:.76rem;
+    padding:15px 22px;
+  }
+  .btn.primary:hover:not(:disabled){ background:var(--ink); border-color:var(--ink); color:var(--card); }
+  .btn.ghost{ background:transparent; }
+  .btn.tiny{ font-size:.58rem; padding:8px 11px; }
+
+  /* ---- setup bar ---- */
+  .setup{
+    margin-top:clamp(12px,2vw,16px);
+    background:var(--card);
+    border:1px solid var(--card-edge);
+    border-radius:14px;
+    box-shadow:0 20px 44px -26px var(--shadow);
+    padding:clamp(14px,2.4vw,20px) clamp(16px,3vw,26px);
+    /* A grid, not a wrapping flex row.
+
+       Flex-wrap sized every field to whatever text happened to be in it, then
+       bottom-aligned fields of different heights, so the panel came out as three
+       ragged rows with controls starting at four different x positions. Columns of
+       one width fix that by construction: whatever wraps, wraps onto a column. */
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(196px, 1fr));
+    align-items:start;
+    gap:16px 18px;
+  }
+  .field{ display:flex; flex-direction:column; gap:5px; min-width:0; }
+  .money{
+    position:relative;
+    display:flex;
+    align-items:center;
+  }
+  .money .cur{
+    position:absolute;
+    left:11px;
+    font-family:var(--mono);
+    font-size:.82rem;
+    color:var(--ink-soft);
+    pointer-events:none;
+    white-space:nowrap;
+  }
+  input[type="text"],input[type="number"]{
+    font-family:var(--mono);
+    font-size:.95rem;
+    color:var(--ink);
+    background:var(--card-sunk);
+    border:1.5px solid var(--card-edge);
+    border-radius:8px;
+    padding:11px 12px;
+    width:100%;
+    -moz-appearance:textfield;
+  }
+  input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0; }
+  input:focus-visible{ outline:2px solid var(--gold); outline-offset:1px; }
+  /* --cur-pad is set from JS to the measured symbol width, so "CN¥" and "$"
+     both clear the digits. */
+  .money input{ padding-left:var(--cur-pad,24px); font-variant-numeric:tabular-nums; }
+  input.bad{ border-color:var(--loss); background:color-mix(in srgb, var(--loss) 12%, var(--card-sunk)); }
+  .w-default{ width:150px; }
+  /* Below the grid's two-column point every control spans the whole card, and a
+     150px money box beside them is the one thing that does not line up. */
+  @media (max-width:560px){ .w-default{ width:100%; } }
+  /* Every dropdown in the setup row, not just the currency one.
+
+     This used to be `select#currency`, which was fine when there was exactly one
+     select. Four more were added — rounding, the change destination, payment routing
+     and the discrepancy handling — and every one of them rendered as a bare native
+     control: 19px tall, next to a 44px styled neighbour and a 45px money input. Three
+     different control heights in a row that is supposed to read as one panel.
+
+     Height is pinned rather than left to padding, because a select's intrinsic height
+     comes from its font and the arrow the platform draws, so padding alone does not
+     make it match an input. */
+  .setup select{
+    font-family:var(--mono);
+    font-size:.82rem;
+    color:var(--ink);
+    background:var(--card-sunk);
+    border:1.5px solid var(--card-edge);
+    border-radius:8px;
+    padding:0 32px 0 12px;
+    height:45px;
+    cursor:pointer;
+    /* The platform arrow sits at a different inset on every OS, so draw our own and
+       reserve the room for it above. */
+    -webkit-appearance:none;
+    appearance:none;
+    background-image:linear-gradient(45deg, transparent 50%, var(--ink-soft) 50%),
+                     linear-gradient(135deg, var(--ink-soft) 50%, transparent 50%);
+    background-position:calc(100% - 17px) 20px, calc(100% - 12px) 20px;
+    background-size:5px 5px, 5px 5px;
+    background-repeat:no-repeat;
+    /* A select clips its label mid-word by default — "$ USD — US dolla". These are
+       set by the app rather than typed by anyone, so the right answer is columns
+       wide enough for them; the ellipsis is the floor for a narrow window, where
+       a visible "…" at least reads as truncation rather than as a bug. */
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  .setup select:focus-visible{ outline:2px solid var(--gold); outline-offset:1px; }
+  .setup select:hover{ border-color:var(--ink-soft); }
+  #currency{ min-width:0; }
+
+
+  .notice{
+    margin:10px 0 0;
+    background:var(--alert-bg);
+    border:1.5px solid var(--alert);
+    border-radius:10px;
+    padding:11px 14px;
+    font-size:.86rem;
+    line-height:1.5;
+    color:var(--ink);
+  }
+  .setup .spacer{ flex:1 1 auto; }
+  /* The one field carrying a hint and a tooltip needs two columns for them. */
+  .field.grow{ grid-column:span 2; gap:3px; position:relative; }
+  @media (max-width:560px){ .field.grow{ grid-column:1 / -1; } }
+
+  /* Seat count and the add button are not settings, so they get their own line
+     under the grid rather than competing with it for a column. */
+  .setup-foot{
+    grid-column:1 / -1;
+    display:flex;
+    align-items:center;
+    gap:14px;
+    flex-wrap:wrap;
+    border-top:1px solid var(--card-edge);
+    padding-top:14px;
+  }
+  .check-row{ display:flex; align-items:center; gap:7px; }
+  .term{ border-bottom:1px dotted var(--ink-soft); cursor:help; }
+  .info{
+    flex:none;
+    width:19px; height:19px;
+    border-radius:50%;
+    border:1.5px solid var(--card-edge);
+    background:var(--card-sunk);
+    color:var(--ink-soft);
+    font-family:var(--mono);
+    font-size:.66rem;
+    line-height:1;
+    padding:0;
+    cursor:pointer;
+    display:grid;
+    place-items:center;
+  }
+  .info:hover,.info[aria-expanded="true"]{
+    background:var(--felt-deep);
+    border-color:var(--felt-deep);
+    color:var(--on-felt);
+  }
+  .info:focus-visible{ outline:2px solid var(--gold); outline-offset:2px; }
+
+  .tip{
+    position:absolute;
+    top:calc(100% + 8px);
+    left:0;
+    z-index:20;
+    width:min(380px, calc(100vw - 44px));
+    background:var(--card);
+    border:1.5px solid var(--card-edge);
+    border-radius:12px;
+    box-shadow:0 26px 54px -22px var(--shadow);
+    padding:15px 17px;
+    font-size:.82rem;
+    line-height:1.6;
+    color:var(--ink);
+  }
+  .tip b{ display:block; font-size:.58rem; font-family:var(--mono);
+          letter-spacing:.19em; text-transform:uppercase; color:var(--ink-soft);
+          margin-bottom:8px; }
+  .tip p{ margin:0 0 9px; }
+  .tip .eg{
+    display:flex; flex-direction:column; gap:4px;
+    background:var(--card-sunk);
+    border-left:2.5px solid var(--gold);
+    border-radius:0 8px 8px 0;
+    padding:10px 12px;
+    margin:11px 0 9px;
+    font-family:var(--mono);
+    font-size:.73rem;
+    line-height:1.55;
+  }
+  .tip .eg b{ display:inline; font-family:var(--mono); font-size:.73rem;
+              letter-spacing:0; text-transform:none; color:var(--ink); margin:0; }
+  .tip .eg-h{ color:var(--ink-soft); letter-spacing:.04em; }
+  .tip .tip-foot{ margin:0; color:var(--ink-soft); font-size:.76rem; }
+  .check{
+    display:flex;
+    align-items:center;
+    gap:9px;
+    cursor:pointer;
+    font-size:.92rem;
+    font-weight:600;
+  }
+  .check input{
+    width:17px; height:17px;
+    accent-color:var(--felt);
+    cursor:pointer;
+    flex:none;
+  }
+  .check input:focus-visible{ outline:2px solid var(--gold); outline-offset:2px; }
+  .hint{
+    font-size:.75rem;
+    line-height:1.5;
+    color:var(--ink-soft);
+    max-width:46ch;
+  }
+  .count{
+    font-family:var(--mono);
+    font-size:.66rem;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    white-space:nowrap;
+  }
+  .count b{ color:var(--ink); font-size:.86rem; }
+
+  /* ---- player rows ---- */
+  .players{ margin-top:clamp(12px,2vw,16px); display:flex; flex-direction:column; gap:10px; }
+  .seat{
+    background:var(--card);
+    border:1px solid var(--card-edge);
+    border-radius:14px;
+    box-shadow:0 18px 40px -28px var(--shadow);
+    padding:clamp(13px,2.2vw,18px) clamp(14px,2.6vw,20px);
+    display:grid;
+    grid-template-columns:1fr auto;
+    gap:12px 16px;
+    align-items:start;
+  }
+  .seat-head{ display:flex; align-items:center; gap:10px; min-width:0; }
+  .seat-no{
+    font-family:var(--mono);
+    font-size:.62rem;
+    color:var(--ink-soft);
+    border:1.5px solid var(--card-edge);
+    border-radius:50%;
+    width:26px; height:26px;
+    display:grid; place-items:center;
+    flex:none;
+  }
+  .seat-head input{ font-family:var(--body); font-weight:600; font-size:1rem; padding:9px 11px; }
+  .seat-tools{ display:flex; align-items:center; gap:8px; }
+
+  .stakes{
+    grid-column:1 / -1;
+    display:grid;
+    grid-template-columns:1fr;
+    gap:12px;
+    border-top:1px solid var(--card-edge);
+    padding-top:12px;
+  }
+  @media (min-width:660px){
+    .stakes{ grid-template-columns:1fr 190px; align-items:start; }
+  }
+
+  .chips{ display:flex; flex-wrap:wrap; align-items:center; gap:7px; margin-top:6px; }
+  .chip{
+    position:relative;
+    display:inline-flex;
+    align-items:center;
+    background:var(--chip);
+    border:1.5px dashed var(--chip-edge);
+    border-radius:999px;
+    padding-left:9px;
+  }
+  .chip input{
+    width:64px;
+    border:0;
+    background:transparent;
+    padding:8px 2px 8px 8px;
+    font-size:.85rem;
+    text-align:right;
+    font-variant-numeric:tabular-nums;
+  }
+  .chip input:focus-visible{ outline:2px solid var(--gold); outline-offset:1px; border-radius:4px; }
+  .chip .cur{ font-family:var(--mono); font-size:.72rem; color:var(--ink-soft); }
+  .chip .x{
+    border:0;
+    background:transparent;
+    color:var(--ink-soft);
+    cursor:pointer;
+    font-size:1rem;
+    line-height:1;
+    padding:8px 10px 8px 4px;
+    border-radius:999px;
+  }
+  .chip .x:hover{ color:var(--loss); }
+  .chip .x:focus-visible{ outline:2px solid var(--gold); outline-offset:-2px; }
+  .chip.bad{ border-color:var(--loss); border-style:solid; }
+
+  /* A seat someone has cashed out of. Deliberately not dimmed — the numbers on it
+     are the ones you are about to settle from and must stay perfectly legible. It
+     recedes by going quieter in the frame, not by losing contrast. */
+  .seat.settled{ border-color:var(--win); background:var(--ok-bg); }
+  .seat.settled .chips{ opacity:.72; }
+  .seat.settled input[readonly]{ background:transparent; border-style:dashed; cursor:default; }
+  /* Same shape as the cashed-out tag in a different colour. The Banker button alone
+     could not carry this: pressed and unpressed rendered near enough identically that
+     you could not tell from the screen who was holding the money. */
+  .banker-tag{
+    font-family:var(--mono);
+    font-size:.54rem;
+    letter-spacing:.17em;
+    text-transform:uppercase;
+    color:var(--gold);
+    border:1px solid var(--gold);
+    border-radius:99px;
+    padding:2px 7px;
+    white-space:nowrap;
+  }
+  .settled-tag{
+    font-family:var(--mono);
+    font-size:.54rem;
+    letter-spacing:.17em;
+    text-transform:uppercase;
+    color:var(--win);
+    border:1px solid var(--win);
+    border-radius:99px;
+    padding:2px 7px;
+    margin-left:8px;
+    white-space:nowrap;
+  }
+  .no-chips{
+    font-family:var(--mono);
+    font-size:.68rem;
+    color:var(--ink-soft);
+    padding:8px 0;
+  }
+
+  .tally{
+    display:flex;
+    gap:18px;
+    justify-content:flex-start;
+    font-family:var(--mono);
+    font-variant-numeric:tabular-nums;
+    margin-top:10px;
+  }
+  @media (min-width:660px){
+    .tally{ flex-direction:column; gap:10px; margin-top:0; }
+  }
+  .tally div{ min-width:0; }
+  .tally .v{ font-size:1.02rem; font-weight:600; display:block; margin-top:2px; }
+  .v.up{ color:var(--win); }
+  .v.down{ color:var(--loss); }
+  .v.flat{ color:var(--flat); }
+
+
+  /* ---- guide ---- */
+  .guide{
+    margin-top:clamp(16px,2.6vw,24px);
+    background:var(--card);
+    border:1px solid var(--card-edge);
+    border-radius:14px;
+    box-shadow:0 20px 44px -26px var(--shadow);
+    overflow:hidden;
+  }
+  .guide summary{
+    cursor:pointer;
+    padding:clamp(15px,2.4vw,20px) clamp(16px,3vw,26px);
+    font-family:var(--mono);
+    font-size:.66rem;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    list-style:none;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .guide summary::-webkit-details-marker{ display:none; }
+  .guide summary::after{
+    content:"+";
+    margin-left:auto;
+    font-size:1.1rem;
+    line-height:1;
+    color:var(--ink-soft);
+  }
+  .guide[open] summary::after{ content:"\2212"; }
+  .guide summary:hover{ color:var(--ink); }
+  .guide summary:focus-visible{ outline:2px solid var(--gold); outline-offset:-3px; }
+  .guide-body{
+    padding:0 clamp(16px,3vw,26px) clamp(20px,3vw,30px);
+    max-width:68ch;
+    font-size:.94rem;
+    line-height:1.72;
+    color:var(--ink);
+  }
+  .guide-body .lede{
+    font-size:1.02rem;
+    color:var(--ink);
+    border-left:2.5px solid var(--gold);
+    padding-left:15px;
+    margin-top:0;
+  }
+  .guide-body h2{
+    font-family:var(--display);
+    font-weight:700;
+    font-size:1.32rem;
+    line-height:1.25;
+    margin:30px 0 10px;
+    text-wrap:balance;
+  }
+  .guide-body h3{
+    font-family:var(--body);
+    font-weight:700;
+    font-size:1rem;
+    margin:22px 0 8px;
+  }
+  .guide-body p{ margin:0 0 13px; }
+  .guide-body ul{ margin:0 0 15px; padding-left:20px; }
+  .guide-body li{ margin-bottom:7px; }
+  .guide-body strong{ font-weight:700; }
+
+  /* ---- actions ---- */
+  .actions{
+    margin-top:clamp(14px,2.4vw,20px);
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    align-items:center;
+  }
+  .actions .spacer{ flex:1 1 auto; }
+
+  /* ---- results ---- */
+  .result{
+    margin-top:clamp(14px,2.4vw,20px);
+    background:var(--card);
+    border:1px solid var(--card-edge);
+    border-radius:14px;
+    box-shadow:0 22px 50px -26px var(--shadow);
+    padding:clamp(16px,3vw,26px);
+  }
+  .result h2{
+    font-family:var(--display);
+    font-weight:700;
+    font-size:1.5rem;
+    margin:0 0 4px;
+  }
+  .banner{
+    border-radius:10px;
+    padding:13px 15px;
+    margin:14px 0 18px;
+    font-size:.92rem;
+    line-height:1.55;
+    border:1.5px solid var(--card-edge);
+    background:var(--card-sunk);
+  }
+  .banner.ok{ border-color:var(--win); background:var(--ok-bg); }
+  .banner.warn{ border-color:var(--alert); background:var(--alert-bg); }
+  .banner b{ font-family:var(--mono); font-variant-numeric:tabular-nums; }
+  .banner .head{
+    display:block;
+    font-family:var(--mono);
+    font-size:.6rem;
+    letter-spacing:.19em;
+    text-transform:uppercase;
+    margin-bottom:5px;
+    color:var(--ink-soft);
+  }
+  .banner.warn .head{ color:var(--alert); }
+  .banner.ok .head{ color:var(--win); }
+
+  ol.transfers{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:8px; }
+  ol.transfers li{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    flex-wrap:wrap;
+    background:var(--card-sunk);
+    border:1.5px solid var(--card-edge);
+    border-radius:10px;
+    padding:12px 14px;
+    font-size:.98rem;
+  }
+  ol.transfers .who{ font-weight:700; }
+  ol.transfers .arrow{ color:var(--gold); font-family:var(--mono); }
+  ol.transfers .amt{
+    margin-left:auto;
+    font-family:var(--mono);
+    font-weight:600;
+    font-variant-numeric:tabular-nums;
+    font-size:1.05rem;
+  }
+  .none{ font-size:.95rem; color:var(--ink-soft); }
+
+  table.summary{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:20px;
+    font-family:var(--mono);
+    font-size:.85rem;
+  }
+  .summary caption{
+    text-align:left;
+    font-size:.57rem;
+    letter-spacing:.19em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    margin-bottom:8px;
+  }
+  .summary th,.summary td{
+    border-bottom:1.5px solid var(--card-edge);
+    padding:9px 8px;
+    text-align:right;
+    font-variant-numeric:tabular-nums;
+  }
+  .summary th:first-child,.summary td:first-child{ text-align:left; font-family:var(--body); }
+  .summary thead th{
+    font-size:.55rem;
+    font-weight:500;
+    letter-spacing:.11em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+  }
+  .summary tfoot td{ font-weight:600; border-bottom:0; border-top:1.5px solid var(--ink); }
+  /* The change sits in the footer so it totals with the seats, but it is not a total:
+     the heavy rule belongs to the Table row alone, or the two read as equals. */
+  .summary tfoot tr.change td{ font-weight:500; border-top:1px dashed var(--card-edge); color:var(--ink-soft); }
+
+  .foot{
+    margin-top:clamp(18px,3vw,26px);
+    font-family:var(--mono);
+    font-size:.64rem;
+    line-height:1.95;
+    letter-spacing:.02em;
+    color:var(--on-felt-dim);
+    text-align:center;
+  }
+  .foot a{ color:var(--on-felt); text-decoration:none; border-bottom:1px solid rgba(255,255,255,.28); }
+  .foot a:hover{ border-bottom-color:var(--on-felt); }
+  .foot a:focus-visible{ outline:2px solid var(--on-felt); outline-offset:3px; border-radius:2px; }
+  .foot .sep{ opacity:.5; margin:0 7px; }
+
+  @media (max-width:560px){
+    .seat{ grid-template-columns:1fr; }
+    .seat-tools{ justify-content:flex-end; }
+    .actions .btn{ flex:1 1 auto; }
+    .actions .btn.primary{ flex-basis:100%; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ transition-duration:.01ms !important; animation-duration:.01ms !important; }
+  }
+
+  /* Hangul takes neither the wide tracking nor the uppercasing that the shared
+     block applies to small Latin labels. */
+  .lbl, .updated, .back{ letter-spacing:0; text-transform:none; }
+  .doc p{ line-height:1.8; }
+  .doc h2{ margin-top:30px; }
+</style>
+</head>
+<body>
+
+<main class="table">
+
+  <header class="rail">
+    <div class="brand">
+      <div class="suits">&spades; &hearts; &diams; &clubs;</div>
+      <h1>정산하는 법</h1>
+      <div class="sub" style="letter-spacing:0;font-size:.8rem">끝나고 5분 안에 끝내기</div>
+    </div>
+    <a class="back" href="../">&larr; 계산기로</a>
+  </header>
+
+  <article class="doc">
+
+    <p class="updated">가이드</p>
+
+    <p class="lede">게임은 재미있는데 끝나고 나면 항상 10분이 사라집니다. 칩은 다 셌고 다들
+      피곤한데 &ldquo;그래서 누가 누구한테 얼마야?&rdquo;가 시작되죠. 순서만 정해 두면 5분이면
+      끝납니다.</p>
+
+    <h2>판돈을 한곳에 모으지 마세요</h2>
+    <p>홈 게임에는 하우스가 없습니다. 들어온 돈이 그대로 나가기 때문에, 끝나고 남는 건 각자의
+      <strong>순손익</strong>뿐입니다. 최종 칩에서 그날 넣은 돈을 전부 빼면 됩니다. 3만 원씩 두 번
+      넣고 9만 5천 원으로 끝냈다면 3만 5천 원을 딴 것이고, 한 번 넣고 다 잃었다면 3만 원이
+      빈 것입니다.</p>
+    <p>모두의 순손익을 더하면 정확히 0이 되어야 합니다. 딴 사람이 받을 돈과 잃은 사람이 낼 돈이
+      같다는 뜻이니까요. 그러면 남은 건 둘을 짝지어 주는 일뿐입니다.</p>
+
+    <h2>송금은 최소 횟수로</h2>
+    <p>네 명이 각자 서로에게 보내면 여섯 번, 여섯 명이면 열다섯 번입니다. 그럴 이유가 없습니다.
+      가장 많이 딴 사람과 가장 많이 잃은 사람부터 묶고, 남는 쪽을 다음 사람과 다시 묶으면
+      <em>n</em>명은 언제나 <em>n</em>&nbsp;&minus;&nbsp;1번 안에 끝납니다.</p>
+    <p>토스나 카카오페이로 몇 초면 보내는 시대라 횟수가 무슨 의미냐고 할 수 있습니다. 실제로
+      송금 자체는 부담이 아닙니다. 그런데 정산이 안 끝나는 이유는 송금이 느려서가 아니라
+      <strong>사람이 안 보내서</strong>입니다. 받을 사람이 세 명한테 각각 연락하는 것과 한 명한테만
+      연락하는 건 완전히 다릅니다. 횟수를 줄이는 건 쫓아다닐 사람 수를 줄이는 일입니다.</p>
+
+    <h2>자리에서 하는 순서</h2>
+    <p>순서가 어긋나면 계산이 아니라 논쟁이 됩니다. 이 순서를 지키세요.</p>
+    <p><strong>1. 먼저 전원 칩을 다 셉니다.</strong> 한 명이라도 남은 상태에서 송금을 시작하면,
+      마지막 사람 숫자가 들어왔을 때 합이 안 맞고 이미 보낸 돈까지 되돌려야 합니다.</p>
+    <p><strong>2. 총 바이인과 총 칩을 맞춰 봅니다.</strong> 두 숫자가 같아야 합니다. 여기서 15초
+      쓰는 게 나중에 40분을 아낍니다.</p>
+    <p><strong>3. 그다음에 송금합니다.</strong> 숫자가 확정된 뒤에요.</p>
+
+    <h2>리바이는 그때그때 적으세요</h2>
+    <p>정산이 틀어지는 원인 1위는 계산 실수가 아니라 아무도 적지 않은 리바이입니다. &ldquo;아까 3만
+      더 했지?&rdquo;를 새벽 2시에 기억으로 복원하는 건 불가능합니다.</p>
+    <p>총액으로 적지 말고 <strong>건별로</strong> 적으세요. &ldquo;9만&rdquo;이라고 적어 두면 3만씩 세 번인지
+      4만 5천씩 두 번인지 나중에 아무도 모릅니다. 한 줄에 한 건씩 적으면 합이 안 맞을 때 어디가
+      빠졌는지 바로 보입니다.</p>
+
+    <h2>먼저 일어나는 사람</h2>
+    <p>끝까지 앉아 있는 게임은 드뭅니다. 누군가는 11시에 가야 하고, 그 순간이 정산이 깨지는
+      가장 흔한 지점입니다. 돈만 받아 가고 칩은 트레이에 들어가는데 아무도 숫자를 안 적거든요.</p>
+    <p>규칙은 하나입니다. <strong>일어나는 자리에서 칩을 세고 적습니다.</strong> 그 사람의 그날
+      기록은 거기서 끝나고, 더 이상 바뀌지 않습니다. 나중에 합을 맞출 때 그 숫자가 이미
+      확정되어 있으면 남은 사람들만 보면 됩니다.</p>
+    <p>먼저 가는 사람에게 바로 송금받을 필요는 없습니다. 오히려 나중에 전체를 한 번에 계산하는
+      쪽이 낫습니다. 중요한 건 돈이 아니라 <strong>숫자가 남았느냐</strong>입니다.</p>
+
+    <h2>기록을 남기세요</h2>
+    <p>현금은 영수증이 없습니다. 그래서 2주 뒤에 &ldquo;나 그때 받았나?&rdquo;가 나오면 아무도 증명을
+      못 합니다. 대부분 누군가 거짓말을 해서가 아니라, 그냥 기억이 안 나서입니다.</p>
+    <p>정산이 끝나면 내역을 그대로 단톡방에 붙여 넣으세요. 날짜, 누가 누구에게 얼마, 각자 얼마
+      넣고 얼마 가져갔는지가 한 화면에 남습니다. 그날은 아무 비용도 들지 않고, 나중에 말이 나오면
+      그걸로 끝납니다.</p>
+
+    <p><a href="../">정산 계산기</a>는 이 과정을 대신해 줍니다. 바이인과 최종 칩만 넣으면 최소
+      횟수의 송금 목록과 날짜가 찍힌 내역이 나옵니다. 가입도 설치도 없고, 입력한 숫자는 브라우저
+      밖으로 나가지 않습니다.</p>
+
+
+    <p style="margin-top:34px"><a href="../">정산 계산기로 돌아가기</a> &middot;
+      <a href="./">다른 가이드 보기</a></p>
+
+  </article>
+
+  <footer class="foot">
+    입력한 내용은 이 브라우저에만 남습니다 &mdash; 아무것도 전송되지 않습니다.<br>
+    <a href="../">계산기</a><span class="sep">&middot;</span><a href="./">가이드</a><span class="sep">&middot;</span><a href="../../privacy-ko">개인정보처리방침</a><span class="sep">&middot;</span><a href="../../" hreflang="en">English</a>
+  </footer>
+
+</main>
+
+</body>
+</html>

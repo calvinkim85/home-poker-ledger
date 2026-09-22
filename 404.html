@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!-- Partial CSP. script-src is deliberately absent: Google supports only strict
+     CSP with per-request nonces for AdSense (a domain allowlist breaks ad serving
+     as their domains rotate), and GitHub Pages serves static files and cannot
+     generate a nonce per request. frame-ancestors and X-Content-Type-Options are
+     header-only and cannot be set from a meta tag at all. What is here is the
+     subset that is both enforceable and safe for ads. See docs/launch-runbook.md. -->
+<meta http-equiv="Content-Security-Policy" content="object-src 'none'; base-uri 'none'; form-action 'none'; upgrade-insecure-requests">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#14523c">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="preload" href="/fonts/plex-sans-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/bodoni-700-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/plex-mono-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/favicon-96.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png">
+<link rel="icon" type="image/svg+xml" href="/icon.svg">
+<link rel="apple-touch-icon" sizes="192x192" href="/favicon-192.png">
+<title>Page not found — Home Poker Ledger</title>
+<meta name="description" content="That page does not exist on Home Poker Ledger. The settlement calculator is one click away.">
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="/site.css">
+<script>
+(function(){try{var s=JSON.parse(localStorage.getItem("poker.ledger.v1")||"null");
+if(s&&(s.theme==="dark"||s.theme==="light"))document.documentElement.setAttribute("data-theme",s.theme);}catch(e){}})();
+</script>
+</head>
+<body>
+
+<main class="table">
+
+  <header class="rail">
+    <div class="brand">
+      <div class="suits">&spades; &hearts; &diams; &clubs;</div>
+      <h1>Folded</h1>
+      <div class="sub">404 &middot; That page isn't here</div>
+    </div>
+    <a class="back" href="/">&larr; Back to the ledger</a>
+  </header>
+
+  <article class="doc">
+    <p class="lede">There's no page at that address. Nothing is broken on your end &mdash;
+      the link was probably mistyped, or pointed at something that has since moved.</p>
+    <p>Everything on this site is one of these:</p>
+    <ul class="cards">
+      <li><a href="/"><b>The settlement calculator</b><span>Enter buy-ins and cash-outs for 2&ndash;9 players and get who pays whom, in as few transfers as possible.</span></a></li>
+      <li><a href="/how-it-works"><b>How it works</b><span>What the calculator does with your numbers, and why the settlement comes out the way it does.</span></a></li>
+      <li><a href="/guides/"><b>Guides</b><span>Running the money side of a home game: chip values, rebuys, and what to do when the count is short.</span></a></li>
+    </ul>
+  </article>
+
+  <footer class="foot">
+    <a href="/">Ledger</a><span class="sep">&middot;</span><a href="/how-it-works">How it works</a><span class="sep">&middot;</span><a href="/guides/">Guides</a><br>
+    <a href="/privacy" hreflang="en">Privacy</a>&#8202;<a href="/privacy-ko" lang="ko" hreflang="ko" aria-label="개인정보처리방침 — the privacy policy in Korean">(한국어)</a><span class="sep">&middot;</span><a href="/terms">Terms</a><span class="sep">&middot;</span><a href="#" data-consent-reopen hidden>Cookie settings</a>
+  </footer>
+
+</main>
+
+<script src="/consent.js" defer></script>
+
+</body>
+</html>
