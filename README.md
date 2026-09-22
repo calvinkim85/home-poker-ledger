@@ -145,6 +145,13 @@ scripts/            build, Korean generation, feeds, preflight
 _headers            CSP, HSTS, frame-ancestors — applied by Cloudflare Pages
 ```
 
+## Licence
+
+[MIT](LICENSE). Use it, fork it, ship your own version.
+
+The licence covers the code. The prose in `guides/` is the site's editorial
+content rather than software, so if you want to republish that, ask.
+
 ## Feedback
 
 Issues and suggestions are welcome. If your game does something this does not
