@@ -1,0 +1,54 @@
+<!-- Source of og.png — the Open Graph / Twitter card.
+     THE POINT OF THIS FILE: og.png used to be a hand-made binary with no source, so
+     when MAX_PLAYERS went from 9 to 10 the card kept advertising "2-9 players" and
+     nothing could catch it — a claim inside a PNG cannot be grepped or tested.
+     The copy now lives here in text, and test/cases/site-metadata.js asserts the
+     player count stated below matches MAX_PLAYERS in index.html.
+
+     Regenerate (macOS, no image libraries needed — Quick Look renders with WebKit):
+       qlmanage -t -s 1200 -o /tmp/ogout scripts/og-card.html
+       sips -c 630 1200 /tmp/ogout/og-card.html.png --out og.png
+
+     The page is deliberately SQUARE with the card centred, and sized in vw rather
+     than px: Quick Look picks its own viewport width and always emits a square, so
+     a square page plus sips' centre crop lands on exactly 1200x630 either way.
+     Fonts load from the live site so the card matches the real typography. -->
+<!DOCTYPE html><html><head><meta charset="utf-8">
+<style>
+@font-face{font-family:'Bodoni Moda';src:url('https://homepokerledger.com/fonts/bodoni-700-latin.woff2') format('woff2');font-weight:700;font-display:block}
+@font-face{font-family:'Plex Sans';src:url('https://homepokerledger.com/fonts/plex-sans-400-latin.woff2') format('woff2');font-weight:400;font-display:block}
+@font-face{font-family:'Plex Mono';src:url('https://homepokerledger.com/fonts/plex-mono-500-latin.woff2') format('woff2');font-weight:500;font-display:block}
+*{margin:0;padding:0;box-sizing:border-box}
+/* Page is SQUARE with the card centred, because the Quick Look renderer always
+   emits a square. A centre crop of the square then yields exactly the card. */
+html{width:100vw}
+body{width:100vw;aspect-ratio:1/1;overflow:hidden;background:#fff;
+  display:flex;align-items:center;justify-content:center}
+/* Aspect-locked to 1200x630 so whatever viewport width the renderer picks,
+   scaling the result to 1200 wide lands on exactly 630 tall. */
+.bg{width:100vw;aspect-ratio:1200/630;background:#1d6b4f;
+  background-image:repeating-linear-gradient(135deg,rgba(0,0,0,.055) 0 .25vw,transparent .25vw .58vw);
+  display:flex;align-items:center;justify-content:center}
+.card{width:88.33%;height:77.8%;background:#fbf7ef;border-radius:2.33vw;
+  padding:0 5.33vw;display:flex;flex-direction:column;justify-content:center;
+  box-shadow:0 1.5vw 3.7vw rgba(10,26,20,.30)}
+.suits{font-size:2.5vw;color:#84662c;letter-spacing:.34em;margin-bottom:2.17vw;line-height:1}
+h1{font-family:'Bodoni Moda',Didot,Georgia,serif;font-weight:700;font-size:8.667vw;
+  color:#22201c;line-height:1;letter-spacing:-.005em;margin-bottom:2.17vw}
+.tag{font-family:'Plex Sans',Helvetica,Arial,sans-serif;font-size:3.083vw;color:#22201c;margin-bottom:1vw;line-height:1.25}
+.sub{font-family:'Plex Sans',Helvetica,Arial,sans-serif;font-size:2.75vw;color:#716a5d;margin-bottom:2.83vw;line-height:1.25}
+.chips{display:flex;align-items:center;gap:1.33vw;font-family:'Plex Mono',Consolas,monospace;font-size:2.5vw}
+.chip{background:#f4ede0;border:.167vw solid #c8b998;border-radius:99vw;padding:1vw 2.5vw;color:#22201c}
+.arrow,.settle{color:#716a5d}
+.arrow{margin:0 .67vw}
+</style></head><body>
+<div class="bg"><div class="card">
+  <div class="suits">&spades; &hearts; &diams; &clubs;</div>
+  <h1>Poker Ledger</h1>
+  <div class="tag">Buy-ins, cash-outs, and who pays whom.</div>
+  <div class="sub">2&ndash;10 players &middot; seven currencies &middot; no sign-up.</div>
+  <div class="chips">
+    <span class="chip">$20</span><span class="chip">$20</span><span class="chip">$40</span>
+    <span class="arrow">&rarr;</span><span class="settle">settle</span>
+  </div>
+</div></div></body></html>

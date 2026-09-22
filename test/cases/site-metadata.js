@@ -18,6 +18,20 @@ eq("og:image sits under the site",
    (head.match(/<meta property="og:image" content="([^"]+)"/) || [])[1], SITE + "og.png");
 eq("twitter:image matches og:image",
    (head.match(/<meta name="twitter:image" content="([^"]+)"/) || [])[1], SITE + "og.png");
+
+/* The social card is the first thing anyone sees of this site — it is what Hacker News,
+   Reddit, Slack and KakaoTalk render when the link is shared. It used to be a hand-made
+   PNG with no source, so when the table grew from nine seats to ten the card went on
+   advertising "2-9 players" and no test could see it: the claim was pixels.
+   scripts/og-card.html is now the source, so the claim is text and can be checked. */
+log("-- the social card does not lie about the table --");
+var cardMax = ogCard.match(/2&ndash;(\d+) players/);
+eq("the card states a player maximum", !!cardMax, true);
+var codeMax = html.match(/MAX_PLAYERS\s*=\s*(\d+)/);
+eq("index.html declares MAX_PLAYERS", !!codeMax, true);
+eq("the card's player maximum is the real one",
+   cardMax && cardMax[1], codeMax && codeMax[1]);
+eq("the card names the site, not a stale brand", ogCard.indexOf("Poker Ledger") !== -1, true);
 eq("sitemap lists the canonical URL", sitemap.indexOf("<loc>" + SITE + "</loc>") !== -1, true);
 eq("every sitemap URL sits under the canonical site",
    (sitemap.match(/<loc>([^<]+)<\/loc>/g) || []).filter(function(l){

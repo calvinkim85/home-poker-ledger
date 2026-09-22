@@ -148,6 +148,7 @@ def build():
         "var hasOfl = %s;" % ("true" if os.path.exists(os.path.join(ROOT, "fonts", "OFL.txt")) else "false"),
         "var css = %s;" % js_string(read("site.css")),
         "var consentJs = %s;" % js_string(read("consent.js")),
+        "var ogCard = %s;" % js_string(read("scripts/og-card.html")),
         "var koHtml = %s;" % js_string(read("ko/index.html")),
         "var koTemplate = %s;" % js_string(read("ko/app.html")),
         "var rssEn = %s;" % js_string(read("rss.xml")),
