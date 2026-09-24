@@ -28,7 +28,7 @@ mkdir dist
 # Copy every tracked file EXCEPT the internal-only paths. Working from
 # `git ls-files` means only version-controlled files ship — never a stray local
 # file — and the exclude list is the single source of truth for "not public".
-git ls-files | grep -vE '^(test/|scripts/|docs/|poker-app-config/|\.claude/|ko/app\.html$|ko/guides/_|ko/guides/.*\.part\.html$|\.gitignore$|README\.md$|CLAUDE\.md$|CNAME$)' \
+git ls-files | grep -vE '^(test/|scripts/|docs/|poker-app-config/|\.claude/|ko/app\.html$|ko/guides/_|ko/guides/.*\.part\.html$|\.gitignore$|README\.md$|CLAUDE\.md$|AGENTS\.md$|CNAME$)' \
 | while IFS= read -r f; do
     mkdir -p "dist/$(dirname "$f")"
     cp "$f" "dist/$f"
@@ -49,7 +49,7 @@ fi
 test -f dist/ko/guides/index.html || { echo "build-site: Korean guide index missing"; exit 1; }
 test -f dist/rss.xml             || { echo "build-site: English feed missing"; exit 1; }
 test -f dist/ko/rss.xml          || { echo "build-site: Korean feed missing"; exit 1; }
-if [ -e dist/test ] || [ -e dist/scripts ] || [ -e dist/docs ] || [ -e dist/poker-app-config ] || [ -e dist/CLAUDE.md ] || [ -e dist/README.md ]; then
+if [ -e dist/test ] || [ -e dist/scripts ] || [ -e dist/docs ] || [ -e dist/poker-app-config ] || [ -e dist/CLAUDE.md ] || [ -e dist/AGENTS.md ] || [ -e dist/README.md ]; then
   echo "build-site: internal files leaked into dist"; exit 1
 fi
 
