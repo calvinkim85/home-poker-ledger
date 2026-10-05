@@ -109,12 +109,10 @@ eq("short_name is short enough for an icon label",
    mani && mani.short_name.length <= 12, true);
 eq("the full name is the product name", mani && mani.name, "Home Poker Ledger");
 
-log("-- the differentiator is in the title, where it drives the click --");
-/* Free-versus-subscription is the wedge against the paid alternatives, so it belongs
-   in the line people actually read in a search result. It was previously only in the
-   meta description, which Google often rewrites and which carries far less weight on
-   the click decision. */
-eq("the title says it is free", /free/i.test(title), true);
+/* "Free" used to be required in the title as the wedge against paid alternatives. On
+   2026-10-05 Calvin chose "Poker Settlement Calculator | Home Poker Ledger" without it:
+   function first, name last. "Free" is still required in the description (checked above),
+   so the claim still reaches search results. */
 eq("the description still says it too", /free/i.test(desc), true);
 
 log("-- the favicon can actually appear in Google results --");
