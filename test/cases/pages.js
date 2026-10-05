@@ -384,3 +384,45 @@ Object.keys(pages).concat(["__app__"]).forEach(function(n){
   if (t === undefined || og === undefined) return;   /* covered elsewhere */
   eq(label + " og:title matches the page title", og, t);
 });
+
+log("-- every guide is reachable from more than the index --");
+/* On 2026-10-05 Search Console's first Links report showed 15 of the guides linked from
+   exactly one page, the guide index, while the privacy policy had 25 inbound links from
+   the footers. Google reads that as "these pages do not matter much", and the one guide
+   it had never crawled was in that group. Each guide now ends with three related guides.
+   These checks keep the block present, pointing at real pages, and in step with the index. */
+var GUIDE_INDEX = pages["guides/index.html"];
+function slugOf(n){ return n.replace("guides/", "").replace(".html", ""); }
+function indexTitle(slug){
+  var m = GUIDE_INDEX.match(new RegExp('<li><a href="' + slug + '"><b>([^<]+)</b>'));
+  return m ? m[1] : null;
+}
+var inboundTo = {};
+GUIDES.forEach(function(n){ inboundTo[slugOf(n)] = 0; });
+NAMES.forEach(function(n){
+  var seen = {};
+  (pages[n].match(/href="([a-z0-9-]+)"/g) || []).forEach(function(h){
+    var s = h.slice(6, -1);
+    if (s !== slugOf(n) && inboundTo[s] !== undefined && !seen[s]) { seen[s] = 1; inboundTo[s]++; }
+  });
+});
+GUIDES.forEach(function(n){
+  var p = pages[n], slug = slugOf(n);
+  var at = p.indexOf("<h2>Related guides</h2>");
+  eq(n + " ends with a Related guides block", at !== -1, true);
+  if (at === -1) return;
+  var block = p.slice(at, p.indexOf("</ul>", at));
+  eq(n + " related block sits inside the article", p.indexOf("</article>", at) !== -1, true);
+  var links = (block.match(/<li><a href="([a-z0-9-]+)"><b>([^<]+)<\/b>/g) || []).map(function(li){
+    var m = li.match(/href="([a-z0-9-]+)"><b>([^<]+)</); return { slug: m[1], title: m[2] };
+  });
+  eq(n + " suggests exactly three guides", links.length, 3);
+  links.forEach(function(l){
+    eq(n + " → " + l.slug + " is a real guide", pages["guides/" + l.slug + ".html"] !== undefined, true);
+    eq(n + " does not suggest itself", l.slug !== slug, true);
+    eq(n + " → " + l.slug + " uses the index's title", l.title, indexTitle(l.slug));
+  });
+});
+GUIDES.forEach(function(n){
+  eq(n + " is linked from at least three pages", inboundTo[slugOf(n)] >= 3, true);
+});

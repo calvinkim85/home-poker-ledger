@@ -330,3 +330,21 @@ eq("the panel starts hidden", /id="gapTip" role="tooltip" hidden/.test(koHtml), 
 ["그대로 보기", "뱅커가 부담", "딴 사람들이 부담"].forEach(function(mode){
   eq("the Korean tip explains " + mode, koHtml.indexOf(mode) > -1, true);
 });
+
+log("-- each Korean guide links to the others --");
+/* Same reason as the English related-guides block: a guide reachable only from the index
+   looks unimportant to Google. With a handful of Korean guides, each links to all others. */
+var koPages = koNames.filter(function(n){
+  return /\.html$/.test(n) && n !== "index.html" && n.charAt(0) !== "_" && !/\.part\.html$/.test(n);
+});
+koPages.forEach(function(n){
+  var p = koGuides[n], at = p.indexOf("<h2>함께 읽으면 좋은 가이드</h2>");
+  eq("ko/guides/" + n + " has a related-guides block", at !== -1, true);
+  if (at === -1) return;
+  var block = p.slice(at, p.indexOf("</ul>", at));
+  koPages.forEach(function(o){
+    var slug = o.replace(".html", "");
+    eq("ko/guides/" + n + (o === n ? " does not link to itself" : " links to " + slug),
+       block.indexOf('href="' + slug + '"') !== -1, o !== n);
+  });
+});

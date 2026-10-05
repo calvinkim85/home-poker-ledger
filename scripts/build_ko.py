@@ -87,12 +87,25 @@ def build_guides(style):
     wrap = open(os.path.join(GUIDES, "_wrap.html"), encoding="utf-8").read()
     wrap = wrap.replace(STYLE_MARKER, style)
 
-    written = []
+    # Two passes: every guide links to the others, so all metadata is read first.
+    loaded = []
     for f in parts:
         slug = f[:-len(".part.html")]
         meta, body = read_part(os.path.join(GUIDES, f))
+        loaded.append((slug, meta, body))
+
+    written = []
+    for slug, meta, body in loaded:
+        # With only a handful of Korean guides, each one links to all the others. Without
+        # this they were reachable from the guide index alone, and Google ranks a page it
+        # finds linked from one place as one that does not matter much.
+        others = "".join(
+            '      <li><a href="%s"><b>%s</b>\n        <span>%s</span></a></li>\n'
+            % (s, m["h1"], m["desc"]) for s, m, _ in loaded if s != slug)
+        related = ("\n    <h2>함께 읽으면 좋은 가이드</h2>\n    <ul class=\"cards\">\n"
+                   + others + "    </ul>\n") if others else ""
         page = fill(wrap, TITLE=meta["title"], H1=meta["h1"], SUB=meta["sub"],
-                    DESC=meta["desc"], SLUG=slug, DATE=DATE, BODY=body)
+                    DESC=meta["desc"], SLUG=slug, DATE=DATE, BODY=body, RELATED=related)
         open(os.path.join(GUIDES, slug + ".html"), "w", encoding="utf-8").write(page)
         written.append((slug, meta))
 
