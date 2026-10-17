@@ -15,10 +15,11 @@ Each file in test/cases/ starts with a `// needs: <prelude>` line naming what it
   storage  the above plus load(), systemTheme(), and stubs for localStorage/matchMedia
   site     the raw text of index.html and the crawler files, for asserting on markup
 """
-import gzip, os, re, sys
+import gzip, json, os, re, sys
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "scripts"))
 from extract import ROOT, SRC, script_body, region, func   # noqa: E402
+import sitemap_dates   # noqa: E402
 
 CASES = os.path.join(ROOT, "test", "cases")
 BUILD = os.path.join(ROOT, "test", "build")
@@ -149,6 +150,9 @@ def build():
         "var css = %s;" % js_string(read("site.css")),
         "var consentJs = %s;" % js_string(read("consent.js")),
         "var ogCard = %s;" % js_string(read("scripts/og-card.html")),
+        # None when there is no git history (the isolated runner copies without .git);
+        # the test then says so and skips, rather than passing on nothing.
+        "var sitemapDates = %s;" % json.dumps(sitemap_dates.expected()),
         "var koHtml = %s;" % js_string(read("ko/index.html")),
         "var koTemplate = %s;" % js_string(read("ko/app.html")),
         "var rssEn = %s;" % js_string(read("rss.xml")),

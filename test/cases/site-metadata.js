@@ -297,3 +297,22 @@ eq("sameAs points at the public documentation repository",
 /* JSON-LD is JSON. A comment or a trailing comma silently invalidates the whole
    block, and nothing on the page would look different. */
 eq("the block is still parseable JSON", !!parsed, true);
+
+log("-- the sitemap's dates are true --");
+/* Google re-crawls by <lastmod>, and only while it trusts the dates. They are kept by hand,
+   and by 2026-10-17 32 of 33 still said September although the guides changed on 10-05.
+   scripts/sitemap_dates.py rewrites them from git; this fails if anyone forgets to run it.
+   Skipped outside the deploy repo: the isolated runner copies the tree without .git, and the
+   public mirror's commit dates are its own, not the dates the pages changed on the live site. */
+if (sitemapDates === null) {
+  log("   skipped: not the deploy repo's git history");
+} else {
+  var listed = {};
+  (sitemap.match(/<loc>[^<]+<\/loc>\s*<lastmod>[^<]*<\/lastmod>/g) || []).forEach(function(b){
+    listed[b.match(/<loc>([^<]+)</)[1]] = b.match(/<lastmod>([^<]*)</)[1];
+  });
+  Object.keys(sitemapDates).forEach(function(u){
+    eq(u + " lastmod is the day it last changed (run scripts/sitemap_dates.py)",
+       listed[u], sitemapDates[u]);
+  });
+}
