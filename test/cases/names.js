@@ -12,6 +12,8 @@ eq("tab and CR", cleanName("A\tB\rC"), "ABC");
 eq("RTL override", cleanName("‮evil"), "evil");
 eq("isolates and marks", cleanName("⁦a⁩‎b‏"), "ab");
 eq("C1 controls", cleanName("x\u0085y\u009bz"), "xyz");
+eq("line and paragraph separators", cleanName("A\u2028Zed pays Cal\u2029B"), "AZed pays CalB");
+eq("Arabic letter mark", cleanName("\u061cBo"), "Bo");
 
 log("-- ordinary names are untouched --");
 eq("Korean", cleanName("김철수"), "김철수");

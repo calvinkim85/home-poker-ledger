@@ -1263,11 +1263,12 @@ var CURRENCY_ORDER = ["USD","EUR","GBP","SGD","CNY","JPY","KRW"];
 
   /* Names end up in the plain-text summary people paste into a group chat, so a
      newline in one becomes a line of its own there: a crafted share link could add a
-     payment that was never on screen. Control characters and the bidi overrides that
-     reorder a line are dropped; the zero-width joiner stays, because emoji need it. */
+     payment that was never on screen. Control characters, the line and paragraph
+     separators some chat apps render as line breaks, and the bidi marks and overrides
+     that reorder a line are dropped; the zero-width joiner stays, because emoji need it. */
   function cleanName(s){
     if(typeof s !== "string") return "";
-    return s.replace(/[\u0000-\u001f\u007f-\u009f\u200e\u200f\u202a-\u202e\u2066-\u2069]/g, "");
+    return s.replace(/[\u0000-\u001f\u007f-\u009f\u061c\u200e\u200f\u2028\u2029\u202a-\u202e\u2066-\u2069]/g, "");
   }
 
   /* Switching currency relabels, it does not convert: $20 becomes \u20a920. Values are
