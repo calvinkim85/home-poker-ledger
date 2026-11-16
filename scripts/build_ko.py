@@ -43,12 +43,12 @@ def core_js():
         # Storage-side validators and the share codec. The Korean page needs the same
         # guarantees about untrusted input that the English one has, and a share link
         # is the one input a stranger controls.
-        func(js, "  function clampUnits(c){"),
+        func(js, "  function clampUnits(c, code){"),
         func(js, "  function readRound(v, code){"),
         func(js, "  function readGapMode(v, legacyAbsorb){"),
         func(js, "  function readPayVia(v){"),
         func(js, "  function readDest(v){"),
-        func(js, "  function readPlayers(raw){"),
+        func(js, "  function readPlayers(raw, code){"),
         region(js, "  var SHARE_BASE", "\n  function shareUrl"),
         func(js, "  function shareUrl(){"),
         func(js, "  function decodeShare(hash){"),

@@ -847,7 +847,10 @@
     padding:12px 14px;
     font-size:.98rem;
   }
-  ol.transfers .who{ font-weight:700; }
+  /* a 40-character name with no spaces pushed the page sideways on a phone, in the
+     payments and in the sentences that list names */
+  ol.transfers .who{ font-weight:700; overflow-wrap:anywhere; min-width:0; }
+  .banner, .notice{ overflow-wrap:anywhere; }
   ol.transfers .arrow{ color:var(--gold); font-family:var(--mono); }
   ol.transfers .amt{
     margin-left:auto;
@@ -858,6 +861,9 @@
   }
   .none{ font-size:.95rem; color:var(--ink-soft); }
 
+  /* At high stakes the figures outgrow a phone; the table scrolls in place instead of
+     widening the whole page. */
+  .table-scroll{ overflow-x:auto; -webkit-overflow-scrolling:touch; }
   table.summary{
     width:100%;
     border-collapse:collapse;
@@ -969,7 +975,7 @@
       <label class="lbl" for="defaultBuyIn">Standard buy-in</label>
       <div class="money w-default">
         <span class="cur" id="defaultCur">$</span>
-        <input type="text" id="defaultBuyIn" inputmode="decimal" value="20.00">
+        <input type="text" id="defaultBuyIn" inputmode="decimal" autocomplete="off" value="20.00">
       </div>
     </div>
     <div class="field">
@@ -1384,11 +1390,20 @@
   function parseMoney(text){
     var raw = String(text == null ? "" : text).trim();
     if(raw === "") return 0;
-    /* Drop grouping separators, then a symbol run at either edge — so "CN\u00a51,250.50"
-       and "50.00 USD" both parse, while interior junk like "12abc34" still fails. */
-    var t = raw.replace(/[\s,'\u00a0\u2019]/g, "")
-               .replace(/^[^\d.\-]+/, "")
-               .replace(/[^\d.]+$/, "");
+    /* Drop spaces, apostrophes and invisible marks, then a currency label at either
+       edge — so "CN\u00a51,250.50", "50.00 USD" and "30,000\uc6d0" all parse, while
+       interior junk like "12abc34" still fails.
+       Only a label is stripped, never arbitrary junk: stripping anything turned "20k"
+       into 20 and a typographic minus "\u22125" into +5, and a wrong number with no red
+       field is the worst failure this function has. Commas are grouping only when
+       followed by exactly three digits; "20,50" is a European decimal and would
+       otherwise become 2,050, so it is rejected rather than guessed at. */
+    var t = raw.replace(/[\s'\u00a0\u2019\u200b\u200e\u200f\u202a-\u202e\u2060\u2066-\u2069\ufeff]/g, "");
+    if(/,(?!\d{3}(?!\d))/.test(t)) return null;
+    var label = "(?:[A-Za-z]{0,3}\\p{Sc}|[A-Za-z]{3}|[\uc6d0\u5186\u5143])";
+    t = t.replace(/,/g, "")
+         .replace(new RegExp("^" + label, "u"), "")
+         .replace(new RegExp(label + "$", "u"), "");
     if(t === "" || t === "." || t === "-") return null;
     if(!/^-?\d*\.?\d*$/.test(t)) return null;
     var n = parseFloat(t);
@@ -1420,6 +1435,15 @@
   }
   function toInput(units){ return (units / Math.pow(10, cur().dec)).toFixed(cur().dec); }
 
+  /* Names end up in the plain-text summary people paste into a group chat, so a
+     newline in one becomes a line of its own there: a crafted share link could add a
+     payment that was never on screen. Control characters and the bidi overrides that
+     reorder a line are dropped; the zero-width joiner stays, because emoji need it. */
+  function cleanName(s){
+    if(typeof s !== "string") return "";
+    return s.replace(/[\u0000-\u001f\u007f-\u009f\u200e\u200f\u202a-\u202e\u2066-\u2069]/g, "");
+  }
+
   /* Switching currency relabels, it does not convert: $20 becomes \u20a920. Values are
      re-quantized to the new precision, which is lossy going into a zero-decimal
      currency — the caller warns when that actually changed something. */
@@ -1434,14 +1458,30 @@
     state.players.forEach(function(p){
       p.buyIns = p.buyIns.map(re);
       p.cashOut = re(p.cashOut);
+      /* owed is a share of the buy-ins, so it has to move with them or the bank
+         check reports credit nobody has */
+      if(p.owed) p.owed = re(p.owed);
     });
     state.defaultBuyIn = re(state.defaultBuyIn);
     return changed;
   }
 
   /* ---------- persistence ---------- */
+  /* True while a share link is on screen. That game is the sender's, and every handler
+     below calls save(), so without this the first tap - even the theme button -
+     replaced the visitor's own saved game with the friend's. Only the colour scheme is
+     this browser's own preference, so it is the one thing still written. */
+  var viewingShared = false;
   function save(){
     try{
+      if(viewingShared){
+        var own = JSON.parse(localStorage.getItem(KEY) || "null");
+        if(own && typeof own === "object"){
+          own.theme = themeState;
+          localStorage.setItem(KEY, JSON.stringify(own));
+        }
+        return;
+      }
       localStorage.setItem(KEY, JSON.stringify({
         players: state.players.map(function(p){
           return { name:p.name, buyIns:p.buyIns.slice(), cashOut:p.cashOut,
@@ -1457,9 +1497,12 @@
       }));
     }catch(e){}
   }
-  function clampUnits(c){
+  /* `code` is the currency the amount is in. It defaults to the one on screen, but a
+     share link is decoded before boot switches to the link's currency, and clamping
+     its won against dollars let it carry 100x the cap. */
+  function clampUnits(c, code){
     if(typeof c !== "number" || !isFinite(c) || c < 0) return 0;
-    return Math.min(Math.round(c), MAX_AMOUNT * minor(state.currency));
+    return Math.min(Math.round(c), MAX_AMOUNT * minor(code || state.currency));
   }
   /* Both callers below are untrusted input: localStorage is editable by hand, and a
      share link was built by somebody else. One implementation so the bounds cannot
@@ -1484,7 +1527,7 @@
     return PAY_MODES.indexOf(v) >= 0 ? v : "fewest";
   }
 
-  function readPlayers(raw){
+  function readPlayers(raw, code){
     if(!Array.isArray(raw) || raw.length < MIN_PLAYERS) return null;
     /* Exactly one banker, enforced rather than trusted: a hand-edited store or a
        crafted link can mark every seat, and two bankers would make bankerIndex pick
@@ -1493,12 +1536,13 @@
     return raw.slice(0, MAX_PLAYERS).map(function(p, i){
       p = p || {};
       return {
-        name: typeof p.name === "string" ? p.name.slice(0, 40) : "Player " + (i + 1),
-        buyIns: (Array.isArray(p.buyIns) ? p.buyIns : []).slice(0, MAX_BUYINS).map(clampUnits),
-        cashOut: clampUnits(p.cashOut),
+        name: typeof p.name === "string" ? cleanName(p.name).slice(0, 40) : "Player " + (i + 1),
+        buyIns: (Array.isArray(p.buyIns) ? p.buyIns : []).slice(0, MAX_BUYINS)
+                  .map(function(c){ return clampUnits(c, code); }),
+        cashOut: clampUnits(p.cashOut, code),
         done: p.done === true,
         banker: (p.banker === true && !seen) ? (seen = true) : false,
-        owed: clampUnits(p.owed)
+        owed: clampUnits(p.owed, code)
       };
     });
   }
@@ -1528,17 +1572,17 @@
       if(!m || !m[1]) return null;
       var o = JSON.parse(decodeURIComponent(m[1]));
       if(!o || typeof o !== "object") return null;
+      var code = Object.prototype.hasOwnProperty.call(CURRENCIES, o.c) ? o.c : "USD";
       var players = readPlayers((Array.isArray(o.p) ? o.p : []).map(function(p){
         p = p || {};
         /* a shared game is one that has already been counted */
         return { name: p.n, buyIns: p.b, cashOut: p.o, done: true, banker: p.k === true,
                  owed: p.w };
-      }));
+      }), code);
       if(!players) return null;
-      /* Resolved before the step is checked: a link carrying KRW plus a step of 500
-         must not be validated against whatever currency this browser happens to be
-         showing, or the step would survive into a currency that never offered it. */
-      var code = Object.prototype.hasOwnProperty.call(CURRENCIES, o.c) ? o.c : "USD";
+      /* `code` is resolved before the step is checked: a link carrying KRW plus a step
+         of 500 must not be validated against whatever currency this browser happens to
+         be showing, or the step would survive into a currency that never offered it. */
       return {
         currency: code,
         gapMode: readGapMode(o.m, o.a === true),
@@ -1569,7 +1613,7 @@
       state.roundTo = readRound(s.roundTo, state.currency);
       state.roundDest = readDest(s.roundDest);
       if(typeof s.defaultBuyIn === "number" && isFinite(s.defaultBuyIn) && s.defaultBuyIn >= 0){
-        state.defaultBuyIn = Math.round(s.defaultBuyIn);
+        state.defaultBuyIn = clampUnits(s.defaultBuyIn);   /* 1.7e308 rendered as "$∞" */
       }
       var loaded = readPlayers(s.players);
       if(!loaded) return false;
@@ -1774,7 +1818,20 @@
   }
   function seatName(p, i){ return p.name || "Player " + (i + 1); }
   function setBanker(idx){
-    state.players.forEach(function(p, i){ p.banker = (i === idx); });
+    state.players.forEach(function(p, i){
+      p.banker = (i === idx);
+      /* the banker has no "owes the bank" field, so a leftover figure would sit in
+         the bank check and the copied text with no way to see or clear it */
+      if(p.banker) p.owed = 0;
+    });
+  }
+  /* Seats still to be counted, named by their place at the table. Numbering them by
+     their place in this filtered list announced seats 2 and 3 as "Player 1 and
+     Player 2". `name` is the page's own namer, so Korean labels stay Korean. */
+  function waitingNames(players, name){
+    var out = [];
+    players.forEach(function(p, i){ if(p.done !== true) out.push(name(p, i)); });
+    return out;
   }
   /* Both settings name the banker, so neither can outlive one. Un-marking the seat
      used to fix only what was on screen - storage kept "banker" for both, and marking
@@ -2030,6 +2087,9 @@
   /* ---------- rendering ---------- */
   function el(tag, cls, text){
     var n = document.createElement(tag);
+    /* Without this, Back restored the last text typed into each field - including
+       junk that was never accepted - over the saved value, unmarked. */
+    if(tag === "input") n.autocomplete = "off";
     if(cls) n.className = cls;
     if(text != null) n.textContent = text;
     return n;
@@ -2066,8 +2126,9 @@
     name.maxLength = 40;
     name.setAttribute("aria-label", "Name of player " + (idx + 1));
     name.addEventListener("input", function(){
-      p.name = name.value;
+      p.name = cleanName(name.value);
       save();
+      hideResult();   /* the payments on screen name the old spelling */
     });
     head.appendChild(name);
     seat.appendChild(head);
@@ -2174,7 +2235,8 @@
     cash.addEventListener("input", function(){
       var c = parseMoney(cash.value);
       cash.classList.toggle("bad", c === null);
-      if(c !== null){ p.cashOut = c; save(); updateTally(); }
+      /* a settlement computed before this edit must not stay on screen */
+      if(c !== null){ p.cashOut = c; save(); updateTally(); hideResult(); }
     });
     cash.addEventListener("blur", function(){
       if(parseMoney(cash.value) !== null) cash.value = toInput(p.cashOut);
@@ -2205,7 +2267,7 @@
            were ever given chips for is not a state the night can be in. */
         var bad = c === null || c > totalIn(p);
         owed.classList.toggle("bad", bad);
-        if(!bad){ p.owed = c; save(); updateTally(); }
+        if(!bad){ p.owed = c; save(); updateTally(); hideResult(); }
       });
       owed.addEventListener("blur", function(){
         var c = parseMoney(owed.value);
@@ -2249,7 +2311,7 @@
     inp.addEventListener("input", function(){
       var c = parseMoney(inp.value);
       chip.classList.toggle("bad", c === null);
-      if(c !== null){ p.buyIns[ci] = c; save(); updateTally(); }
+      if(c !== null){ p.buyIns[ci] = c; save(); updateTally(); hideResult(); }
     });
     inp.addEventListener("blur", function(){
       if(parseMoney(inp.value) !== null) inp.value = toInput(p.buyIns[ci]);
@@ -2303,8 +2365,7 @@
        gets no nagging; someone who marked five of six players gets told which one is
        missing, which is exactly the moment the mistake happens. */
     var settled = players.filter(function(p){ return p.done === true; });
-    var waiting = players.filter(function(p){ return p.done !== true; })
-                         .map(function(p, i){ return p.name || "Player " + (i + 1); });
+    var waiting = waitingNames(players, seatName);
     /* Always set the notice, never only when the warning applies. Setting it
        conditionally left the previous run's warning on screen after the last player
        was marked — telling you to count people you had just counted. Calculate owns
@@ -2381,17 +2442,27 @@
 
       var short = el("div");
       short.style.marginTop = "8px";
+      /* Rounding moves part of a winner's chips into the change pot, so the top can
+         hold less than the gap it is asked to cover. When money is left over the
+         split did not settle everything, and saying it did would be the one false
+         sentence on the screen. */
+      var leftover = res.unpaid.length
+        ? "Even after every payment below, " + listNames(res.unpaid) + " still cannot be paid in full."
+        : res.unowed.length
+          ? "Even after every payment below, " + listNames(res.unowed) + " still " + verb(res.unowed.length, "owes", "owe") + " money with nobody to pay."
+          : "";
       if(absorbed){
         var who = Object.keys(adj.taken).map(function(k){
           return { name:raw[k].name, amt:adj.taken[k] };
         }).sort(function(a, b){ return b.amt - a.amt; });
+        var outcome = leftover
+          ? ". Everyone finishes in the order they placed. " + leftover
+          : ", so the payments below settle exactly. Everyone finishes in the order they placed.";
         short.textContent = (adj.side === "winners"
-          ? "Split from the top: " + listNames(who) + " gave up that much of the win, so the payments below settle exactly. Everyone finishes in the order they placed."
-          : "Split from the top: " + listNames(who) + " " + verb(who.length, "owes", "owe") + " that much less, so the payments below settle exactly. Everyone finishes in the order they placed.");
-      }else if(res.unpaid.length){
-        short.textContent = "Even after every payment below, " + listNames(res.unpaid) + " still cannot be paid in full.";
-      }else if(res.unowed.length){
-        short.textContent = "Even after every payment below, " + listNames(res.unowed) + " still " + verb(res.unowed.length, "owes", "owe") + " money with nobody to pay.";
+          ? "Split from the top: " + listNames(who) + " gave up that much of the win"
+          : "Split from the top: " + listNames(who) + " " + verb(who.length, "owes", "owe") + " that much less") + outcome;
+      }else if(leftover){
+        short.textContent = leftover;
       }else if(gapOnBanker){
         short.textContent = entries[bIdx].name + (diff > 0
           ? " covers the " + fmt(diff) + " the count is over, so the payments below settle exactly."
@@ -2489,7 +2560,9 @@
     if(adjusted) fr.appendChild(el("td", null, fmt(0)));
     tfoot.appendChild(fr);
     tbl.appendChild(tfoot);
-    resultEl.appendChild(tbl);
+    var tblWrap = el("div", "table-scroll");
+    tblWrap.appendChild(tbl);
+    resultEl.appendChild(tblWrap);
 
     /* --- copy --- */
     var copyRow = el("div", "actions");
@@ -2581,7 +2654,12 @@
     if(diff !== 0){
       lines.push("WARNING: table is " + (diff < 0 ? "short" : "over") + " by " + fmt(Math.abs(diff)));
       if(adj && adj.side){
-        lines.push("The gap was split between the top " + adj.side + ", so the payments above settle exactly.");
+        var short = res.unpaid.length ? listNames(res.unpaid) + " still cannot be paid in full."
+          : res.unowed.length ? listNames(res.unowed) + " still " + verb(res.unowed.length, "owes", "owe") + " money with nobody to pay."
+          : "";
+        lines.push(short
+          ? "The gap was split between the top " + adj.side + ", but not all of it could be covered: " + short
+          : "The gap was split between the top " + adj.side + ", so the payments above settle exactly.");
       }
     }
     /* This text gets pasted into the table's group chat, where everyone who just
@@ -2705,6 +2783,26 @@
     if(parseMoney(defaultInput.value) !== null) defaultInput.value = toInput(state.defaultBuyIn);
   });
 
+  /* Another tab saved. Without this, two tabs on one game were last-writer-wins on
+     every keystroke: this tab's next save() wrote its stale copy over the other's
+     edits. Storage events only reach the tabs that did not write, so the one being
+     typed in is never re-rendered under the cursor. A shared game on screen is not
+     this browser's game, so it is left alone. */
+  window.addEventListener("storage", function(e){
+    if(e.key !== KEY || viewingShared) return;
+    if(!load()) return;
+    applyTheme();
+    applyCurrency();
+    hideResult();
+    render();
+  });
+
+  /* Pasting a share link into a tab already on this page changes only the fragment,
+     so the browser does not reload and the link, read once at boot, was ignored. */
+  window.addEventListener("hashchange", function(){
+    if(decodeShare(location.hash)) location.reload();
+  });
+
   /* ---------- boot ---------- */
   /* A share link wins over stored state, but is never written to storage: opening a
      friend's link must not quietly overwrite your own game. */
@@ -2717,6 +2815,7 @@
     state.roundDest = shared.roundDest;
     state.players = shared.players;
     dropModesWithoutBanker();
+    viewingShared = true;
   }else if(!load()){
     state.players = [makePlayer(0), makePlayer(1)];
   }
@@ -2725,7 +2824,11 @@
   buildCurrencyPicker();
   applyCurrency();
   render();
-  if(shared) calculate();
+  if(shared){
+    calculate();
+    showNotice("This is a game someone shared with you. Changes here are not saved, and " +
+               "your own saved game is untouched.");
+  }
 })();
 </script>
 

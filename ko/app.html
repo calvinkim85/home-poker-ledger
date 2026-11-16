@@ -135,7 +135,10 @@
   .ko-pay{ display:flex; align-items:center; gap:10px; padding:10px 14px;
            background:var(--card-sunk); border:1px solid var(--card-edge);
            border-radius:10px; margin-bottom:8px; font-family:var(--mono); }
-  .ko-pay .who{ font-family:var(--body); font-weight:600; }
+  /* 띄어쓰기 없는 긴 이름이 휴대폰에서 화면을 옆으로 밀어냈다 */
+  .ko-pay{ flex-wrap:wrap; }
+  .ko-note, .banner, .notice{ overflow-wrap:anywhere; }
+  .ko-pay .who{ font-family:var(--body); font-weight:600; overflow-wrap:anywhere; min-width:0; }
   .ko-pay .amt{ margin-left:auto; font-weight:700; }
   .ko-note{ font-size:.85rem; color:var(--ink-soft); }
   .ko-doc h2{ margin-top:26px; }
@@ -169,7 +172,7 @@
       <label class="lbl" for="def">기본 바이인</label>
       <div class="money w-default">
         <span class="cur" id="defCur">₩</span>
-        <input type="text" id="def" inputmode="numeric" value="30,000">
+        <input type="text" id="def" inputmode="numeric" autocomplete="off" value="30,000">
       </div>
     </div>
     <div class="field">
@@ -333,6 +336,8 @@
 
   var el = function(tag, cls, text){
     var n = document.createElement(tag);
+    /* 이게 없으면 뒤로 가기가 저장되지 않은 입력까지 되살렸다. */
+    if(tag === "input") n.autocomplete = "off";
     if(cls) n.className = cls;
     if(text != null) n.textContent = text;
     return n;
@@ -395,7 +400,11 @@
     document.getElementById("themeName").textContent = KO_THEME_LABEL[themeState];
   }
 
+  /* 공유 링크를 보는 동안은 저장하지 않는다. 모든 버튼이 save()를 부르기 때문에, 이게
+     없으면 첫 탭에 내 게임이 친구의 게임으로 덮어써졌다. 테마는 따로 저장된다. */
+  var viewingShared = false;
   function save(){
+    if(viewingShared) return;
     try{
       localStorage.setItem(KEY, JSON.stringify({
         players: state.players.map(function(p){
@@ -408,17 +417,13 @@
       }));
     }catch(e){}
   }
-  function clampUnits(c){
-    if(typeof c !== "number" || !isFinite(c) || c < 0) return 0;
-    return Math.min(Math.round(c), MAX_AMOUNT * minor(state.currency));
-  }
   function load(){
     try{
       var s = JSON.parse(localStorage.getItem(KEY) || "null");
       if(!s) return false;
       state.currency = Object.prototype.hasOwnProperty.call(CURRENCIES, s.currency) ? s.currency : "KRW";
       if(typeof s.defaultBuyIn === "number" && isFinite(s.defaultBuyIn) && s.defaultBuyIn >= 0){
-        state.defaultBuyIn = Math.round(s.defaultBuyIn);
+        state.defaultBuyIn = clampUnits(s.defaultBuyIn);
       }
       if(!Array.isArray(s.players) || s.players.length < MIN_PLAYERS) return false;
       /* readPlayers is the English app's validator, shared rather than copied, so the
@@ -449,7 +454,7 @@
     var name = el("input");
     name.type = "text"; name.value = p.name; name.maxLength = 40;
     name.setAttribute("aria-label", (idx + 1) + "번 플레이어 이름");
-    name.addEventListener("input", function(){ p.name = name.value; save(); });
+    name.addEventListener("input", function(){ p.name = cleanName(name.value); save(); hideResult(); });
     head.appendChild(name);
     s.appendChild(head);
 
@@ -518,7 +523,7 @@
       inp.addEventListener("input", function(){
         var v = parseMoney(inp.value);
         inp.classList.toggle("bad", v === null);
-        if(v !== null){ p.buyIns[bi] = v; save(); tally(); }
+        if(v !== null){ p.buyIns[bi] = v; save(); tally(); hideResult(); }
       });
       inp.addEventListener("blur", function(){
         if(parseMoney(inp.value) !== null) inp.value = toInput(p.buyIns[bi]);
@@ -554,7 +559,8 @@
     cash.addEventListener("input", function(){
       var v = parseMoney(cash.value);
       cash.classList.toggle("bad", v === null);
-      if(v !== null){ p.cashOut = v; save(); tally(); }
+      /* 계산한 뒤에 금액을 고치면 이전 정산 결과를 내린다 */
+      if(v !== null){ p.cashOut = v; save(); tally(); hideResult(); }
     });
     cash.addEventListener("blur", function(){
       if(parseMoney(cash.value) !== null) cash.value = toInput(p.cashOut);
@@ -582,7 +588,7 @@
         /* 받은 칩보다 많이 빚질 수는 없다. */
         var bad = v === null || v > totalIn(p);
         owed.classList.toggle("bad", bad);
-        if(!bad){ p.owed = v; save(); tally(); }
+        if(!bad){ p.owed = v; save(); tally(); hideResult(); }
       });
       owed.addEventListener("blur", function(){
         var v = parseMoney(owed.value);
@@ -748,8 +754,7 @@
     /* 가이드가 말하는 순서 위반 — 한 명이라도 안 센 상태에서 송금이 시작되면
        마지막 숫자가 들어왔을 때 이미 보낸 돈까지 되돌려야 한다. */
     var settled = players.filter(function(p){ return p.done === true; });
-    var waiting = players.filter(function(p){ return p.done !== true; })
-                         .map(function(p, i){ return nameOf(p, i); });
+    var waiting = waitingNames(players, nameOf);
     notice(settled.length > 0 && waiting.length > 0
       ? "아직 안 센 사람: " + waiting.join(", ") +
         ". 다 세기 전에 정산하면 보낸 돈을 되돌려야 합니다."
@@ -919,7 +924,9 @@
     fr.appendChild(el("td", null, fmtSigned(diff)));
     if(adjHead) fr.appendChild(el("td", null, fmt(0)));
     tf.appendChild(fr); tbl.appendChild(tf);
-    resultEl.appendChild(tbl);
+    var tblWrap = el("div", "table-scroll");
+    tblWrap.appendChild(tbl);
+    resultEl.appendChild(tblWrap);
 
     var actions = el("div", "actions");
     var copy = el("button", "btn", "정산 내역 복사");
@@ -1060,6 +1067,20 @@
     notice(""); save(); hideResult(); render();
   });
 
+  /* 다른 탭이 저장했다. 이게 없으면 두 탭이 같은 게임을 열었을 때 나중에 저장한 쪽이
+     다른 탭의 입력을 덮어썼다. 공유 링크를 보는 중이면 건드리지 않는다. */
+  window.addEventListener("storage", function(e){
+    if(e.key !== KEY || viewingShared) return;
+    if(!load()) return;
+    hideResult();
+    render();
+  });
+
+  /* 이미 열린 탭에 공유 링크를 붙여 넣으면 해시만 바뀌어 새로고침이 일어나지 않았다. */
+  window.addEventListener("hashchange", function(){
+    if(decodeShare(location.hash)) location.reload();
+  });
+
   themeState = readSiteTheme() || systemTheme();
   applyTheme();
 
@@ -1074,11 +1095,15 @@
     state.roundDest = shared.roundDest;
     state.players = shared.players.map(koNames);
     dropModesWithoutBanker();
+    viewingShared = true;
   }else if(!load()){
     state.players = [seat(0), seat(1)];
   }
   render();
-  if(shared) calculate();
+  if(shared){
+    calculate();
+    notice("누군가 공유한 게임입니다. 여기서 고친 내용은 저장되지 않고, 내 게임은 그대로 있습니다.");
+  }
 })();
 </script>
 

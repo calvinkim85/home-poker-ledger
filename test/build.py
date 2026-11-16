@@ -108,16 +108,18 @@ def build():
         region(js, "  var THEMES = [", "  var root ="),
         "var themeState = null;",
         STUBS,
-        func(js, "  function clampUnits(c){"),
+        func(js, "  function clampUnits(c, code){"),
         func(js, "  function readRound(v, code){"),
         func(js, "  function readGapMode(v, legacyAbsorb){"),
         func(js, "  function readPayVia(v){"),
         func(js, "  function readDest(v){"),
-        func(js, "  function readPlayers(raw){"),
+        func(js, "  function readPlayers(raw, code){"),
         region(js, "  var SHARE_BASE", "\n  function shareUrl"),
         func(js, "  function shareUrl(){"),
         func(js, "  function decodeShare(hash){"),
         func(js, "  function load(){"),
+        "var viewingShared = false;",
+        func(js, "  function save(){"),
     ])
     def js_string(text):
         return "\"" + text.replace("\\", "\\\\").replace('"', '\\"') \

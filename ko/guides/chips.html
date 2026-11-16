@@ -846,7 +846,10 @@
     padding:12px 14px;
     font-size:.98rem;
   }
-  ol.transfers .who{ font-weight:700; }
+  /* a 40-character name with no spaces pushed the page sideways on a phone, in the
+     payments and in the sentences that list names */
+  ol.transfers .who{ font-weight:700; overflow-wrap:anywhere; min-width:0; }
+  .banner, .notice{ overflow-wrap:anywhere; }
   ol.transfers .arrow{ color:var(--gold); font-family:var(--mono); }
   ol.transfers .amt{
     margin-left:auto;
@@ -857,6 +860,9 @@
   }
   .none{ font-size:.95rem; color:var(--ink-soft); }
 
+  /* At high stakes the figures outgrow a phone; the table scrolls in place instead of
+     widening the whole page. */
+  .table-scroll{ overflow-x:auto; -webkit-overflow-scrolling:touch; }
   table.summary{
     width:100%;
     border-collapse:collapse;

@@ -842,7 +842,10 @@
     padding:12px 14px;
     font-size:.98rem;
   }
-  ol.transfers .who{ font-weight:700; }
+  /* a 40-character name with no spaces pushed the page sideways on a phone, in the
+     payments and in the sentences that list names */
+  ol.transfers .who{ font-weight:700; overflow-wrap:anywhere; min-width:0; }
+  .banner, .notice{ overflow-wrap:anywhere; }
   ol.transfers .arrow{ color:var(--gold); font-family:var(--mono); }
   ol.transfers .amt{
     margin-left:auto;
@@ -853,6 +856,9 @@
   }
   .none{ font-size:.95rem; color:var(--ink-soft); }
 
+  /* At high stakes the figures outgrow a phone; the table scrolls in place instead of
+     widening the whole page. */
+  .table-scroll{ overflow-x:auto; -webkit-overflow-scrolling:touch; }
   table.summary{
     width:100%;
     border-collapse:collapse;
@@ -997,7 +1003,10 @@
   .ko-pay{ display:flex; align-items:center; gap:10px; padding:10px 14px;
            background:var(--card-sunk); border:1px solid var(--card-edge);
            border-radius:10px; margin-bottom:8px; font-family:var(--mono); }
-  .ko-pay .who{ font-family:var(--body); font-weight:600; }
+  /* 띄어쓰기 없는 긴 이름이 휴대폰에서 화면을 옆으로 밀어냈다 */
+  .ko-pay{ flex-wrap:wrap; }
+  .ko-note, .banner, .notice{ overflow-wrap:anywhere; }
+  .ko-pay .who{ font-family:var(--body); font-weight:600; overflow-wrap:anywhere; min-width:0; }
   .ko-pay .amt{ margin-left:auto; font-weight:700; }
   .ko-note{ font-size:.85rem; color:var(--ink-soft); }
   .ko-doc h2{ margin-top:26px; }
@@ -1031,7 +1040,7 @@
       <label class="lbl" for="def">기본 바이인</label>
       <div class="money w-default">
         <span class="cur" id="defCur">₩</span>
-        <input type="text" id="def" inputmode="numeric" value="30,000">
+        <input type="text" id="def" inputmode="numeric" autocomplete="off" value="30,000">
       </div>
     </div>
     <div class="field">
@@ -1207,11 +1216,20 @@ var CURRENCY_ORDER = ["USD","EUR","GBP","SGD","CNY","JPY","KRW"];
   function parseMoney(text){
     var raw = String(text == null ? "" : text).trim();
     if(raw === "") return 0;
-    /* Drop grouping separators, then a symbol run at either edge — so "CN\u00a51,250.50"
-       and "50.00 USD" both parse, while interior junk like "12abc34" still fails. */
-    var t = raw.replace(/[\s,'\u00a0\u2019]/g, "")
-               .replace(/^[^\d.\-]+/, "")
-               .replace(/[^\d.]+$/, "");
+    /* Drop spaces, apostrophes and invisible marks, then a currency label at either
+       edge — so "CN\u00a51,250.50", "50.00 USD" and "30,000\uc6d0" all parse, while
+       interior junk like "12abc34" still fails.
+       Only a label is stripped, never arbitrary junk: stripping anything turned "20k"
+       into 20 and a typographic minus "\u22125" into +5, and a wrong number with no red
+       field is the worst failure this function has. Commas are grouping only when
+       followed by exactly three digits; "20,50" is a European decimal and would
+       otherwise become 2,050, so it is rejected rather than guessed at. */
+    var t = raw.replace(/[\s'\u00a0\u2019\u200b\u200e\u200f\u202a-\u202e\u2060\u2066-\u2069\ufeff]/g, "");
+    if(/,(?!\d{3}(?!\d))/.test(t)) return null;
+    var label = "(?:[A-Za-z]{0,3}\\p{Sc}|[A-Za-z]{3}|[\uc6d0\u5186\u5143])";
+    t = t.replace(/,/g, "")
+         .replace(new RegExp("^" + label, "u"), "")
+         .replace(new RegExp(label + "$", "u"), "");
     if(t === "" || t === "." || t === "-") return null;
     if(!/^-?\d*\.?\d*$/.test(t)) return null;
     var n = parseFloat(t);
@@ -1243,6 +1261,15 @@ var CURRENCY_ORDER = ["USD","EUR","GBP","SGD","CNY","JPY","KRW"];
   }
   function toInput(units){ return (units / Math.pow(10, cur().dec)).toFixed(cur().dec); }
 
+  /* Names end up in the plain-text summary people paste into a group chat, so a
+     newline in one becomes a line of its own there: a crafted share link could add a
+     payment that was never on screen. Control characters and the bidi overrides that
+     reorder a line are dropped; the zero-width joiner stays, because emoji need it. */
+  function cleanName(s){
+    if(typeof s !== "string") return "";
+    return s.replace(/[\u0000-\u001f\u007f-\u009f\u200e\u200f\u202a-\u202e\u2066-\u2069]/g, "");
+  }
+
   /* Switching currency relabels, it does not convert: $20 becomes \u20a920. Values are
      re-quantized to the new precision, which is lossy going into a zero-decimal
      currency — the caller warns when that actually changed something. */
@@ -1257,6 +1284,9 @@ var CURRENCY_ORDER = ["USD","EUR","GBP","SGD","CNY","JPY","KRW"];
     state.players.forEach(function(p){
       p.buyIns = p.buyIns.map(re);
       p.cashOut = re(p.cashOut);
+      /* owed is a share of the buy-ins, so it has to move with them or the bank
+         check reports credit nobody has */
+      if(p.owed) p.owed = re(p.owed);
     });
     state.defaultBuyIn = re(state.defaultBuyIn);
     return changed;
@@ -1284,7 +1314,20 @@ var CURRENCY_ORDER = ["USD","EUR","GBP","SGD","CNY","JPY","KRW"];
   }
   function seatName(p, i){ return p.name || "Player " + (i + 1); }
   function setBanker(idx){
-    state.players.forEach(function(p, i){ p.banker = (i === idx); });
+    state.players.forEach(function(p, i){
+      p.banker = (i === idx);
+      /* the banker has no "owes the bank" field, so a leftover figure would sit in
+         the bank check and the copied text with no way to see or clear it */
+      if(p.banker) p.owed = 0;
+    });
+  }
+  /* Seats still to be counted, named by their place at the table. Numbering them by
+     their place in this filtered list announced seats 2 and 3 as "Player 1 and
+     Player 2". `name` is the page's own namer, so Korean labels stay Korean. */
+  function waitingNames(players, name){
+    var out = [];
+    players.forEach(function(p, i){ if(p.done !== true) out.push(name(p, i)); });
+    return out;
   }
   /* Both settings name the banker, so neither can outlive one. Un-marking the seat
      used to fix only what was on screen - storage kept "banker" for both, and marking
@@ -1538,9 +1581,9 @@ var CURRENCY_ORDER = ["USD","EUR","GBP","SGD","CNY","JPY","KRW"];
   }
 
 
-  function clampUnits(c){
+  function clampUnits(c, code){
     if(typeof c !== "number" || !isFinite(c) || c < 0) return 0;
-    return Math.min(Math.round(c), MAX_AMOUNT * minor(state.currency));
+    return Math.min(Math.round(c), MAX_AMOUNT * minor(code || state.currency));
   }
 
   function readRound(v, code){
@@ -1561,7 +1604,7 @@ var CURRENCY_ORDER = ["USD","EUR","GBP","SGD","CNY","JPY","KRW"];
     return (typeof v === "number" && v >= 0 && v < ROUND_DESTS.length) ? Math.floor(v) : 0;
   }
 
-  function readPlayers(raw){
+  function readPlayers(raw, code){
     if(!Array.isArray(raw) || raw.length < MIN_PLAYERS) return null;
     /* Exactly one banker, enforced rather than trusted: a hand-edited store or a
        crafted link can mark every seat, and two bankers would make bankerIndex pick
@@ -1570,12 +1613,13 @@ var CURRENCY_ORDER = ["USD","EUR","GBP","SGD","CNY","JPY","KRW"];
     return raw.slice(0, MAX_PLAYERS).map(function(p, i){
       p = p || {};
       return {
-        name: typeof p.name === "string" ? p.name.slice(0, 40) : "Player " + (i + 1),
-        buyIns: (Array.isArray(p.buyIns) ? p.buyIns : []).slice(0, MAX_BUYINS).map(clampUnits),
-        cashOut: clampUnits(p.cashOut),
+        name: typeof p.name === "string" ? cleanName(p.name).slice(0, 40) : "Player " + (i + 1),
+        buyIns: (Array.isArray(p.buyIns) ? p.buyIns : []).slice(0, MAX_BUYINS)
+                  .map(function(c){ return clampUnits(c, code); }),
+        cashOut: clampUnits(p.cashOut, code),
         done: p.done === true,
         banker: (p.banker === true && !seen) ? (seen = true) : false,
-        owed: clampUnits(p.owed)
+        owed: clampUnits(p.owed, code)
       };
     });
   }
@@ -1603,17 +1647,17 @@ var CURRENCY_ORDER = ["USD","EUR","GBP","SGD","CNY","JPY","KRW"];
       if(!m || !m[1]) return null;
       var o = JSON.parse(decodeURIComponent(m[1]));
       if(!o || typeof o !== "object") return null;
+      var code = Object.prototype.hasOwnProperty.call(CURRENCIES, o.c) ? o.c : "USD";
       var players = readPlayers((Array.isArray(o.p) ? o.p : []).map(function(p){
         p = p || {};
         /* a shared game is one that has already been counted */
         return { name: p.n, buyIns: p.b, cashOut: p.o, done: true, banker: p.k === true,
                  owed: p.w };
-      }));
+      }), code);
       if(!players) return null;
-      /* Resolved before the step is checked: a link carrying KRW plus a step of 500
-         must not be validated against whatever currency this browser happens to be
-         showing, or the step would survive into a currency that never offered it. */
-      var code = Object.prototype.hasOwnProperty.call(CURRENCIES, o.c) ? o.c : "USD";
+      /* `code` is resolved before the step is checked: a link carrying KRW plus a step
+         of 500 must not be validated against whatever currency this browser happens to
+         be showing, or the step would survive into a currency that never offered it. */
       return {
         currency: code,
         gapMode: readGapMode(o.m, o.a === true),
@@ -1662,6 +1706,8 @@ var CURRENCY_ORDER = ["USD","EUR","GBP","SGD","CNY","JPY","KRW"];
 
   var el = function(tag, cls, text){
     var n = document.createElement(tag);
+    /* 이게 없으면 뒤로 가기가 저장되지 않은 입력까지 되살렸다. */
+    if(tag === "input") n.autocomplete = "off";
     if(cls) n.className = cls;
     if(text != null) n.textContent = text;
     return n;
@@ -1724,7 +1770,11 @@ var CURRENCY_ORDER = ["USD","EUR","GBP","SGD","CNY","JPY","KRW"];
     document.getElementById("themeName").textContent = KO_THEME_LABEL[themeState];
   }
 
+  /* 공유 링크를 보는 동안은 저장하지 않는다. 모든 버튼이 save()를 부르기 때문에, 이게
+     없으면 첫 탭에 내 게임이 친구의 게임으로 덮어써졌다. 테마는 따로 저장된다. */
+  var viewingShared = false;
   function save(){
+    if(viewingShared) return;
     try{
       localStorage.setItem(KEY, JSON.stringify({
         players: state.players.map(function(p){
@@ -1737,17 +1787,13 @@ var CURRENCY_ORDER = ["USD","EUR","GBP","SGD","CNY","JPY","KRW"];
       }));
     }catch(e){}
   }
-  function clampUnits(c){
-    if(typeof c !== "number" || !isFinite(c) || c < 0) return 0;
-    return Math.min(Math.round(c), MAX_AMOUNT * minor(state.currency));
-  }
   function load(){
     try{
       var s = JSON.parse(localStorage.getItem(KEY) || "null");
       if(!s) return false;
       state.currency = Object.prototype.hasOwnProperty.call(CURRENCIES, s.currency) ? s.currency : "KRW";
       if(typeof s.defaultBuyIn === "number" && isFinite(s.defaultBuyIn) && s.defaultBuyIn >= 0){
-        state.defaultBuyIn = Math.round(s.defaultBuyIn);
+        state.defaultBuyIn = clampUnits(s.defaultBuyIn);
       }
       if(!Array.isArray(s.players) || s.players.length < MIN_PLAYERS) return false;
       /* readPlayers is the English app's validator, shared rather than copied, so the
@@ -1778,7 +1824,7 @@ var CURRENCY_ORDER = ["USD","EUR","GBP","SGD","CNY","JPY","KRW"];
     var name = el("input");
     name.type = "text"; name.value = p.name; name.maxLength = 40;
     name.setAttribute("aria-label", (idx + 1) + "번 플레이어 이름");
-    name.addEventListener("input", function(){ p.name = name.value; save(); });
+    name.addEventListener("input", function(){ p.name = cleanName(name.value); save(); hideResult(); });
     head.appendChild(name);
     s.appendChild(head);
 
@@ -1847,7 +1893,7 @@ var CURRENCY_ORDER = ["USD","EUR","GBP","SGD","CNY","JPY","KRW"];
       inp.addEventListener("input", function(){
         var v = parseMoney(inp.value);
         inp.classList.toggle("bad", v === null);
-        if(v !== null){ p.buyIns[bi] = v; save(); tally(); }
+        if(v !== null){ p.buyIns[bi] = v; save(); tally(); hideResult(); }
       });
       inp.addEventListener("blur", function(){
         if(parseMoney(inp.value) !== null) inp.value = toInput(p.buyIns[bi]);
@@ -1883,7 +1929,8 @@ var CURRENCY_ORDER = ["USD","EUR","GBP","SGD","CNY","JPY","KRW"];
     cash.addEventListener("input", function(){
       var v = parseMoney(cash.value);
       cash.classList.toggle("bad", v === null);
-      if(v !== null){ p.cashOut = v; save(); tally(); }
+      /* 계산한 뒤에 금액을 고치면 이전 정산 결과를 내린다 */
+      if(v !== null){ p.cashOut = v; save(); tally(); hideResult(); }
     });
     cash.addEventListener("blur", function(){
       if(parseMoney(cash.value) !== null) cash.value = toInput(p.cashOut);
@@ -1911,7 +1958,7 @@ var CURRENCY_ORDER = ["USD","EUR","GBP","SGD","CNY","JPY","KRW"];
         /* 받은 칩보다 많이 빚질 수는 없다. */
         var bad = v === null || v > totalIn(p);
         owed.classList.toggle("bad", bad);
-        if(!bad){ p.owed = v; save(); tally(); }
+        if(!bad){ p.owed = v; save(); tally(); hideResult(); }
       });
       owed.addEventListener("blur", function(){
         var v = parseMoney(owed.value);
@@ -2077,8 +2124,7 @@ var CURRENCY_ORDER = ["USD","EUR","GBP","SGD","CNY","JPY","KRW"];
     /* 가이드가 말하는 순서 위반 — 한 명이라도 안 센 상태에서 송금이 시작되면
        마지막 숫자가 들어왔을 때 이미 보낸 돈까지 되돌려야 한다. */
     var settled = players.filter(function(p){ return p.done === true; });
-    var waiting = players.filter(function(p){ return p.done !== true; })
-                         .map(function(p, i){ return nameOf(p, i); });
+    var waiting = waitingNames(players, nameOf);
     notice(settled.length > 0 && waiting.length > 0
       ? "아직 안 센 사람: " + waiting.join(", ") +
         ". 다 세기 전에 정산하면 보낸 돈을 되돌려야 합니다."
@@ -2248,7 +2294,9 @@ var CURRENCY_ORDER = ["USD","EUR","GBP","SGD","CNY","JPY","KRW"];
     fr.appendChild(el("td", null, fmtSigned(diff)));
     if(adjHead) fr.appendChild(el("td", null, fmt(0)));
     tf.appendChild(fr); tbl.appendChild(tf);
-    resultEl.appendChild(tbl);
+    var tblWrap = el("div", "table-scroll");
+    tblWrap.appendChild(tbl);
+    resultEl.appendChild(tblWrap);
 
     var actions = el("div", "actions");
     var copy = el("button", "btn", "정산 내역 복사");
@@ -2389,6 +2437,20 @@ var CURRENCY_ORDER = ["USD","EUR","GBP","SGD","CNY","JPY","KRW"];
     notice(""); save(); hideResult(); render();
   });
 
+  /* 다른 탭이 저장했다. 이게 없으면 두 탭이 같은 게임을 열었을 때 나중에 저장한 쪽이
+     다른 탭의 입력을 덮어썼다. 공유 링크를 보는 중이면 건드리지 않는다. */
+  window.addEventListener("storage", function(e){
+    if(e.key !== KEY || viewingShared) return;
+    if(!load()) return;
+    hideResult();
+    render();
+  });
+
+  /* 이미 열린 탭에 공유 링크를 붙여 넣으면 해시만 바뀌어 새로고침이 일어나지 않았다. */
+  window.addEventListener("hashchange", function(){
+    if(decodeShare(location.hash)) location.reload();
+  });
+
   themeState = readSiteTheme() || systemTheme();
   applyTheme();
 
@@ -2403,11 +2465,15 @@ var CURRENCY_ORDER = ["USD","EUR","GBP","SGD","CNY","JPY","KRW"];
     state.roundDest = shared.roundDest;
     state.players = shared.players.map(koNames);
     dropModesWithoutBanker();
+    viewingShared = true;
   }else if(!load()){
     state.players = [seat(0), seat(1)];
   }
   render();
-  if(shared) calculate();
+  if(shared){
+    calculate();
+    notice("누군가 공유한 게임입니다. 여기서 고친 내용은 저장되지 않고, 내 게임은 그대로 있습니다.");
+  }
 })();
 </script>
 
